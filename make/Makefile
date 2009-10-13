@@ -87,14 +87,18 @@ else
 endif
 
 # Where is /java/devtools in case we need it
-ifdef ALT_JDK_DEVTOOLS_DIR
-  _DEVTOOLS = $(ALT_JDK_DEVTOOLS_DIR)
+ifdef ALT_DROPS_DIR
+  DROPS_DIR = $(ALT_DROPS_DIR)
 else
-  _DEVTOOLS = $(_SLASHJAVA)/devtools
+  ifdef ALT_JDK_DEVTOOLS_DIR
+    DROPS_DIR = $(ALT_JDK_DEVTOOLS_DIR)/share/jdk7-drops
+  else
+    DROPS_DIR = $(_SLASHJAVA)/devtools/share/jdk7-drops
+  endif
 endif
 
 # Add in path to devtools
-ANT_OPTIONS += -Ddevtools=$(_DEVTOOLS)
+ANT_OPTIONS += -Ddrops.dir=$(DROPS_DIR)
 
 ifdef ALT_OUTPUTDIR
   OUTPUTDIR = $(ALT_OUTPUTDIR)
