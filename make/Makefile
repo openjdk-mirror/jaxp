@@ -86,7 +86,10 @@ else
   endif
 endif
 
-# Where is /java/devtools in case we need it
+# Do we have the drops already downloaded?
+# Check ALT_DROPS_DIR for a full path first,
+# before trying to use the devtools path,
+# either via ALT_JDK_DEVTOOLS_DIR or /java/devtools.
 ifdef ALT_DROPS_DIR
   DROPS_DIR = $(ALT_DROPS_DIR)
 else
@@ -97,7 +100,7 @@ else
   endif
 endif
 
-# Add in path to devtools
+# Add in path to drops already downloaded
 ANT_OPTIONS += -Ddrops.dir=$(DROPS_DIR)
 
 ifdef ALT_OUTPUTDIR
@@ -134,7 +137,7 @@ endif
 default: all
 
 # All ant targets of interest
-ANT_TARGETS = all source build dist clobber clean sanity
+ANT_TARGETS = all source drop_included build dist clobber clean sanity
 
 # Create a make target for each
 $(ANT_TARGETS):
