@@ -160,6 +160,12 @@ public class XSComplexTypeDecl implements XSComplexTypeDefinition, TypeInfo {
     }
 
     public XSCMValidator getContentModel(CMBuilder cmBuilder) {
+        // for complex type with empty or simple content,
+        // there is no content model validator
+        if (fContentType == XSComplexTypeDecl.CONTENTTYPE_SIMPLE ||
+            fContentType == XSComplexTypeDecl.CONTENTTYPE_EMPTY) {
+            return null;
+        }
         if (fCMValidator == null)
             synchronized (this) {
                 if (fCMValidator == null) {

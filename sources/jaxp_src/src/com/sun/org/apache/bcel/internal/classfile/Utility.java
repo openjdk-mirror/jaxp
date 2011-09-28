@@ -431,7 +431,7 @@ public abstract class Utility {
 
           default: // Never reached
             System.err.println("Unreachable default case reached!");
-            System.exit(-1);
+            buf.setLength(0);
           }
         }
       }

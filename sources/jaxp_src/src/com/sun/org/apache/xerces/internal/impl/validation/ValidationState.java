@@ -24,8 +24,7 @@ import com.sun.org.apache.xerces.internal.util.SymbolTable;
 import com.sun.org.apache.xerces.internal.impl.dv.ValidationContext;
 
 import com.sun.org.apache.xerces.internal.xni.NamespaceContext;
-import java.util.Hashtable;
-import java.util.Enumeration;
+import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -35,7 +34,7 @@ import java.util.Locale;
  * @xerces.internal
  *
  * @author Elena Litani, IBM
- * @version $Id: ValidationState.java,v 1.6 2010/07/23 02:09:27 joehw Exp $
+ * @version $Id: ValidationState.java,v 1.7 2010-11-01 04:39:53 joehw Exp $
  */
 public class ValidationState implements ValidationContext {
 
@@ -52,10 +51,8 @@ public class ValidationState implements ValidationContext {
     private SymbolTable fSymbolTable            = null;
     private Locale fLocale                      = null;
 
-    //REVISIT: Should replace with a lighter structure.
-    private final Hashtable fIdTable    = new Hashtable();
-    private final Hashtable fIdRefTable = new Hashtable();
-    private final static Object fNullValue = new Object();
+    private ArrayList<String> fIdList;
+    private ArrayList<String> fIdRefList;
 
     //
     // public methods
@@ -93,13 +90,19 @@ public class ValidationState implements ValidationContext {
      * otherwise return the first IDREF value without a matching ID value.
      */
     public String checkIDRefID () {
-        Enumeration en = fIdRefTable.keys();
+        if (fIdList == null) {
+            if (fIdRefList != null) {
+                return fIdRefList.get(0);
+            }
+        }
 
-        String key;
-        while (en.hasMoreElements()) {
-            key = (String)en.nextElement();
-            if (!fIdTable.containsKey(key)) {
-                  return key;
+        if (fIdRefList != null) {
+            String key;
+            for (int i = 0; i < fIdRefList.size(); i++) {
+                key = fIdRefList.get(i);
+                if (!fIdList.contains(key)) {
+                      return key;
+                }
             }
         }
         return null;
@@ -109,8 +112,8 @@ public class ValidationState implements ValidationContext {
         fExtraChecking = true;
         fFacetChecking = true;
         fNamespaces = true;
-        fIdTable.clear();
-        fIdRefTable.clear();
+        fIdList = null;
+        fIdRefList = null;
         fEntityState = null;
         fNamespaceContext = null;
         fSymbolTable = null;
@@ -123,8 +126,8 @@ public class ValidationState implements ValidationContext {
      * the two tables.
      */
     public void resetIDTables() {
-        fIdTable.clear();
-        fIdRefTable.clear();
+        fIdList = null;
+        fIdRefList = null;
     }
 
     //
@@ -165,15 +168,18 @@ public class ValidationState implements ValidationContext {
 
     // id
     public boolean isIdDeclared(String name) {
-        return fIdTable.containsKey(name);
+        if (fIdList == null) return false;
+        return fIdList.contains(name);
     }
     public void addId(String name) {
-        fIdTable.put(name, fNullValue);
+        if (fIdList == null) fIdList = new ArrayList();
+        fIdList.add(name);
     }
 
     // idref
     public void addIdRef(String name) {
-        fIdRefTable.put(name, fNullValue);
+        if (fIdRefList == null) fIdRefList = new ArrayList();
+        fIdRefList.add(name);
     }
     // get symbols
 

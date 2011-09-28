@@ -42,6 +42,7 @@ import com.sun.org.apache.xerces.internal.util.XMLChar;
 import com.sun.org.apache.xerces.internal.util.XMLSymbols;
 import com.sun.org.apache.xerces.internal.xni.QName;
 import com.sun.org.apache.xerces.internal.xs.XSConstants;
+import java.util.HashMap;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
@@ -145,9 +146,9 @@ public class XSAttributeChecker {
 
     // used to store the map from element name to attribute list
     // for 14 global elements
-    private static final Hashtable fEleAttrsMapG = new Hashtable(29);
+    private static final Map fEleAttrsMapG = new HashMap(29);
     // for 39 local elememnts
-    private static final Hashtable fEleAttrsMapL = new Hashtable(79);
+    private static final Map fEleAttrsMapL = new HashMap(79);
 
     // used to initialize fEleAttrsMap
     // step 1: all possible data types
@@ -926,7 +927,7 @@ public class XSAttributeChecker {
     protected SymbolTable fSymbolTable = null;
 
     // used to store the mapping from processed element to attributes
-    protected Hashtable fNonSchemaAttrs = new Hashtable();
+    protected Map fNonSchemaAttrs = new HashMap();
 
     // temprory vector, used to hold the namespace list
     protected Vector fNamespaceList = new Vector();
@@ -992,7 +993,7 @@ public class XSAttributeChecker {
             reportSchemaError("s4s-elt-schema-ns", new Object[] {elName}, element);
         }
 
-        Hashtable eleAttrsMap = fEleAttrsMapG;
+        Map eleAttrsMap = fEleAttrsMapG;
         String lookupName = elName;
 
         // REVISIT: only local element and attribute are different from others.
@@ -1808,9 +1809,9 @@ class SmallContainer extends Container {
 }
 
 class LargeContainer extends Container {
-    Hashtable items;
+    Map items;
     LargeContainer(int size) {
-        items = new Hashtable(size*2+1);
+        items = new HashMap(size*2+1);
         values = new OneAttr[size];
     }
     void put(String key, OneAttr value) {

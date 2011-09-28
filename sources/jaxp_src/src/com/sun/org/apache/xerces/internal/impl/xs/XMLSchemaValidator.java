@@ -83,8 +83,6 @@ import com.sun.org.apache.xerces.internal.xs.StringList;
 import com.sun.org.apache.xerces.internal.xs.XSConstants;
 import com.sun.org.apache.xerces.internal.xs.XSObjectList;
 import com.sun.org.apache.xerces.internal.xs.XSTypeDefinition;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
 import com.sun.org.apache.xerces.internal.parsers.XMLParser;
 
 /**
@@ -489,8 +487,6 @@ public class XMLSchemaValidator
     /** Schema Grammar Description passed,  to give a chance to application to supply the Grammar */
     protected final XSDDescription fXSDDescription = new XSDDescription();
     protected final Hashtable fLocationPairs = new Hashtable();
-    protected final Hashtable fExpandedLocationPairs = new Hashtable();
-    protected final ArrayList fUnparsedLocations = new ArrayList();
 
 
     // handlers
@@ -1293,7 +1289,6 @@ public class XMLSchemaValidator
         fIdConstraint = false;
         //reset XSDDescription
         fLocationPairs.clear();
-        fExpandedLocationPairs.clear();
 
         // cleanup id table
         fValidationState.resetIDTables();

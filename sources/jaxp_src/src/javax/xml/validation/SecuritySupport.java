@@ -41,7 +41,7 @@ import java.util.*;
  */
 class SecuritySupport  {
 
-
+    
     ClassLoader getContextClassLoader() {
         return (ClassLoader)
         AccessController.doPrivileged(new PrivilegedAction() {
@@ -58,7 +58,7 @@ class SecuritySupport  {
     }
 
     String getSystemProperty(final String propName) {
-        return (String)
+	return (String)
             AccessController.doPrivileged(new PrivilegedAction() {
                 public Object run() {
                     return System.getProperty(propName);
@@ -69,31 +69,31 @@ class SecuritySupport  {
     FileInputStream getFileInputStream(final File file)
         throws FileNotFoundException
     {
-        try {
+	try {
             return (FileInputStream)
                 AccessController.doPrivileged(new PrivilegedExceptionAction() {
                     public Object run() throws FileNotFoundException {
                         return new FileInputStream(file);
                     }
                 });
-        } catch (PrivilegedActionException e) {
-            throw (FileNotFoundException)e.getException();
-        }
+	} catch (PrivilegedActionException e) {
+	    throw (FileNotFoundException)e.getException();
+	}
     }
 
     InputStream getURLInputStream(final URL url)
         throws IOException
     {
-        try {
+	try {
             return (InputStream)
                 AccessController.doPrivileged(new PrivilegedExceptionAction() {
                     public Object run() throws IOException {
                         return url.openStream();
                     }
                 });
-        } catch (PrivilegedActionException e) {
-            throw (IOException)e.getException();
-        }
+	} catch (PrivilegedActionException e) {
+	    throw (IOException)e.getException();
+	}
     }
 
     URL getResourceAsURL(final ClassLoader cl,
@@ -104,7 +104,7 @@ class SecuritySupport  {
                 public Object run() {
                     URL url;
                     if (cl == null) {
-                        url = ClassLoader.getSystemResource(name);
+                        url = Object.class.getResource(name);
                     } else {
                         url = cl.getResource(name);
                     }
@@ -133,7 +133,7 @@ class SecuritySupport  {
             throw (IOException)e.getException();
         }
     }
-
+    
     InputStream getResourceAsStream(final ClassLoader cl,
                                            final String name)
     {
@@ -142,7 +142,7 @@ class SecuritySupport  {
                 public Object run() {
                     InputStream ris;
                     if (cl == null) {
-                        ris = ClassLoader.getSystemResourceAsStream(name);
+                        ris = Object.class.getResourceAsStream(name);
                     } else {
                         ris = cl.getResourceAsStream(name);
                     }
