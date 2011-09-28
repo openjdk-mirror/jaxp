@@ -23,7 +23,7 @@
  */
 
 /*
- * Copyright (c) 2003 by BEA Systems, Inc. All Rights Reserved.
+ * Copyright (c) 2009 by Oracle Corporation. All Rights Reserved.
  */
 
 package javax.xml.stream;
@@ -185,7 +185,8 @@ import javax.xml.namespace.NamespaceContext;
  *     </tfoot>
  * </table>
  *
- * @author Copyright (c) 2003 by BEA Systems. All Rights Reserved.
+ * @version 1.0
+ * @author Copyright (c) 2009 by Oracle Corporation. All Rights Reserved.
  * @see XMLOutputFactory
  * @see XMLStreamReader
  * @since 1.6

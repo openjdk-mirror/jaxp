@@ -40,50 +40,50 @@ import javax.xml.stream.events.ProcessingInstruction;
 
 public class ProcessingInstructionEvent extends DummyEvent
 implements ProcessingInstruction {
-
+    
     /** Processing Instruction Name */
     private String fName;
     /** Processsing instruction content */
     private String fContent;
-
+    
     public ProcessingInstructionEvent() {
         init();
     }
-
+    
     public ProcessingInstructionEvent(String targetName, String data) {
         this(targetName,data,null);
     }
-
+    
     public ProcessingInstructionEvent(String targetName, String data,Location loc) {
         init();
         this.fName = targetName;
         fContent = data;
         setLocation(loc);
     }
-
+    
     protected void init() {
         setEventType(XMLStreamConstants.PROCESSING_INSTRUCTION);
     }
-
+    
     public String getTarget() {
         return fName;
     }
-
+    
     public void setTarget(String targetName) {
         fName = targetName;
     }
-
+    
     public void setData(String data) {
         fContent = data;
     }
-
+    
     public String getData() {
         return fContent;
     }
-
+    
     public String toString() {
         if(fContent != null && fName != null)
-            return "<?" + fName + fContent + "?>";
+            return "<?" + fName + " " + fContent + "?>";
         if(fName != null)
             return "<?" + fName + "?>";
         if(fContent != null)
@@ -91,23 +91,11 @@ implements ProcessingInstruction {
         else
             return "<??>";
     }
-
-    /** This method will write the XMLEvent as per the XML 1.0 specification as Unicode characters.
-     * No indentation or whitespace should be outputted.
-     *
-     * Any user defined event type SHALL have this method
-     * called when being written to on an output stream.
-     * Built in Event types MUST implement this method,
-     * but implementations MAY choose not call these methods
-     * for optimizations reasons when writing out built in
-     * Events to an output stream.
-     * The output generated MUST be equivalent in terms of the
-     * infoset expressed.
-     *
-     * @param writer The writer that will output the data
-     * @throws XMLStreamException if there is a fatal error writing the event
-     */
-    public void writeAsEncodedUnicode(Writer writer) throws XMLStreamException {
+    
+    protected void writeAsEncodedUnicodeEx(java.io.Writer writer) 
+    throws java.io.IOException
+    {
+        writer.write(toString());
     }
-
+    
 }

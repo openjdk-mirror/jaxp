@@ -48,24 +48,24 @@ import org.xml.sax.SAXException;
  * @author <a href="mailto:Sunitha.Reddy@Sun.com">Sunitha Reddy</a>
  */
 public final class StAXValidatorHelper implements ValidatorHelper {
-
+    
     /** Component manager. **/
     private XMLSchemaValidatorComponentManager fComponentManager;
-
+    
     private Transformer identityTransformer1 = null;
     private TransformerHandler identityTransformer2 = null;
     private ValidatorHandlerImpl handler = null;
-
+    
     /** Creates a new instance of StaxValidatorHelper */
     public StAXValidatorHelper(XMLSchemaValidatorComponentManager componentManager) {
         fComponentManager = componentManager;
     }
-
-    public void validate(Source source, Result result)
+    
+    public void validate(Source source, Result result) 
         throws SAXException, IOException {
-
+        
         if (result == null || result instanceof StAXResult) {
-
+         
             if( identityTransformer1==null ) {
                 try {
                     SAXTransformerFactory tf = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
@@ -77,8 +77,8 @@ public final class StAXValidatorHelper implements ValidatorHelper {
                 }
             }
 
+            handler = new ValidatorHandlerImpl(fComponentManager);
             if( result!=null ) {
-                handler = new ValidatorHandlerImpl(fComponentManager);
                 handler.setContentHandler(identityTransformer2);
                 identityTransformer2.setResult(result);
             }
@@ -94,8 +94,8 @@ public final class StAXValidatorHelper implements ValidatorHelper {
             }
             return;
         }
-        throw new IllegalArgumentException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(),
-                "SourceResultMismatch",
+        throw new IllegalArgumentException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(), 
+                "SourceResultMismatch", 
                 new Object [] {source.getClass().getName(), result.getClass().getName()}));
     }
 }

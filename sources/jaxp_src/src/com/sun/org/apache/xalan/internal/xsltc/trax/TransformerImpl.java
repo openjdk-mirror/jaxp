@@ -102,16 +102,16 @@ public final class TransformerImpl extends Transformer
     private final static String XML_STRING   = "xml";
 
     private final static String LEXICAL_HANDLER_PROPERTY =
-        "http://xml.org/sax/properties/lexical-handler";
+	"http://xml.org/sax/properties/lexical-handler";
     private static final String NAMESPACE_FEATURE =
-        "http://xml.org/sax/features/namespaces";
-
+	"http://xml.org/sax/features/namespaces";
+    
     /**
      * Namespace prefixes feature for {@link XMLReader}.
      */
     private static final String NAMESPACE_PREFIXES_FEATURE =
         "http://xml.org/sax/features/namespace-prefixes";
-
+    
     /**
      * A reference to the translet or null if the identity transform.
      */
@@ -183,14 +183,14 @@ public final class TransformerImpl extends Transformer
      * A reference to an object that creates and caches XMLReader objects.
      */
     private XMLReaderManager _readerManager = XMLReaderManager.getInstance();
-
+    
     /**
      * A flag indicating whether we use incremental building of the DTM.
      */
     //private boolean _isIncremental = false;
 
     /**
-     * A flag indicating whether this transformer implements the identity
+     * A flag indicating whether this transformer implements the identity 
      * transform.
      */
     private boolean _isIdentity = false;
@@ -202,7 +202,7 @@ public final class TransformerImpl extends Transformer
 
     /**
      * A hashtable to store parameters for the identity transform. These
-     * are not needed during the transformation, but we must keep track of
+     * are not needed during the transformation, but we must keep track of 
      * them to be fully complaint with the JAXP API.
      */
     private Hashtable _parameters = null;
@@ -211,47 +211,47 @@ public final class TransformerImpl extends Transformer
      * This class wraps an ErrorListener into a MessageHandler in order to
      * capture messages reported via xsl:message.
      */
-    static class MessageHandler
-           extends com.sun.org.apache.xalan.internal.xsltc.runtime.MessageHandler
+    static class MessageHandler 
+           extends com.sun.org.apache.xalan.internal.xsltc.runtime.MessageHandler 
     {
-        private ErrorListener _errorListener;
-
-        public MessageHandler(ErrorListener errorListener) {
-            _errorListener = errorListener;
-        }
-
-        public void displayMessage(String msg) {
-            if(_errorListener == null) {
-                System.err.println(msg);
-            }
-            else {
-                try {
-                    _errorListener.warning(new TransformerException(msg));
-                }
-                catch (TransformerException e) {
-                    // ignored
-                }
-            }
-        }
+	private ErrorListener _errorListener;
+     
+	public MessageHandler(ErrorListener errorListener) {
+	    _errorListener = errorListener;
+	}
+     
+	public void displayMessage(String msg) {
+	    if(_errorListener == null) {
+		System.err.println(msg); 
+	    }
+	    else {
+		try {
+		    _errorListener.warning(new TransformerException(msg));
+		}
+		catch (TransformerException e) {
+		    // ignored 
+		}
+	    }
+	}
     }
 
-    protected TransformerImpl(Properties outputProperties, int indentNumber,
-        TransformerFactoryImpl tfactory)
+    protected TransformerImpl(Properties outputProperties, int indentNumber, 
+	TransformerFactoryImpl tfactory) 
     {
-        this(null, outputProperties, indentNumber, tfactory);
-        _isIdentity = true;
-        // _properties.put(OutputKeys.METHOD, "xml");
+	this(null, outputProperties, indentNumber, tfactory);
+	_isIdentity = true;
+	// _properties.put(OutputKeys.METHOD, "xml");
     }
 
     protected TransformerImpl(Translet translet, Properties outputProperties,
-        int indentNumber, TransformerFactoryImpl tfactory)
+	int indentNumber, TransformerFactoryImpl tfactory) 
     {
-        _translet = (AbstractTranslet) translet;
-        _properties = createOutputProperties(outputProperties);
-        _propertiesClone = (Properties) _properties.clone();
-        _indentNumber = indentNumber;
-        _tfactory = tfactory;
-        //_isIncremental = tfactory._incremental;
+	_translet = (AbstractTranslet) translet;
+	_properties = createOutputProperties(outputProperties);
+	_propertiesClone = (Properties) _properties.clone();
+	_indentNumber = indentNumber;
+	_tfactory = tfactory;
+	//_isIncremental = tfactory._incremental;
     }
 
     /**
@@ -260,7 +260,7 @@ public final class TransformerImpl extends Transformer
     public boolean isSecureProcessing() {
         return _isSecureProcessing;
     }
-
+    
     /**
      * Set the state of the secure processing feature.
      */
@@ -273,11 +273,11 @@ public final class TransformerImpl extends Transformer
      * null if this is the identity transform.
      */
     protected AbstractTranslet getTranslet() {
-        return _translet;
+	return _translet;
     }
 
     public boolean isIdentity() {
-        return _isIdentity;
+	return _isIdentity;
     }
 
     /**
@@ -288,33 +288,33 @@ public final class TransformerImpl extends Transformer
      * @throws TransformerException
      */
     public void transform(Source source, Result result)
-        throws TransformerException
+	throws TransformerException 
     {
-        if (!_isIdentity) {
-            if (_translet == null) {
-                ErrorMsg err = new ErrorMsg(ErrorMsg.JAXP_NO_TRANSLET_ERR);
-                throw new TransformerException(err.toString());
-            }
-            // Pass output properties to the translet
-            transferOutputProperties(_translet);
-        }
+	if (!_isIdentity) {
+	    if (_translet == null) {
+		ErrorMsg err = new ErrorMsg(ErrorMsg.JAXP_NO_TRANSLET_ERR);
+		throw new TransformerException(err.toString());
+	    }
+	    // Pass output properties to the translet
+	    transferOutputProperties(_translet);
+	}
+	    
+	final SerializationHandler toHandler = getOutputHandler(result);
+	if (toHandler == null) {
+	    ErrorMsg err = new ErrorMsg(ErrorMsg.JAXP_NO_HANDLER_ERR);
+	    throw new TransformerException(err.toString());
+	}
 
-        final SerializationHandler toHandler = getOutputHandler(result);
-        if (toHandler == null) {
-            ErrorMsg err = new ErrorMsg(ErrorMsg.JAXP_NO_HANDLER_ERR);
-            throw new TransformerException(err.toString());
-        }
+	if (_uriResolver != null && !_isIdentity) {
+	    _translet.setDOMCache(this);
+	}
 
-        if (_uriResolver != null && !_isIdentity) {
-            _translet.setDOMCache(this);
-        }
+	// Pass output properties to handler if identity
+	if (_isIdentity) {
+	    transferOutputProperties(toHandler);
+	}
 
-        // Pass output properties to handler if identity
-        if (_isIdentity) {
-            transferOutputProperties(toHandler);
-        }
-
-        transform(source, toHandler, _encoding);
+	transform(source, toHandler, _encoding);
         try{
             if (result instanceof DOMResult) {
                 ((DOMResult)result).setNode(_tohFactory.getNode());
@@ -334,102 +334,102 @@ public final class TransformerImpl extends Transformer
     }
 
     /**
-     * Create an output handler for the transformation output based on
-     * the type and contents of the TrAX Result object passed to the
-     * transform() method.
+     * Create an output handler for the transformation output based on 
+     * the type and contents of the TrAX Result object passed to the 
+     * transform() method. 
      */
-    public SerializationHandler getOutputHandler(Result result)
-        throws TransformerException
+    public SerializationHandler getOutputHandler(Result result) 
+	throws TransformerException 
     {
-        // Get output method using get() to ignore defaults
-        _method = (String) _properties.get(OutputKeys.METHOD);
+	// Get output method using get() to ignore defaults 
+	_method = (String) _properties.get(OutputKeys.METHOD);
 
-        // Get encoding using getProperty() to use defaults
-        _encoding = (String) _properties.getProperty(OutputKeys.ENCODING);
+	// Get encoding using getProperty() to use defaults
+	_encoding = (String) _properties.getProperty(OutputKeys.ENCODING);
 
-        _tohFactory = TransletOutputHandlerFactory.newInstance();
-        _tohFactory.setEncoding(_encoding);
-        if (_method != null) {
-            _tohFactory.setOutputMethod(_method);
-        }
+	_tohFactory = TransletOutputHandlerFactory.newInstance();
+	_tohFactory.setEncoding(_encoding);
+	if (_method != null) {
+	    _tohFactory.setOutputMethod(_method);
+	}
 
-        // Set indentation number in the factory
-        if (_indentNumber >= 0) {
-            _tohFactory.setIndentNumber(_indentNumber);
-        }
+	// Set indentation number in the factory
+	if (_indentNumber >= 0) {
+	    _tohFactory.setIndentNumber(_indentNumber);
+	}
 
-        // Return the content handler for this Result object
-        try {
-            // Result object could be SAXResult, DOMResult, or StreamResult
-            if (result instanceof SAXResult) {
+	// Return the content handler for this Result object
+	try {
+	    // Result object could be SAXResult, DOMResult, or StreamResult 
+	    if (result instanceof SAXResult) {
                 final SAXResult target = (SAXResult)result;
                 final ContentHandler handler = target.getHandler();
 
-                _tohFactory.setHandler(handler);
+		_tohFactory.setHandler(handler);
 
                 /**
                  * Fix for bug 24414
                  * If the lexicalHandler is set then we need to get that
-                 * for obtaining the lexical information
+                 * for obtaining the lexical information 
                  */
                 LexicalHandler lexicalHandler = target.getLexicalHandler();
 
                 if (lexicalHandler != null ) {
-                    _tohFactory.setLexicalHandler(lexicalHandler);
-                }
+		    _tohFactory.setLexicalHandler(lexicalHandler);
+		}
 
-                _tohFactory.setOutputType(TransletOutputHandlerFactory.SAX);
-                return _tohFactory.getSerializationHandler();
+		_tohFactory.setOutputType(TransletOutputHandlerFactory.SAX);
+		return _tohFactory.getSerializationHandler();
             }
             else if (result instanceof StAXResult) {
-                if (((StAXResult) result).getXMLEventWriter() != null)
+                if (((StAXResult) result).getXMLEventWriter() != null) 
                     _tohFactory.setXMLEventWriter(((StAXResult) result).getXMLEventWriter());
-                else if (((StAXResult) result).getXMLStreamWriter() != null)
+                else if (((StAXResult) result).getXMLStreamWriter() != null) 
                     _tohFactory.setXMLStreamWriter(((StAXResult) result).getXMLStreamWriter());
                 _tohFactory.setOutputType(TransletOutputHandlerFactory.STAX);
                 return _tohFactory.getSerializationHandler();
             }
-            else if (result instanceof DOMResult) {
-                _tohFactory.setNode(((DOMResult) result).getNode());
-                _tohFactory.setNextSibling(((DOMResult) result).getNextSibling());
-                _tohFactory.setOutputType(TransletOutputHandlerFactory.DOM);
-                return _tohFactory.getSerializationHandler();
+	    else if (result instanceof DOMResult) {
+		_tohFactory.setNode(((DOMResult) result).getNode());
+		_tohFactory.setNextSibling(((DOMResult) result).getNextSibling());
+		_tohFactory.setOutputType(TransletOutputHandlerFactory.DOM);
+		return _tohFactory.getSerializationHandler();
             }
-            else if (result instanceof StreamResult) {
-                // Get StreamResult
-                final StreamResult target = (StreamResult) result;
+	    else if (result instanceof StreamResult) {
+		// Get StreamResult
+		final StreamResult target = (StreamResult) result;	
 
-                // StreamResult may have been created with a java.io.File,
-                // java.io.Writer, java.io.OutputStream or just a String
-                // systemId.
+		// StreamResult may have been created with a java.io.File,
+		// java.io.Writer, java.io.OutputStream or just a String
+		// systemId. 
 
-                _tohFactory.setOutputType(TransletOutputHandlerFactory.STREAM);
+		_tohFactory.setOutputType(TransletOutputHandlerFactory.STREAM);
 
-                // try to get a Writer from Result object
-                final Writer writer = target.getWriter();
-                if (writer != null) {
-                    _tohFactory.setWriter(writer);
-                    return _tohFactory.getSerializationHandler();
-                }
+		// try to get a Writer from Result object
+		final Writer writer = target.getWriter();
+		if (writer != null) {
+		    _tohFactory.setWriter(writer);
+		    return _tohFactory.getSerializationHandler();
+		}
 
-                // or try to get an OutputStream from Result object
-                final OutputStream ostream = target.getOutputStream();
-                if (ostream != null) {
-                    _tohFactory.setOutputStream(ostream);
-                    return _tohFactory.getSerializationHandler();
-                }
+		// or try to get an OutputStream from Result object
+		final OutputStream ostream = target.getOutputStream();
+		if (ostream != null) {
+		    _tohFactory.setOutputStream(ostream);
+		    return _tohFactory.getSerializationHandler();
+		}
 
-                // or try to get just a systemId string from Result object
-                String systemId = result.getSystemId();
-                if (systemId == null) {
-                    ErrorMsg err = new ErrorMsg(ErrorMsg.JAXP_NO_RESULT_ERR);
+		// or try to get just a systemId string from Result object
+		String systemId = result.getSystemId();
+		if (systemId == null) {
+		    ErrorMsg err = new ErrorMsg(ErrorMsg.JAXP_NO_RESULT_ERR);
                     throw new TransformerException(err.toString());
-                }
+		}
 
-                // System Id may be in one of several forms, (1) a uri
-                // that starts with 'file:', (2) uri that starts with 'http:'
-                // or (3) just a filename on the local system.
-                URL url = null;
+		// System Id may be in one of several forms, (1) a uri
+		// that starts with 'file:', (2) uri that starts with 'http:'
+		// or (3) just a filename on the local system.
+		URL url = null;
                 if (systemId.startsWith("file:")) {
                     // if StreamResult(File) or setSystemID(File) was used,
                     // the systemId will be URI encoded as a result of File.toURI(),
@@ -443,15 +443,15 @@ public final class TransformerImpl extends Transformer
                         String host = uri.getHost(); // decoded String
                         String path = uri.getPath(); //decoded String
                         if (path == null) {
-                         path = "";
+                         path = "";   
                         }
 
                         // if host (URI authority) then file:// + host + path
                         // else just path (may be absolute or relative)
                         if (host != null) {
-                         systemId += "//" + host + path;
+                         systemId += "//" + host + path;   
                         } else {
-                         systemId += "//" + path;
+                         systemId += "//" + path;   
                         }
                     }
                     catch(ClassNotFoundException e){
@@ -461,27 +461,26 @@ public final class TransformerImpl extends Transformer
                     catch (Exception  exception) {
                         // URI exception which means nothing can be done so OK to ignore
                     }
-
+                        
                     url = new URL(systemId);
                     _ostream = new FileOutputStream(url.getFile());
-                    _tohFactory.setOutputStream(_ostream);
-                    return _tohFactory.getSerializationHandler();
+		    _tohFactory.setOutputStream(_ostream);
+		    return _tohFactory.getSerializationHandler();
                 }
                 else if (systemId.startsWith("http:")) {
                     url = new URL(systemId);
                     final URLConnection connection = url.openConnection();
-                    _tohFactory.setOutputStream(_ostream = connection.getOutputStream());
-                    return _tohFactory.getSerializationHandler();
+		    _tohFactory.setOutputStream(_ostream = connection.getOutputStream());
+		    return _tohFactory.getSerializationHandler();
                 }
                 else {
                     // system id is just a filename
-                    url = new File(systemId).toURL();
-                    _tohFactory.setOutputStream(
-                        _ostream = new FileOutputStream(url.getFile()));
-                    return _tohFactory.getSerializationHandler();
+		    _tohFactory.setOutputStream(
+		        _ostream = new FileOutputStream(new File(systemId)));
+		    return _tohFactory.getSerializationHandler();
                 }
-            }
-        }
+	    }
+	}
         // If we cannot write to the location specified by the SystemId
         catch (UnknownServiceException e) {
             throw new TransformerException(e);
@@ -493,14 +492,14 @@ public final class TransformerImpl extends Transformer
         catch (IOException e) {
             throw new TransformerException(e);
         }
-        return null;
+	return null;
     }
 
     /**
      * Set the internal DOM that will be used for the next transformation
      */
     protected void setDOM(DOM dom) {
-        _dom = dom;
+	_dom = dom;
     }
 
     /**
@@ -517,7 +516,7 @@ public final class TransformerImpl extends Transformer
                  } else {
                     wsfilter = null;
                  }
-
+            
                  boolean hasIdCall = (_translet != null) ? _translet.hasIdCall()
                                                          : false;
 
@@ -551,7 +550,7 @@ public final class TransformerImpl extends Transformer
             throw new TransformerException(e);
         }
     }
-
+ 
     /**
      * Returns the {@link com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl}
      * object that create this <code>Transformer</code>.
@@ -559,7 +558,7 @@ public final class TransformerImpl extends Transformer
     protected TransformerFactoryImpl getTransformerFactory() {
         return _tfactory;
     }
-
+    
     /**
      * Returns the {@link com.sun.org.apache.xalan.internal.xsltc.runtime.output.TransletOutputHandlerFactory}
      * object that create the <code>TransletOutputHandler</code>.
@@ -569,7 +568,7 @@ public final class TransformerImpl extends Transformer
     }
 
     private void transformIdentity(Source source, SerializationHandler handler)
-        throws Exception
+	throws Exception 
     {
         // Get systemId from source
         if (source != null) {
@@ -596,15 +595,15 @@ public final class TransformerImpl extends Transformer
                 InputSource input;
                 if (streamInput != null) {
                     input = new InputSource(streamInput);
-                    input.setSystemId(_sourceSystemId);
-                }
+                    input.setSystemId(_sourceSystemId); 
+                } 
                 else if (streamReader != null) {
                     input = new InputSource(streamReader);
-                    input.setSystemId(_sourceSystemId);
-                }
+                    input.setSystemId(_sourceSystemId); 
+                } 
                 else if (_sourceSystemId != null) {
                     input = new InputSource(_sourceSystemId);
-                }
+                } 
                 else {
                     ErrorMsg err = new ErrorMsg(ErrorMsg.JAXP_NO_SOURCE_ERR);
                     throw new TransformerException(err.toString());
@@ -647,7 +646,7 @@ public final class TransformerImpl extends Transformer
         } else if (source instanceof StAXSource) {
             final StAXSource staxSource = (StAXSource)source;
             StAXEvent2SAX staxevent2sax = null;
-            StAXStream2SAX staxStream2SAX = null;
+            StAXStream2SAX staxStream2SAX = null; 
             if (staxSource.getXMLEventReader() != null) {
                 final XMLEventReader xmlEventReader = staxSource.getXMLEventReader();
                 staxevent2sax = new StAXEvent2SAX(xmlEventReader);
@@ -676,29 +675,29 @@ public final class TransformerImpl extends Transformer
     /**
      * Internal transformation method - uses the internal APIs of XSLTC
      */
-    private void transform(Source source, SerializationHandler handler,
-        String encoding) throws TransformerException
+    private void transform(Source source, SerializationHandler handler, 
+	String encoding) throws TransformerException 
     {
-        try {
+	try {
             /*
              * According to JAXP1.2, new SAXSource()/StreamSource()
-             * should create an empty input tree, with a default root node.
+             * should create an empty input tree, with a default root node. 
              * new DOMSource()creates an empty document using DocumentBuilder.
-             * newDocument(); Use DocumentBuilder.newDocument() for all 3
-             * situations, since there is no clear spec. how to create
+             * newDocument(); Use DocumentBuilder.newDocument() for all 3 
+             * situations, since there is no clear spec. how to create 
              * an empty tree when both SAXSource() and StreamSource() are used.
              */
-            if ((source instanceof StreamSource && source.getSystemId()==null
+            if ((source instanceof StreamSource && source.getSystemId()==null 
                 && ((StreamSource)source).getInputStream()==null &&
                 ((StreamSource)source).getReader()==null)||
                 (source instanceof SAXSource &&
                 ((SAXSource)source).getInputSource()==null &&
                 ((SAXSource)source).getXMLReader()==null )||
-                (source instanceof DOMSource &&
+                (source instanceof DOMSource && 
                 ((DOMSource)source).getNode()==null)){
-                        DocumentBuilderFactory builderF =
+                        DocumentBuilderFactory builderF = 
                                 DocumentBuilderFactory.newInstance();
-                        DocumentBuilder builder =
+                        DocumentBuilder builder = 
                                 builderF.newDocumentBuilder();
                         String systemID = source.getSystemId();
                         source = new DOMSource(builder.newDocument());
@@ -707,33 +706,33 @@ public final class TransformerImpl extends Transformer
                         if (systemID != null) {
                           source.setSystemId(systemID);
                         }
-            }
-            if (_isIdentity) {
-                transformIdentity(source, handler);
-            } else {
-                _translet.transform(getDOM(source), handler);
-            }
-        } catch (TransletException e) {
-            if (_errorListener != null) postErrorToListener(e.getMessage());
-            throw new TransformerException(e);
-        } catch (RuntimeException e) {
-            if (_errorListener != null) postErrorToListener(e.getMessage());
-            throw new TransformerException(e);
-        } catch (Exception e) {
-            if (_errorListener != null) postErrorToListener(e.getMessage());
-            throw new TransformerException(e);
-        } finally {
+            }           
+	    if (_isIdentity) {
+		transformIdentity(source, handler);
+	    } else {
+		_translet.transform(getDOM(source), handler);
+	    }
+	} catch (TransletException e) {
+	    if (_errorListener != null)	postErrorToListener(e.getMessage());
+	    throw new TransformerException(e);
+	} catch (RuntimeException e) {
+	    if (_errorListener != null)	postErrorToListener(e.getMessage());
+	    throw new TransformerException(e);
+	} catch (Exception e) {
+	    if (_errorListener != null)	postErrorToListener(e.getMessage());
+	    throw new TransformerException(e);
+	} finally {
             _dtmManager = null;
         }
 
-        // If we create an output stream for the Result, we need to close it after the transformation.
-        if (_ostream != null) {
-            try {
-                _ostream.close();
-            }
-            catch (IOException e) {}
-            _ostream = null;
-        }
+	// If we create an output stream for the Result, we need to close it after the transformation.
+	if (_ostream != null) {
+	    try {
+	        _ostream.close();
+	    }
+	    catch (IOException e) {}
+	    _ostream = null;
+	}
     }
 
     /**
@@ -742,8 +741,8 @@ public final class TransformerImpl extends Transformer
      *
      * @return The error event handler currently in effect
      */
-    public ErrorListener getErrorListener() {
-        return _errorListener;
+    public ErrorListener getErrorListener() {  
+	return _errorListener; 
     }
 
     /**
@@ -756,17 +755,17 @@ public final class TransformerImpl extends Transformer
      * @throws IllegalArgumentException
      */
     public void setErrorListener(ErrorListener listener)
-        throws IllegalArgumentException {
+	throws IllegalArgumentException {
         if (listener == null) {
-            ErrorMsg err = new ErrorMsg(ErrorMsg.ERROR_LISTENER_NULL_ERR,
-                                        "Transformer");
+	    ErrorMsg err = new ErrorMsg(ErrorMsg.ERROR_LISTENER_NULL_ERR,
+					"Transformer");
             throw new IllegalArgumentException(err.toString());
-        }
+	}
         _errorListener = listener;
-
-        // Register a message handler to report xsl:messages
+        
+	// Register a message handler to report xsl:messages
     if (_translet != null)
-        _translet.setMessageHandler(new MessageHandler(_errorListener));
+    	_translet.setMessageHandler(new MessageHandler(_errorListener));
     }
 
     /**
@@ -775,8 +774,8 @@ public final class TransformerImpl extends Transformer
     private void postErrorToListener(String message) {
         try {
             _errorListener.error(new TransformerException(message));
-        }
-        catch (TransformerException e) {
+	}
+	catch (TransformerException e) {
             // ignored - transformation cannot be continued
         }
     }
@@ -788,7 +787,7 @@ public final class TransformerImpl extends Transformer
         try {
             _errorListener.warning(new TransformerException(message));
         }
-        catch (TransformerException e) {
+	catch (TransformerException e) {
             // ignored - transformation cannot be continued
         }
     }
@@ -799,23 +798,23 @@ public final class TransformerImpl extends Transformer
      * list of elements given in the <xsl:output> element.
      */
     private String makeCDATAString(Hashtable cdata) {
-        // Return a 'null' string if no CDATA section elements were specified
-        if (cdata == null) return null;
+	// Return a 'null' string if no CDATA section elements were specified
+	if (cdata == null) return null;
 
-        StringBuffer result = new StringBuffer();
+	StringBuffer result = new StringBuffer();
 
-        // Get an enumeration of all the elements in the hashtable
-        Enumeration elements = cdata.keys();
-        if (elements.hasMoreElements()) {
-            result.append((String)elements.nextElement());
-            while (elements.hasMoreElements()) {
-                String element = (String)elements.nextElement();
-                result.append(' ');
-                result.append(element);
-            }
-        }
-
-        return(result.toString());
+	// Get an enumeration of all the elements in the hashtable
+	Enumeration elements = cdata.keys();
+	if (elements.hasMoreElements()) {
+	    result.append((String)elements.nextElement());
+	    while (elements.hasMoreElements()) {
+		String element = (String)elements.nextElement();
+		result.append(' ');
+		result.append(element);
+	    }
+	}
+	
+	return(result.toString());
     }
 
     /**
@@ -829,8 +828,8 @@ public final class TransformerImpl extends Transformer
      *
      * @return Properties in effect for this Transformer
      */
-    public Properties getOutputProperties() {
-        return (Properties) _properties.clone();
+    public Properties getOutputProperties() { 
+	return (Properties) _properties.clone();
     }
 
     /**
@@ -843,13 +842,13 @@ public final class TransformerImpl extends Transformer
      * @throws IllegalArgumentException if the property name is not known
      */
     public String getOutputProperty(String name)
-        throws IllegalArgumentException
+	throws IllegalArgumentException 
     {
-        if (!validOutputProperty(name)) {
-            ErrorMsg err = new ErrorMsg(ErrorMsg.JAXP_UNKNOWN_PROP_ERR, name);
-            throw new IllegalArgumentException(err.toString());
-        }
-        return _properties.getProperty(name);
+	if (!validOutputProperty(name)) {
+	    ErrorMsg err = new ErrorMsg(ErrorMsg.JAXP_UNKNOWN_PROP_ERR, name);
+	    throw new IllegalArgumentException(err.toString());
+	}
+	return _properties.getProperty(name);
     }
 
     /**
@@ -861,36 +860,36 @@ public final class TransformerImpl extends Transformer
      * @param properties The properties to use for the Transformer
      * @throws IllegalArgumentException Never, errors are ignored
      */
-    public void setOutputProperties(Properties properties)
-        throws IllegalArgumentException
+    public void setOutputProperties(Properties properties) 
+	throws IllegalArgumentException 
     {
-        if (properties != null) {
-            final Enumeration names = properties.propertyNames();
+	if (properties != null) {
+	    final Enumeration names = properties.propertyNames();
 
-            while (names.hasMoreElements()) {
-                final String name = (String) names.nextElement();
+	    while (names.hasMoreElements()) {
+		final String name = (String) names.nextElement();
 
-                // Ignore lower layer properties
-                if (isDefaultProperty(name, properties)) continue;
+		// Ignore lower layer properties
+		if (isDefaultProperty(name, properties)) continue;
 
-                if (validOutputProperty(name)) {
-                    _properties.setProperty(name, properties.getProperty(name));
-                }
-                else {
-                    ErrorMsg err = new ErrorMsg(ErrorMsg.JAXP_UNKNOWN_PROP_ERR, name);
-                    throw new IllegalArgumentException(err.toString());
-                }
-            }
-        }
-        else {
-            _properties = _propertiesClone;
-        }
+		if (validOutputProperty(name)) {
+		    _properties.setProperty(name, properties.getProperty(name));
+		}
+		else {
+		    ErrorMsg err = new ErrorMsg(ErrorMsg.JAXP_UNKNOWN_PROP_ERR, name);
+		    throw new IllegalArgumentException(err.toString());
+		}
+	    }
+	}
+	else {
+	    _properties = _propertiesClone;
+	}
     }
 
     /**
      * Implements JAXP's Transformer.setOutputProperty().
      * Get an output property that is in effect for the transformation. The
-     * property specified may be a property that was set with
+     * property specified may be a property that was set with 
      * setOutputProperty(), or it may be a property specified in the stylesheet.
      *
      * @param name The name of the property to set
@@ -898,13 +897,13 @@ public final class TransformerImpl extends Transformer
      * @throws IllegalArgumentException Never, errors are ignored
      */
     public void setOutputProperty(String name, String value)
-        throws IllegalArgumentException
+	throws IllegalArgumentException 
     {
-        if (!validOutputProperty(name)) {
-            ErrorMsg err = new ErrorMsg(ErrorMsg.JAXP_UNKNOWN_PROP_ERR, name);
-            throw new IllegalArgumentException(err.toString());
-        }
-        _properties.setProperty(name, value);
+	if (!validOutputProperty(name)) {
+	    ErrorMsg err = new ErrorMsg(ErrorMsg.JAXP_UNKNOWN_PROP_ERR, name);
+	    throw new IllegalArgumentException(err.toString());
+	}
+	_properties.setProperty(name, value);
     }
 
     /**
@@ -913,49 +912,49 @@ public final class TransformerImpl extends Transformer
      */
     private void transferOutputProperties(AbstractTranslet translet)
     {
-        // Return right now if no properties are set
-        if (_properties == null) return;
+	// Return right now if no properties are set
+	if (_properties == null) return;
 
-        // Get a list of all the defined properties
-        Enumeration names = _properties.propertyNames();
-        while (names.hasMoreElements()) {
-            // Note the use of get() instead of getProperty()
-            String name  = (String) names.nextElement();
-            String value = (String) _properties.get(name);
+	// Get a list of all the defined properties
+	Enumeration names = _properties.propertyNames();
+	while (names.hasMoreElements()) {
+	    // Note the use of get() instead of getProperty()
+	    String name  = (String) names.nextElement();
+	    String value = (String) _properties.get(name);
 
-            // Ignore default properties
-            if (value == null) continue;
+	    // Ignore default properties
+	    if (value == null) continue;
 
-            // Pass property value to translet - override previous setting
-            if (name.equals(OutputKeys.ENCODING)) {
-                translet._encoding = value;
-            }
-            else if (name.equals(OutputKeys.METHOD)) {
-                translet._method = value;
-            }
-            else if (name.equals(OutputKeys.DOCTYPE_PUBLIC)) {
-                translet._doctypePublic = value;
-            }
-            else if (name.equals(OutputKeys.DOCTYPE_SYSTEM)) {
-                translet._doctypeSystem = value;
-            }
-            else if (name.equals(OutputKeys.MEDIA_TYPE)) {
-                translet._mediaType = value;
-            }
-            else if (name.equals(OutputKeys.STANDALONE)) {
-                translet._standalone = value;
-            }
-            else if (name.equals(OutputKeys.VERSION)) {
-                translet._version = value;
-            }
-            else if (name.equals(OutputKeys.OMIT_XML_DECLARATION)) {
-                translet._omitHeader =
-                    (value != null && value.toLowerCase().equals("yes"));
-            }
-            else if (name.equals(OutputKeys.INDENT)) {
-                translet._indent =
-                    (value != null && value.toLowerCase().equals("yes"));
-            }
+	    // Pass property value to translet - override previous setting
+	    if (name.equals(OutputKeys.ENCODING)) {
+		translet._encoding = value;
+	    }
+	    else if (name.equals(OutputKeys.METHOD)) {
+		translet._method = value;
+	    }
+	    else if (name.equals(OutputKeys.DOCTYPE_PUBLIC)) {
+		translet._doctypePublic = value;
+	    }
+	    else if (name.equals(OutputKeys.DOCTYPE_SYSTEM)) {
+		translet._doctypeSystem = value;
+	    }
+	    else if (name.equals(OutputKeys.MEDIA_TYPE)) {
+		translet._mediaType = value;
+	    }
+	    else if (name.equals(OutputKeys.STANDALONE)) {
+		translet._standalone = value;
+	    }
+	    else if (name.equals(OutputKeys.VERSION)) {
+		translet._version = value;
+	    }
+	    else if (name.equals(OutputKeys.OMIT_XML_DECLARATION)) {
+		translet._omitHeader = 
+		    (value != null && value.toLowerCase().equals("yes"));
+	    }
+	    else if (name.equals(OutputKeys.INDENT)) {
+		translet._indent = 
+		    (value != null && value.toLowerCase().equals("yes"));
+	    }
             else if (name.equals(OutputPropertiesFactory.S_BUILTIN_OLD_EXTENSIONS_UNIVERSAL +"indent-amount")) {
                  if (value != null) {
                      translet._indentamount = Integer.parseInt(value);
@@ -966,16 +965,16 @@ public final class TransformerImpl extends Transformer
                      translet._indentamount = Integer.parseInt(value);
                  }
             }
-            else if (name.equals(OutputKeys.CDATA_SECTION_ELEMENTS)) {
-                if (value != null) {
-                    translet._cdata = null; // clear previous setting
-                    StringTokenizer e = new StringTokenizer(value);
-                    while (e.hasMoreTokens()) {
-                        translet.addCdataElement(e.nextToken());
-                    }
-                }
-            }
-        }
+	    else if (name.equals(OutputKeys.CDATA_SECTION_ELEMENTS)) {
+		if (value != null) {
+		    translet._cdata = null; // clear previous setting
+		    StringTokenizer e = new StringTokenizer(value);
+		    while (e.hasMoreTokens()) {
+			translet.addCdataElement(e.nextToken());
+		    }
+		}
+	    }
+	}
     }
 
     /**
@@ -984,46 +983,46 @@ public final class TransformerImpl extends Transformer
      */
     public void transferOutputProperties(SerializationHandler handler)
     {
-        // Return right now if no properties are set
-        if (_properties == null) return;
+	// Return right now if no properties are set
+	if (_properties == null) return;
 
-        String doctypePublic = null;
-        String doctypeSystem = null;
+	String doctypePublic = null;
+	String doctypeSystem = null;
 
-        // Get a list of all the defined properties
-        Enumeration names = _properties.propertyNames();
-        while (names.hasMoreElements()) {
-            // Note the use of get() instead of getProperty()
-            String name  = (String) names.nextElement();
-            String value = (String) _properties.get(name);
+	// Get a list of all the defined properties
+	Enumeration names = _properties.propertyNames();
+	while (names.hasMoreElements()) {
+	    // Note the use of get() instead of getProperty()
+	    String name  = (String) names.nextElement();
+	    String value = (String) _properties.get(name);
 
-            // Ignore default properties
-            if (value == null) continue;
+	    // Ignore default properties
+	    if (value == null) continue;
 
-            // Pass property value to translet - override previous setting
-            if (name.equals(OutputKeys.DOCTYPE_PUBLIC)) {
-                doctypePublic = value;
-            }
-            else if (name.equals(OutputKeys.DOCTYPE_SYSTEM)) {
-                doctypeSystem = value;
-            }
-            else if (name.equals(OutputKeys.MEDIA_TYPE)) {
-                handler.setMediaType(value);
-            }
-            else if (name.equals(OutputKeys.STANDALONE)) {
-                handler.setStandalone(value);
-            }
-            else if (name.equals(OutputKeys.VERSION)) {
-                handler.setVersion(value);
-            }
-            else if (name.equals(OutputKeys.OMIT_XML_DECLARATION)) {
-                handler.setOmitXMLDeclaration(
-                    value != null && value.toLowerCase().equals("yes"));
-            }
-            else if (name.equals(OutputKeys.INDENT)) {
-                handler.setIndent(
-                    value != null && value.toLowerCase().equals("yes"));
-            }
+	    // Pass property value to translet - override previous setting
+	    if (name.equals(OutputKeys.DOCTYPE_PUBLIC)) {
+		doctypePublic = value;
+	    }
+	    else if (name.equals(OutputKeys.DOCTYPE_SYSTEM)) {
+		doctypeSystem = value;
+	    }
+	    else if (name.equals(OutputKeys.MEDIA_TYPE)) {
+		handler.setMediaType(value);
+	    }
+	    else if (name.equals(OutputKeys.STANDALONE)) {
+		handler.setStandalone(value);
+	    }
+	    else if (name.equals(OutputKeys.VERSION)) {
+		handler.setVersion(value);
+	    }
+	    else if (name.equals(OutputKeys.OMIT_XML_DECLARATION)) {
+		handler.setOmitXMLDeclaration(
+		    value != null && value.toLowerCase().equals("yes"));
+	    }
+	    else if (name.equals(OutputKeys.INDENT)) {
+		handler.setIndent( 
+		    value != null && value.toLowerCase().equals("yes"));
+	    }
             else if (name.equals(OutputPropertiesFactory.S_BUILTIN_OLD_EXTENSIONS_UNIVERSAL +"indent-amount")) {
                 if (value != null) {
                     handler.setIndentAmount(Integer.parseInt(value));
@@ -1033,13 +1032,13 @@ public final class TransformerImpl extends Transformer
                 if (value != null) {
                     handler.setIndentAmount(Integer.parseInt(value));
                 }
-            }
-            else if (name.equals(OutputKeys.CDATA_SECTION_ELEMENTS)) {
-                if (value != null) {
-                    StringTokenizer e = new StringTokenizer(value);
+            } 
+	    else if (name.equals(OutputKeys.CDATA_SECTION_ELEMENTS)) {
+		if (value != null) {
+		    StringTokenizer e = new StringTokenizer(value);
                     Vector uriAndLocalNames = null;
-                    while (e.hasMoreTokens()) {
-                        final String token = e.nextToken();
+		    while (e.hasMoreTokens()) {
+			final String token = e.nextToken();
 
                         // look for the last colon, as the String may be
                         // something like "http://abc.com:local"
@@ -1064,14 +1063,14 @@ public final class TransformerImpl extends Transformer
                         uriAndLocalNames.addElement(localName);
                     }
                     handler.setCdataSectionElements(uriAndLocalNames);
-                }
-            }
-        }
+		}
+	    }
+	}
 
-        // Call setDoctype() if needed
-        if (doctypePublic != null || doctypeSystem != null) {
-            handler.setDoctype(doctypeSystem, doctypePublic);
-        }
+	// Call setDoctype() if needed
+	if (doctypePublic != null || doctypeSystem != null) {
+	    handler.setDoctype(doctypeSystem, doctypePublic);
+	}
     }
 
     /**
@@ -1081,80 +1080,80 @@ public final class TransformerImpl extends Transformer
      * the user using this API.
      */
     private Properties createOutputProperties(Properties outputProperties) {
-        final Properties defaults = new Properties();
-        setDefaults(defaults, "xml");
+	final Properties defaults = new Properties();
+	setDefaults(defaults, "xml");
 
-        // Copy propeties set in stylesheet to base
-        final Properties base = new Properties(defaults);
-        if (outputProperties != null) {
-            final Enumeration names = outputProperties.propertyNames();
-            while (names.hasMoreElements()) {
-                final String name = (String) names.nextElement();
-                base.setProperty(name, outputProperties.getProperty(name));
-            }
-        }
-        else {
-            base.setProperty(OutputKeys.ENCODING, _translet._encoding);
-            if (_translet._method != null)
-                base.setProperty(OutputKeys.METHOD, _translet._method);
-        }
+	// Copy propeties set in stylesheet to base
+	final Properties base = new Properties(defaults);
+	if (outputProperties != null) {
+	    final Enumeration names = outputProperties.propertyNames();
+	    while (names.hasMoreElements()) {
+		final String name = (String) names.nextElement();
+		base.setProperty(name, outputProperties.getProperty(name));
+	    }
+	}
+	else {
+	    base.setProperty(OutputKeys.ENCODING, _translet._encoding);
+	    if (_translet._method != null)
+	        base.setProperty(OutputKeys.METHOD, _translet._method);
+	}
 
-        // Update defaults based on output method
-        final String method = base.getProperty(OutputKeys.METHOD);
-        if (method != null) {
-            if (method.equals("html")) {
-                setDefaults(defaults,"html");
-            }
-            else if (method.equals("text")) {
-                setDefaults(defaults,"text");
-            }
-        }
+	// Update defaults based on output method
+	final String method = base.getProperty(OutputKeys.METHOD);
+	if (method != null) {
+	    if (method.equals("html")) {
+	        setDefaults(defaults,"html");
+	    }
+	    else if (method.equals("text")) {
+	        setDefaults(defaults,"text");
+	    }
+	}
 
-        return base;
+	return base; 
     }
 
-        /**
-         * Internal method to get the default properties from the
-         * serializer factory and set them on the property object.
-         * @param props a java.util.Property object on which the properties are set.
-         * @param method The output method type, one of "xml", "text", "html" ...
-         */
-        private void setDefaults(Properties props, String method)
-        {
-                final Properties method_props =
-                        OutputPropertiesFactory.getDefaultMethodProperties(method);
-                {
-                        final Enumeration names = method_props.propertyNames();
-                        while (names.hasMoreElements())
-                        {
-                                final String name = (String)names.nextElement();
-                                props.setProperty(name, method_props.getProperty(name));
-                        }
-                }
-        }
+	/**
+	 * Internal method to get the default properties from the
+	 * serializer factory and set them on the property object.
+	 * @param props a java.util.Property object on which the properties are set.
+	 * @param method The output method type, one of "xml", "text", "html" ...
+	 */
+	private void setDefaults(Properties props, String method)
+	{
+		final Properties method_props =
+			OutputPropertiesFactory.getDefaultMethodProperties(method);
+		{
+			final Enumeration names = method_props.propertyNames();
+			while (names.hasMoreElements())
+			{
+				final String name = (String)names.nextElement();
+				props.setProperty(name, method_props.getProperty(name));
+			}
+		}
+	}
     /**
      * Verifies if a given output property name is a property defined in
      * the JAXP 1.1 / TrAX spec
      */
     private boolean validOutputProperty(String name) {
-        return (name.equals(OutputKeys.ENCODING) ||
-                name.equals(OutputKeys.METHOD) ||
-                name.equals(OutputKeys.INDENT) ||
-                name.equals(OutputKeys.DOCTYPE_PUBLIC) ||
-                name.equals(OutputKeys.DOCTYPE_SYSTEM) ||
-                name.equals(OutputKeys.CDATA_SECTION_ELEMENTS) ||
-                name.equals(OutputKeys.MEDIA_TYPE) ||
-                name.equals(OutputKeys.OMIT_XML_DECLARATION)   ||
-                name.equals(OutputKeys.STANDALONE) ||
-                name.equals(OutputKeys.VERSION) ||
-                name.charAt(0) == '{');
+	return (name.equals(OutputKeys.ENCODING) ||
+		name.equals(OutputKeys.METHOD) ||
+		name.equals(OutputKeys.INDENT) ||
+		name.equals(OutputKeys.DOCTYPE_PUBLIC) ||
+		name.equals(OutputKeys.DOCTYPE_SYSTEM) ||
+		name.equals(OutputKeys.CDATA_SECTION_ELEMENTS) ||
+		name.equals(OutputKeys.MEDIA_TYPE) ||
+		name.equals(OutputKeys.OMIT_XML_DECLARATION)   ||
+		name.equals(OutputKeys.STANDALONE) ||
+		name.equals(OutputKeys.VERSION) ||
+		name.charAt(0) == '{');
     }
 
     /**
      * Checks if a given output property is default (2nd layer only)
      */
     private boolean isDefaultProperty(String name, Properties properties) {
-        return (properties.get(name) == null);
+	return (properties.get(name) == null);
     }
 
     /**
@@ -1167,21 +1166,21 @@ public final class TransformerImpl extends Transformer
      * @param value The value to assign to the parameter
      */
     public void setParameter(String name, Object value) {
-
+        
         if (value == null) {
             ErrorMsg err = new ErrorMsg(ErrorMsg.JAXP_INVALID_SET_PARAM_VALUE, name);
             throw new IllegalArgumentException(err.toString());
         }
-
-        if (_isIdentity) {
-            if (_parameters == null) {
-                _parameters = new Hashtable();
-            }
-            _parameters.put(name, value);
-        }
-        else {
-            _translet.addParameter(name, value);
-        }
+             
+	if (_isIdentity) {
+	    if (_parameters == null) {
+		_parameters = new Hashtable();
+	    }
+	    _parameters.put(name, value);
+	}
+	else {
+	    _translet.addParameter(name, value);
+	}
     }
 
     /**
@@ -1189,13 +1188,13 @@ public final class TransformerImpl extends Transformer
      * Clear all parameters set with setParameter. Clears the translet's
      * parameter stack.
      */
-    public void clearParameters() {
-        if (_isIdentity && _parameters != null) {
-            _parameters.clear();
-        }
-        else {
-            _translet.clearParameters();
-        }
+    public void clearParameters() {  
+	if (_isIdentity && _parameters != null) {
+	    _parameters.clear();
+	}
+	else {
+	    _translet.clearParameters();
+	}
     }
 
     /**
@@ -1207,12 +1206,12 @@ public final class TransformerImpl extends Transformer
      * @return An object that contains the value assigned to the parameter
      */
     public final Object getParameter(String name) {
-        if (_isIdentity) {
-            return (_parameters != null) ? _parameters.get(name) : null;
-        }
-        else {
-            return _translet.getParameter(name);
-        }
+	if (_isIdentity) {
+	    return (_parameters != null) ? _parameters.get(name) : null;
+	}
+	else {
+	    return _translet.getParameter(name);
+	}
     }
 
     /**
@@ -1222,7 +1221,7 @@ public final class TransformerImpl extends Transformer
      * @return  The URLResolver object currently in use
      */
     public URIResolver getURIResolver() {
-        return _uriResolver;
+	return _uriResolver;
     }
 
     /**
@@ -1231,8 +1230,8 @@ public final class TransformerImpl extends Transformer
      *
      * @param resolver The URIResolver to use in document()
      */
-    public void setURIResolver(URIResolver resolver) {
-        _uriResolver = resolver;
+    public void setURIResolver(URIResolver resolver) { 
+	_uriResolver = resolver;
     }
 
     /**
@@ -1250,16 +1249,16 @@ public final class TransformerImpl extends Transformer
      * @param translet A reference to the translet requesting the document
      */
     public DOM retrieveDocument(String baseURI, String href, Translet translet) {
-        try {
+	try {        
             // Argument to document function was: document('');
             if (href.length() == 0) {
                 href = new String(baseURI);
-            }
+            }    
 
             /*
              *  Fix for bug 24188
              *  Incase the _uriResolver.resolve(href,base) is null
-             *  try to still  retrieve the document before returning null
+             *  try to still  retrieve the document before returning null 
              *  and throwing the FileNotFoundException in
              *  com.sun.org.apache.xalan.internal.xsltc.dom.LoadDocument
              *
@@ -1269,30 +1268,30 @@ public final class TransformerImpl extends Transformer
                 StreamSource streamSource = new StreamSource(
                      SystemIDResolver.getAbsoluteURI(href, baseURI));
                 return getDOM(streamSource) ;
-            }
+            } 
 
             return getDOM(resolvedSource);
-        }
-        catch (TransformerException e) {
-            if (_errorListener != null)
-                postErrorToListener("File not found: " + e.getMessage());
-            return(null);
-        }
+	}
+	catch (TransformerException e) {
+	    if (_errorListener != null)
+		postErrorToListener("File not found: " + e.getMessage());
+	    return(null);
+	}
     }
 
     /**
-     * Receive notification of a recoverable error.
+     * Receive notification of a recoverable error. 
      * The transformer must continue to provide normal parsing events after
      * invoking this method. It should still be possible for the application
      * to process the document through to the end.
      *
-     * @param e The warning information encapsulated in a transformer
+     * @param e The warning information encapsulated in a transformer 
      * exception.
      * @throws TransformerException if the application chooses to discontinue
      * the transformation (always does in our case).
      */
     public void error(TransformerException e)
-        throws TransformerException
+	throws TransformerException 
     {
         Throwable wrapped = e.getException();
         if (wrapped != null) {
@@ -1307,7 +1306,7 @@ public final class TransformerImpl extends Transformer
     }
 
     /**
-     * Receive notification of a non-recoverable error.
+     * Receive notification of a non-recoverable error. 
      * The application must assume that the transformation cannot continue
      * after the Transformer has invoked this method, and should continue
      * (if at all) only to collect addition error messages. In fact,
@@ -1320,7 +1319,7 @@ public final class TransformerImpl extends Transformer
      * the transformation (always does in our case).
      */
     public void fatalError(TransformerException e)
-        throws TransformerException
+	throws TransformerException 
     {
         Throwable wrapped = e.getException();
         if (wrapped != null) {
@@ -1348,7 +1347,7 @@ public final class TransformerImpl extends Transformer
      * the transformation (never does in our case).
      */
     public void warning(TransformerException e)
-        throws TransformerException
+	throws TransformerException 
     {
         Throwable wrapped = e.getException();
         if (wrapped != null) {

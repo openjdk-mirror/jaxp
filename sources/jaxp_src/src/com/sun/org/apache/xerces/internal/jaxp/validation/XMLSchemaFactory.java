@@ -61,48 +61,49 @@ import org.xml.sax.SAXParseException;
  * {@link SchemaFactory} for XML Schema.
  *
  * @author Kohsuke Kawaguchi (kohsuke.kawaguchi@sun.com)
+ * @version $Id: XMLSchemaFactory.java,v 1.5 2009/07/28 23:48:30 joehw Exp $
  */
 public final class XMLSchemaFactory extends SchemaFactory {
-
+    
     // property identifiers
-
+    
     /** Feature identifier: schema full checking. */
     private static final String SCHEMA_FULL_CHECKING =
         Constants.XERCES_FEATURE_PREFIX + Constants.SCHEMA_FULL_CHECKING;
-
+    
     /** Property identifier: grammar pool. */
     private static final String XMLGRAMMAR_POOL =
         Constants.XERCES_PROPERTY_PREFIX + Constants.XMLGRAMMAR_POOL_PROPERTY;
-
+    
     /** Property identifier: SecurityManager. */
     private static final String SECURITY_MANAGER =
         Constants.XERCES_PROPERTY_PREFIX + Constants.SECURITY_MANAGER_PROPERTY;
-
+    
     //
     // Data
     //
-
+    
     /** The XMLSchemaLoader */
     private final XMLSchemaLoader fXMLSchemaLoader = new XMLSchemaLoader();
-
+    
     /** User-specified ErrorHandler; can be null. */
     private ErrorHandler fErrorHandler;
-
+    
     /** The LSResrouceResolver */
     private LSResourceResolver fLSResourceResolver;
-
+    
     /** The DOMEntityResolverWrapper */
     private final DOMEntityResolverWrapper fDOMEntityResolverWrapper;
-
+    
     /** The ErrorHandlerWrapper */
     private ErrorHandlerWrapper fErrorHandlerWrapper;
-
+    
     /** The SecurityManager. */
     private SecurityManager fSecurityManager;
-
-    /** The container for the real grammar pool. */
+    
+    /** The container for the real grammar pool. */ 
     private XMLGrammarPoolWrapper fXMLGrammarPoolWrapper;
-
+    
     public XMLSchemaFactory() {
         fErrorHandlerWrapper = new ErrorHandlerWrapper(DraconianErrorHandler.getInstance());
         fDOMEntityResolverWrapper = new DOMEntityResolverWrapper();
@@ -116,7 +117,7 @@ public final class XMLSchemaFactory extends SchemaFactory {
         fSecurityManager = new SecurityManager();
         fXMLSchemaLoader.setProperty(SECURITY_MANAGER, fSecurityManager);
     }
-
+    
     /**
      * <p>Is specified schema supported by this <code>SchemaFactory</code>?</p>
      *
@@ -131,43 +132,43 @@ public final class XMLSchemaFactory extends SchemaFactory {
      */
     public boolean isSchemaLanguageSupported(String schemaLanguage) {
         if (schemaLanguage == null) {
-            throw new NullPointerException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(),
+            throw new NullPointerException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(), 
                     "SchemaLanguageNull", null));
         }
         if (schemaLanguage.length() == 0) {
-            throw new IllegalArgumentException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(),
+            throw new IllegalArgumentException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(), 
                     "SchemaLanguageLengthZero", null));
         }
-        // only W3C XML Schema 1.0 is supported
+        // only W3C XML Schema 1.0 is supported 
         return schemaLanguage.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI);
     }
-
+    
     public LSResourceResolver getResourceResolver() {
         return fLSResourceResolver;
     }
-
+    
     public void setResourceResolver(LSResourceResolver resourceResolver) {
         fLSResourceResolver = resourceResolver;
         fDOMEntityResolverWrapper.setEntityResolver(resourceResolver);
         fXMLSchemaLoader.setEntityResolver(fDOMEntityResolverWrapper);
     }
-
+    
     public ErrorHandler getErrorHandler() {
         return fErrorHandler;
     }
-
+    
     public void setErrorHandler(ErrorHandler errorHandler) {
         fErrorHandler = errorHandler;
         fErrorHandlerWrapper.setErrorHandler(errorHandler != null ? errorHandler : DraconianErrorHandler.getInstance());
         fXMLSchemaLoader.setErrorHandler(fErrorHandlerWrapper);
-    }
-
+    }  
+    
     public Schema newSchema( Source[] schemas ) throws SAXException {
-
+        
         // this will let the loader store parsed Grammars into the pool.
         XMLGrammarPoolImplExtension pool = new XMLGrammarPoolImplExtension();
         fXMLGrammarPoolWrapper.setGrammarPool(pool);
-
+        
         XMLInputSource[] xmlInputSources = new XMLInputSource[schemas.length];
         InputStream inputStream;
         Reader reader;
@@ -187,7 +188,7 @@ public final class XMLSchemaFactory extends SchemaFactory {
                 SAXSource saxSource = (SAXSource) source;
                 InputSource inputSource = saxSource.getInputSource();
                 if (inputSource == null) {
-                    throw new SAXException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(),
+                    throw new SAXException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(), 
                             "SAXSourceNullInputSource", null));
                 }
                 xmlInputSources[i] = new SAXInputSource(saxSource.getXMLReader(), inputSource);
@@ -195,37 +196,37 @@ public final class XMLSchemaFactory extends SchemaFactory {
             else if (source instanceof DOMSource) {
                 DOMSource domSource = (DOMSource) source;
                 Node node = domSource.getNode();
-                String systemID = domSource.getSystemId();
+                String systemID = domSource.getSystemId();          
                 xmlInputSources[i] = new DOMInputSource(node, systemID);
             }
             else if (source == null) {
-                throw new NullPointerException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(),
+                throw new NullPointerException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(), 
                         "SchemaSourceArrayMemberNull", null));
             }
             else {
-                throw new IllegalArgumentException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(),
-                        "SchemaFactorySourceUnrecognized",
+                throw new IllegalArgumentException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(), 
+                        "SchemaFactorySourceUnrecognized", 
                         new Object [] {source.getClass().getName()}));
             }
         }
-
+        
         try {
             fXMLSchemaLoader.loadGrammar(xmlInputSources);
-        }
+        } 
         catch (XNIException e) {
             // this should have been reported to users already.
             throw Util.toSAXException(e);
-        }
+        } 
         catch (IOException e) {
             // this hasn't been reported, so do so now.
             SAXParseException se = new SAXParseException(e.getMessage(),null,e);
             fErrorHandler.error(se);
             throw se; // and we must throw it.
         }
-
+        
         // Clear reference to grammar pool.
         fXMLGrammarPoolWrapper.setGrammarPool(null);
-
+        
         // Select Schema implementation based on grammar count.
         final int grammarCount = pool.getGrammarCount();
         if (grammarCount > 1) {
@@ -239,16 +240,16 @@ public final class XMLSchemaFactory extends SchemaFactory {
             return EmptyXMLSchema.getInstance();
         }
     }
-
+    
     public Schema newSchema() throws SAXException {
         // Use a Schema that uses the system id as the equality source.
         return new WeakReferenceXMLSchema();
     }
-
-    public boolean getFeature(String name)
+    
+    public boolean getFeature(String name) 
         throws SAXNotRecognizedException, SAXNotSupportedException {
         if (name == null) {
-            throw new NullPointerException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(),
+            throw new NullPointerException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(), 
                     "FeatureNameNull", null));
         }
         if (name.equals(XMLConstants.FEATURE_SECURE_PROCESSING)) {
@@ -261,21 +262,21 @@ public final class XMLSchemaFactory extends SchemaFactory {
             String identifier = e.getIdentifier();
             if (e.getType() == XMLConfigurationException.NOT_RECOGNIZED) {
                 throw new SAXNotRecognizedException(
-                        SAXMessageFormatter.formatMessage(Locale.getDefault(),
+                        SAXMessageFormatter.formatMessage(Locale.getDefault(), 
                         "feature-not-recognized", new Object [] {identifier}));
             }
             else {
                 throw new SAXNotSupportedException(
-                        SAXMessageFormatter.formatMessage(Locale.getDefault(),
+                        SAXMessageFormatter.formatMessage(Locale.getDefault(), 
                         "feature-not-supported", new Object [] {identifier}));
             }
         }
     }
-
-    public Object getProperty(String name)
+    
+    public Object getProperty(String name) 
         throws SAXNotRecognizedException, SAXNotSupportedException {
         if (name == null) {
-            throw new NullPointerException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(),
+            throw new NullPointerException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(), 
                     "ProperyNameNull", null));
         }
         if (name.equals(SECURITY_MANAGER)) {
@@ -283,7 +284,7 @@ public final class XMLSchemaFactory extends SchemaFactory {
         }
         else if (name.equals(XMLGRAMMAR_POOL)) {
             throw new SAXNotSupportedException(
-                    SAXMessageFormatter.formatMessage(Locale.getDefault(),
+                    SAXMessageFormatter.formatMessage(Locale.getDefault(), 
                     "property-not-supported", new Object [] {name}));
         }
         try {
@@ -293,24 +294,29 @@ public final class XMLSchemaFactory extends SchemaFactory {
             String identifier = e.getIdentifier();
             if (e.getType() == XMLConfigurationException.NOT_RECOGNIZED) {
                 throw new SAXNotRecognizedException(
-                        SAXMessageFormatter.formatMessage(Locale.getDefault(),
+                        SAXMessageFormatter.formatMessage(Locale.getDefault(), 
                         "property-not-recognized", new Object [] {identifier}));
             }
             else {
                 throw new SAXNotSupportedException(
-                        SAXMessageFormatter.formatMessage(Locale.getDefault(),
+                        SAXMessageFormatter.formatMessage(Locale.getDefault(), 
                         "property-not-supported", new Object [] {identifier}));
             }
         }
     }
-
+    
     public void setFeature(String name, boolean value)
         throws SAXNotRecognizedException, SAXNotSupportedException {
         if (name == null) {
-            throw new NullPointerException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(),
+            throw new NullPointerException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(), 
                     "FeatureNameNull", null));
         }
         if (name.equals(XMLConstants.FEATURE_SECURE_PROCESSING)) {
+            if (System.getSecurityManager() != null && (!value)) {
+                throw new SAXNotSupportedException(
+                        SAXMessageFormatter.formatMessage(null, 
+                        "jaxp-secureprocessing-feature", null));
+            }
             fSecurityManager = value ? new SecurityManager() : null;
             fXMLSchemaLoader.setProperty(SECURITY_MANAGER, fSecurityManager);
             return;
@@ -322,21 +328,21 @@ public final class XMLSchemaFactory extends SchemaFactory {
             String identifier = e.getIdentifier();
             if (e.getType() == XMLConfigurationException.NOT_RECOGNIZED) {
                 throw new SAXNotRecognizedException(
-                        SAXMessageFormatter.formatMessage(Locale.getDefault(),
+                        SAXMessageFormatter.formatMessage(Locale.getDefault(), 
                         "feature-not-recognized", new Object [] {identifier}));
             }
             else {
                 throw new SAXNotSupportedException(
-                        SAXMessageFormatter.formatMessage(Locale.getDefault(),
+                        SAXMessageFormatter.formatMessage(Locale.getDefault(), 
                         "feature-not-supported", new Object [] {identifier}));
             }
         }
     }
-
+    
     public void setProperty(String name, Object object)
         throws SAXNotRecognizedException, SAXNotSupportedException {
         if (name == null) {
-            throw new NullPointerException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(),
+            throw new NullPointerException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(), 
                     "ProperyNameNull", null));
         }
         if (name.equals(SECURITY_MANAGER)) {
@@ -346,7 +352,7 @@ public final class XMLSchemaFactory extends SchemaFactory {
         }
         else if (name.equals(XMLGRAMMAR_POOL)) {
             throw new SAXNotSupportedException(
-                    SAXMessageFormatter.formatMessage(Locale.getDefault(),
+                    SAXMessageFormatter.formatMessage(Locale.getDefault(), 
                     "property-not-supported", new Object [] {name}));
         }
         try {
@@ -356,23 +362,23 @@ public final class XMLSchemaFactory extends SchemaFactory {
             String identifier = e.getIdentifier();
             if (e.getType() == XMLConfigurationException.NOT_RECOGNIZED) {
                 throw new SAXNotRecognizedException(
-                        SAXMessageFormatter.formatMessage(Locale.getDefault(),
+                        SAXMessageFormatter.formatMessage(Locale.getDefault(), 
                         "property-not-recognized", new Object [] {identifier}));
             }
             else {
                 throw new SAXNotSupportedException(
-                        SAXMessageFormatter.formatMessage(Locale.getDefault(),
+                        SAXMessageFormatter.formatMessage(Locale.getDefault(), 
                         "property-not-supported", new Object [] {identifier}));
             }
         }
     }
-
-    /**
+    
+    /** 
      * Extension of XMLGrammarPoolImpl which exposes the number of
      * grammars stored in the grammar pool.
      */
     static class XMLGrammarPoolImplExtension extends XMLGrammarPoolImpl {
-
+        
         /** Constructs a grammar pool with a default number of buckets. */
         public XMLGrammarPoolImplExtension() {
             super();
@@ -382,25 +388,25 @@ public final class XMLSchemaFactory extends SchemaFactory {
         public XMLGrammarPoolImplExtension(int initialCapacity) {
             super(initialCapacity);
         }
-
+        
         /** Returns the number of grammars contained in this pool. */
         int getGrammarCount() {
             return fGrammarCount;
         }
-
+        
     } // XMLSchemaFactory.XMLGrammarPoolImplExtension
-
+    
     /**
      * A grammar pool which wraps another.
      */
     static class XMLGrammarPoolWrapper implements XMLGrammarPool {
 
         private XMLGrammarPool fGrammarPool;
-
+        
         /*
          * XMLGrammarPool methods
          */
-
+        
         public Grammar[] retrieveInitialGrammarSet(String grammarType) {
             return fGrammarPool.retrieveInitialGrammarSet(grammarType);
         }
@@ -424,19 +430,19 @@ public final class XMLSchemaFactory extends SchemaFactory {
         public void clear() {
             fGrammarPool.clear();
         }
-
+        
         /*
          * Other methods
          */
-
+        
         void setGrammarPool(XMLGrammarPool grammarPool) {
             fGrammarPool = grammarPool;
         }
-
+        
         XMLGrammarPool getGrammarPool() {
             return fGrammarPool;
         }
-
+        
     } // XMLSchemaFactory.XMLGrammarPoolWrapper
-
+    
 } // XMLSchemaFactory

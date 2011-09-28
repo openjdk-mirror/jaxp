@@ -27,13 +27,15 @@ import com.sun.org.apache.xerces.internal.impl.xs.XMLSchemaException;
 import com.sun.org.apache.xerces.internal.impl.xs.XSConstraints;
 
 import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * XSAllCM implements XSCMValidator and handles <all>
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Pavani Mukthipudi, Sun Microsystems Inc.
+ * @version $Id: XSAllCM.java,v 1.7 2009/07/28 15:18:11 spericas Exp $
  */
 public class XSAllCM implements XSCMValidator {
 
@@ -76,20 +78,6 @@ public class XSAllCM implements XSCMValidator {
     //
     // XSCMValidator methods
     //
-
-    /**
-     * This method is only implemented by <code>XSDFACM</code>.
-     */
-    public Object getUserData() {
-        return null;
-    }
-
-    /**
-     * This method is only implemented by <code>XSDFACM</code>.
-     */
-    public int getOneTransitionCounter() {
-        throw new UnsupportedOperationException();
-    }
 
     /**
      * This methods to be called on entering a first element whose type
@@ -137,7 +125,7 @@ public class XSAllCM implements XSCMValidator {
 
         // seen child
         currentState[0] = STATE_CHILD;
-
+        
         Object matchingDecl = null;
 
         for (int i = 0; i < fNumElements; i++) {
@@ -213,7 +201,7 @@ public class XSAllCM implements XSCMValidator {
      * Check which elements are valid to appear at this point. This method also
      * works if the state is in error, in which case it returns what should
      * have been seen.
-     *
+     * 
      * @param state  the current state
      * @return       a Vector whose entries are instances of
      *               either XSWildcardDecl or XSElementDecl.
@@ -229,4 +217,9 @@ public class XSAllCM implements XSCMValidator {
         return ret;
     }
 
+    public ArrayList checkMinMaxBounds() {
+        return null;
+    }
+
 } // class XSAllCM
+

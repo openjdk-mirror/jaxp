@@ -23,7 +23,7 @@
  */
 
 /*
- * Copyright (c) 2003 by BEA Systems, Inc. All Rights Reserved.
+ * Copyright (c) 2009 by Oracle Corporation. All Rights Reserved.
  */
 
 package javax.xml.stream.util;
@@ -39,7 +39,8 @@ import javax.xml.stream.XMLStreamException;
  * is recommended.  The XMLEventAllocator can be set on an XMLInputFactory
  * using the property "javax.xml.stream.allocator"
  *
- * @author Copyright (c) 2003 by BEA Systems. All Rights Reserved.
+ * @version 1.0
+ * @author Copyright (c) 2009 by Oracle Corporation. All Rights Reserved.
  * @see javax.xml.stream.XMLInputFactory
  * @see javax.xml.stream.XMLEventFactory
  * @since 1.6

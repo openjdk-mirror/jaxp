@@ -25,14 +25,16 @@ import com.sun.org.apache.xerces.internal.impl.xs.SubstitutionGroupHandler;
 import com.sun.org.apache.xerces.internal.impl.xs.XMLSchemaException;
 
 import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * Note: State of the content model is stored in the validator
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Sandy Gao, IBM
  * @author Elena Litani, IBM
+ * @version $Id: XSCMValidator.java,v 1.6 2009/07/28 15:18:12 spericas Exp $
  */
 public interface XSCMValidator {
 
@@ -84,7 +86,7 @@ public interface XSCMValidator {
      * Check which elements are valid to appear at this point. This method also
      * works if the state is in error, in which case it returns what should
      * have been seen.
-     *
+     * 
      * @param state  the current state
      * @return       a Vector whose entries are instances of
      *               either XSWildcardDecl or XSElementDecl.
@@ -92,15 +94,18 @@ public interface XSCMValidator {
     public Vector whatCanGoHere(int[] state);
 
     /**
-     * Allows the user to get arbitrary data originally set on the content
-     * model node used to create this validator.
+     * Used by constant space algorithm for a{n,m} for n > 1 and
+     * m <= unbounded. Called by a validator if validation of
+     * countent model succeeds after subsuming a{n,m} to a*
+     * (or a+) to check the n and m bounds.
+     * Returns <code>null</code> if validation of bounds is
+     * successful. Returns a list of strings with error info
+     * if not. Even entries in list returned are error codes
+     * (used to look up properties) and odd entries are parameters
+     * to be passed when formatting error message. Each parameter
+     * is associated with the error code that preceeds it in
+     * the list.
      */
-    public Object getUserData();
-
-    /**
-     * Return the number of times the <code>oneTransition()</code> method
-     * was called, resulting on the validator to move into a non-error state.
-     */
-    public int getOneTransitionCounter();
-
+    public ArrayList checkMinMaxBounds();
+    
 } // XSCMValidator

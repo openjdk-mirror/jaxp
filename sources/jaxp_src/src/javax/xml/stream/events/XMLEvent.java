@@ -23,7 +23,7 @@
  */
 
 /*
- * Copyright (c) 2003 by BEA Systems, Inc. All Rights Reserved.
+ * Copyright (c) 2009 by Oracle Corporation. All Rights Reserved.
  */
 
 package javax.xml.stream.events;
@@ -36,7 +36,8 @@ import javax.xml.namespace.QName;
  * XML 1.0 InfoSet to the Application.  Events may be cached
  * and referenced after the parse has completed.
  *
- * @author Copyright (c) 2003 by BEA Systems. All Rights Reserved.
+ * @version 1.0
+ * @author Copyright (c) 2009 by Oracle Corporation. All Rights Reserved.
  * @see javax.xml.stream.XMLEventReader
  * @see Characters
  * @see ProcessingInstruction

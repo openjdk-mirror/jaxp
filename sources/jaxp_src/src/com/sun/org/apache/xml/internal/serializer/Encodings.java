@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.io.BufferedWriter;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Enumeration;
@@ -43,6 +44,7 @@ import java.security.AccessController;
  * to override encoding names and provide the last printable character
  * for each encoding.
  *
+ * @version $Revision: 1.8 $ $Date: 2007/10/12 04:14:45 $
  * @author <a href="mailto:arkin@intalio.com">Assaf Arkin</a>
  */
 
@@ -64,7 +66,7 @@ public final class Encodings extends Object
      */
     private static final String ENCODINGS_PROP = "com.sun.org.apache.xalan.internal.serialize.encodings";
 
-
+    
     /**
      * Returns a writer for the specified encoding based on
      * an output stream.
@@ -85,9 +87,9 @@ public final class Encodings extends Object
             {
                 try
                 {
-                    return new OutputStreamWriter(
+                    return new BufferedWriter(new OutputStreamWriter(
                         output,
-                        _encodings[i].javaName);
+                        _encodings[i].javaName));
                 }
                 catch (java.lang.IllegalArgumentException iae) // java 1.1.8
                 {
@@ -103,14 +105,14 @@ public final class Encodings extends Object
 
         try
         {
-            return new OutputStreamWriter(output, encoding);
+            return new BufferedWriter(new OutputStreamWriter(output, encoding));
         }
         catch (java.lang.IllegalArgumentException iae) // java 1.1.8
         {
             throw new UnsupportedEncodingException(encoding);
         }
     }
-
+    
 
     /**
      * Returns the last printable character for an unspecified
@@ -122,9 +124,9 @@ public final class Encodings extends Object
     {
         return m_defaultLastPrintable;
     }
-
-
-
+    
+    
+    
     /**
      * Returns the EncodingInfo object for the specified
      * encoding.
@@ -132,7 +134,7 @@ public final class Encodings extends Object
      * This is not a public API.
      *
      * @param encoding The encoding
-     * @return The object that is used to determine if
+     * @return The object that is used to determine if 
      * characters are in the given encoding.
      * @xsl.usage internal
      */
@@ -151,7 +153,7 @@ public final class Encodings extends Object
 
         return ei;
     }
-
+ 
     /**
      * A fast and cheap way to uppercase a String that is
      * only made of printable ASCII characters.
@@ -164,29 +166,29 @@ public final class Encodings extends Object
      */
     static private String toUpperCaseFast(final String s) {
 
-        boolean different = false;
-        final int mx = s.length();
-                char[] chars = new char[mx];
-        for (int i=0; i < mx; i++) {
-                char ch = s.charAt(i);
+    	boolean different = false;
+    	final int mx = s.length();
+		char[] chars = new char[mx];
+    	for (int i=0; i < mx; i++) {
+    		char ch = s.charAt(i);
             // is the character a lower case ASCII one?
-                if ('a' <= ch && ch <= 'z') {
+    		if ('a' <= ch && ch <= 'z') {
                 // a cheap and fast way to uppercase that is good enough
-                        ch = (char) (ch + ('A' - 'a'));
-                        different = true; // the uppercased String is different
-                }
-                chars[i] = ch;
-        }
-
-        // A little optimization, don't call String.valueOf() if
-        // the uppercased string is the same as the input string.
-        final String upper;
-        if (different)
-                upper = String.valueOf(chars);
-        else
-                upper = s;
-
-        return upper;
+    			ch = (char) (ch + ('A' - 'a'));
+    			different = true; // the uppercased String is different
+    		}
+    		chars[i] = ch;
+    	}
+    	
+    	// A little optimization, don't call String.valueOf() if
+    	// the uppercased string is the same as the input string.
+    	final String upper;
+    	if (different) 
+    		upper = String.valueOf(chars);
+    	else
+    		upper = s;
+    		
+    	return upper;
     }
 
     /** The default encoding, ISO style, ISO style.   */

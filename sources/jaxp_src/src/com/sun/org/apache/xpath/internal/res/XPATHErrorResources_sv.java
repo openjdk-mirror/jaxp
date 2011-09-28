@@ -617,7 +617,7 @@ public static final int MAX_CODE = 108;  // this is needed to keep track of the 
   {
     ER_XPATH_READOBJECT, "I XPath.readObject: {0}"},
 
-
+  
   /** Field ER_XPATH_READOBJECT         */
   //public static final int ER_FUNCTION_TOKEN_NOT_FOUND = 69;
 
@@ -626,7 +626,7 @@ public static final int MAX_CODE = 108;  // this is needed to keep track of the 
     ER_FUNCTION_TOKEN_NOT_FOUND,
       "funktionstecken saknas."},
 
-
+  
    /**  Can not deal with XPath type:   */
   //public static final int ER_CANNOT_DEAL_XPATH_TYPE = 71;
 
@@ -635,7 +635,7 @@ public static final int MAX_CODE = 108;  // this is needed to keep track of the 
     ER_CANNOT_DEAL_XPATH_TYPE,
        "Kan inte hantera XPath-typ: {0}"},
 
-
+  
    /**  This NodeSet is not mutable  */
   //public static final int ER_NODESET_NOT_MUTABLE = 72;
 
@@ -644,7 +644,7 @@ public static final int MAX_CODE = 108;  // this is needed to keep track of the 
     ER_NODESET_NOT_MUTABLE,
        "NodeSet \u00e4r of\u00f6r\u00e4nderlig"},
 
-
+  
    /**  This NodeSetDTM is not mutable  */
   //public static final int ER_NODESETDTM_NOT_MUTABLE = 73;
 
@@ -653,7 +653,7 @@ public static final int MAX_CODE = 108;  // this is needed to keep track of the 
     ER_NODESETDTM_NOT_MUTABLE,
        "NodeSetDTM \u00e4r of\u00f6r\u00e4nderlig"},
 
-
+  
    /**  Variable not resolvable:   */
   //public static final int ER_VAR_NOT_RESOLVABLE = 74;
 
@@ -662,7 +662,7 @@ public static final int MAX_CODE = 108;  // this is needed to keep track of the 
     ER_VAR_NOT_RESOLVABLE,
         "Variabel ej l\u00f6sbar: {0}"},
 
-
+  
    /** Null error handler  */
   //public static final int ER_NULL_ERROR_HANDLER = 75;
 
@@ -671,7 +671,7 @@ public static final int MAX_CODE = 108;  // this is needed to keep track of the 
     ER_NULL_ERROR_HANDLER,
         "Null error handler"},
 
-
+  
    /**  Programmer's assertion: unknown opcode  */
   //public static final int ER_PROG_ASSERT_UNKNOWN_OPCODE = 76;
 
@@ -680,7 +680,7 @@ public static final int MAX_CODE = 108;  // this is needed to keep track of the 
     ER_PROG_ASSERT_UNKNOWN_OPCODE,
        "Programmerares f\u00f6rs\u00e4kran: ok\u00e4nd op-kod: {0}"},
 
-
+  
    /**  0 or 1   */
   //public static final int ER_ZERO_OR_ONE = 77;
 
@@ -689,8 +689,8 @@ public static final int MAX_CODE = 108;  // this is needed to keep track of the 
     ER_ZERO_OR_ONE,
        "0 eller 1"},
 
-
-
+  
+  
    /**  rtf() not supported by XRTreeFragSelectWrapper   */
   //public static final int ER_RTF_NOT_SUPPORTED_XRTREEFRAGSELECTWRAPPER = 78;
 
@@ -699,7 +699,7 @@ public static final int MAX_CODE = 108;  // this is needed to keep track of the 
     ER_RTF_NOT_SUPPORTED_XRTREEFRAGSELECTWRAPPER,
        "rtf() underst\u00f6ds inte av XRTreeFragSelectWrapper!"},
 
-
+  
    /**  asNodeIterator() not supported by XRTreeFragSelectWrapper   */
   //public static final int ER_ASNODEITERATOR_NOT_SUPPORTED_XRTREEFRAGSELECTWRAPPER = 79;
 
@@ -708,7 +708,7 @@ public static final int MAX_CODE = 108;  // this is needed to keep track of the 
     ER_ASNODEITERATOR_NOT_SUPPORTED_XRTREEFRAGSELECTWRAPPER,
        "asNodeIterator() underst\u00f6ds inte av XRTreeFragSelectWrapper!"},
 
-
+  
    /**  fsb() not supported for XStringForChars   */
   //public static final int ER_FSB_NOT_SUPPORTED_XSTRINGFORCHARS = 80;
 
@@ -717,7 +717,7 @@ public static final int MAX_CODE = 108;  // this is needed to keep track of the 
     ER_FSB_NOT_SUPPORTED_XSTRINGFORCHARS,
        "fsb() underst\u00f6ds inte av XRStringForChars!"},
 
-
+  
    /**  Could not find variable with the name of   */
   //public static final int ER_COULD_NOT_FIND_VAR = 81;
 
@@ -726,7 +726,7 @@ public static final int MAX_CODE = 108;  // this is needed to keep track of the 
     ER_COULD_NOT_FIND_VAR,
       "Hittade inte variabeln med namn {0}"},
 
-
+  
    /**  XStringForChars can not take a string for an argument   */
   //public static final int ER_XSTRINGFORCHARS_CANNOT_TAKE_STRING = 82;
 
@@ -735,7 +735,7 @@ public static final int MAX_CODE = 108;  // this is needed to keep track of the 
     ER_XSTRINGFORCHARS_CANNOT_TAKE_STRING,
       "XStringForChars kan inte ta en str\u00e4ng som argument"},
 
-
+  
    /**  The FastStringBuffer argument can not be null   */
   //public static final int ER_FASTSTRINGBUFFER_CANNOT_BE_NULL = 83;
 
@@ -743,8 +743,8 @@ public static final int MAX_CODE = 108;  // this is needed to keep track of the 
   {
     ER_FASTSTRINGBUFFER_CANNOT_BE_NULL,
       "FastStringBuffer-argumentet f\u00e5r inte vara null"},
-
-/* MANTIS_XALAN CHANGE: BEGIN */
+    
+/* MANTIS_XALAN CHANGE: BEGIN */ 
    /**  2 or 3   */
   //public static final int ER_TWO_OR_THREE = 84;
 
@@ -913,7 +913,7 @@ public static final int MAX_CODE = 108;  // this is needed to keep track of the 
   // Note to translators: A relative path pattern is part of an XPath expression.
   // The message indicates that syntactically such an expression was expected,
   // but was not found.
-
+ 
   /** Expected relative path pattern */
   //public static final int ER_EXPECTED_REL_PATH_PATTERN = 100;
 
@@ -936,7 +936,7 @@ public static final int MAX_CODE = 108;  // this is needed to keep track of the 
        "Det g\u00e5r inte att konvertera {0} till ett Booleskt v\u00e4rde."},
 
 
-  // Note to translators: Do not translate ANY_UNORDERED_NODE_TYPE and
+  // Note to translators: Do not translate ANY_UNORDERED_NODE_TYPE and 
   // FIRST_ORDERED_NODE_TYPE.
 
   /** Field ER_CANT_CONVERT_TO_SINGLENODE       */
@@ -1077,6 +1077,8 @@ public static final int MAX_CODE = 108;  // this is needed to keep track of the 
        "Ok\u00e4nt fel i XPath."},
 
 
+  {ER_SECUREPROCESSING_FEATURE,
+      "FEATURE_SECURE_PROCESSING: Det g\u00e5r inte att st\u00e4lla in funktionen n\u00e4r s\u00e4kerhetshanteraren anv\u00e4nds: {1}#setFeature({0},{2})"}, 
 
   // Warnings...
 
@@ -1249,3 +1251,5 @@ public static final int MAX_CODE = 108;  // this is needed to keep track of the 
   public static final String QUERY_HEADER = "M\u00d6NSTER ";
 
 }
+
+

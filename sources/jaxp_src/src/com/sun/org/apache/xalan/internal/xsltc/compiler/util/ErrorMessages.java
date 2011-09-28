@@ -90,13 +90,13 @@ public class ErrorMessages extends ListResourceBundle {
  */
 
     // These message should be read from a locale-specific resource bundle
-    /** Get the lookup table for error messages.
+    /** Get the lookup table for error messages.   
      *
      * @return The message lookup table.
      */
     public Object[][] getContents()
     {
-      return new Object[][] {
+      return new Object[][] { 
         {ErrorMsg.MULTIPLE_STYLESHEET_ERR,
         "More than one stylesheet defined in the same file."},
 
@@ -652,7 +652,7 @@ public class ErrorMessages extends ListResourceBundle {
          */
         {ErrorMsg.XSLTC_SOURCE_ERR,
         "XSLTCSource.build() called without systemId being set."},
-
+        
         { ErrorMsg.ER_RESULT_NULL,
             "Result should not be null"},
 
@@ -661,7 +661,7 @@ public class ErrorMessages extends ListResourceBundle {
          * of setParameter must be a valid Java Object.
          */
         {ErrorMsg.JAXP_INVALID_SET_PARAM_VALUE,
-        "The value of param {0} must be a valid Java Object"},
+        "The value of param {0} must be a valid Java Object"},            
 
 
         {ErrorMsg.COMPILE_STDIN_ERR,
@@ -846,7 +846,7 @@ public class ErrorMessages extends ListResourceBundle {
          */
         {ErrorMsg.ERROR_MSG,
         "ERROR:  ''{0}''"},
-
+        
         /*
          * Note to translators:  The substitution text is the name of a class.
          */
@@ -905,7 +905,7 @@ public class ErrorMessages extends ListResourceBundle {
          */
         {ErrorMsg.RUNTIME_ERROR_KEY,
         "Translet errors:"},
-
+        
         /*
          * Note to translators:  An attribute whose value is constrained to
          * be a "QName" or a list of "QNames" had a value that was incorrect.
@@ -913,7 +913,7 @@ public class ErrorMessages extends ListResourceBundle {
          * substitution text contains the actual value of the attribute.
          */
         {ErrorMsg.INVALID_QNAME_ERR,
-        "An attribute whose value must be a QName or whitespace-separated list of QNames had the value ''{0}''"},
+        "An attribute whose value must be a QName or whitespace-separated list of QNames had the value ''{0}''"}, 
 
         /*
          * Note to translators:  An attribute whose value is required to
@@ -936,16 +936,18 @@ public class ErrorMessages extends ListResourceBundle {
          */
         {ErrorMsg.INVALID_METHOD_IN_OUTPUT,
         "The method attribute of an <xsl:output> element had the value ''{0}''.  The value must be one of ''xml'', ''html'', ''text'', or qname-but-not-ncname"},
-
+        
         {ErrorMsg.JAXP_GET_FEATURE_NULL_NAME,
         "The feature name cannot be null in TransformerFactory.getFeature(String name)."},
-
+        
         {ErrorMsg.JAXP_SET_FEATURE_NULL_NAME,
         "The feature name cannot be null in TransformerFactory.setFeature(String name, boolean value)."},
 
         {ErrorMsg.JAXP_UNSUPPORTED_FEATURE,
-        "Cannot set the feature ''{0}'' on this TransformerFactory."}
+        "Cannot set the feature ''{0}'' on this TransformerFactory."},
 
+        {ErrorMsg.JAXP_SECUREPROCESSING_FEATURE,
+        "FEATURE_SECURE_PROCESSING: Cannot set the feature to false when security manager is present."}
     };
     }
 }

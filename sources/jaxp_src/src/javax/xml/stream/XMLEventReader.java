@@ -23,19 +23,23 @@
  */
 
 /*
- * Copyright (c) 2003 by BEA Systems, Inc. All Rights Reserved.
+ * Copyright (c) 2009 by Oracle Corporation. All Rights Reserved.
  */
 
 package javax.xml.stream;
+
 import javax.xml.stream.events.XMLEvent;
+
 import java.util.Iterator;
+
 /**
  *
  * This is the top level interface for parsing XML Events.  It provides
- * the ability to peek at the next event and returns configuration
+ * the ability to peek at the next event and returns configuration 
  * information through the property interface.
  *
- * @author Copyright (c) 2003 by BEA Systems. All Rights Reserved.
+ * @version 1.0
+ * @author Copyright (c) 2009 by Oracle Corporation. All Rights Reserved.
  * @see XMLInputFactory
  * @see XMLEventWriter
  * @since 1.6

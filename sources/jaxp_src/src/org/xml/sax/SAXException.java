@@ -56,6 +56,7 @@ package org.xml.sax;
  *
  * @since SAX 1.0
  * @author David Megginson
+ * @version 2.0.1 (sax2r2)
  * @see org.xml.sax.SAXParseException
  */
 public class SAXException extends Exception {
@@ -66,22 +67,22 @@ public class SAXException extends Exception {
      */
     public SAXException ()
     {
-        super();
-        this.exception = null;
+	super();
+	this.exception = null;
     }
-
-
+    
+    
     /**
      * Create a new SAXException.
      *
      * @param message The error or warning message.
      */
     public SAXException (String message) {
-        super(message);
-        this.exception = null;
+	super(message);
+	this.exception = null;
     }
-
-
+    
+    
     /**
      * Create a new SAXException wrapping an existing exception.
      *
@@ -93,11 +94,11 @@ public class SAXException extends Exception {
      */
     public SAXException (Exception e)
     {
-        super();
-        this.exception = e;
+	super();
+	this.exception = e;
     }
-
-
+    
+    
     /**
      * Create a new SAXException from an existing exception.
      *
@@ -109,11 +110,11 @@ public class SAXException extends Exception {
      */
     public SAXException (String message, Exception e)
     {
-        super(message);
-        this.exception = e;
+	super(message);
+	this.exception = e;
     }
-
-
+    
+    
     /**
      * Return a detail message for this exception.
      *
@@ -125,16 +126,16 @@ public class SAXException extends Exception {
      */
     public String getMessage ()
     {
-        String message = super.getMessage();
-
-        if (message == null && exception != null) {
-            return exception.getMessage();
-        } else {
-            return message;
-        }
+	String message = super.getMessage();
+	
+	if (message == null && exception != null) {
+	    return exception.getMessage();
+	} else {
+	    return message;
+	}
     }
-
-
+    
+    
     /**
      * Return the embedded exception, if any.
      *
@@ -142,9 +143,17 @@ public class SAXException extends Exception {
      */
     public Exception getException ()
     {
-        return exception;
+	return exception;
     }
 
+    /**
+     * Return the cause of the exception
+     *
+     * @return Return the cause of the exception
+     */
+    public Throwable getCause() {
+        return exception;
+    }
 
     /**
      * Override toString to pick up any embedded exception.
@@ -153,15 +162,15 @@ public class SAXException extends Exception {
      */
     public String toString ()
     {
-        if (exception != null) {
-            return exception.toString();
-        } else {
-            return super.toString();
-        }
+	if (exception != null) {
+	    return exception.toString();
+	} else {
+	    return super.toString();
+	}
     }
-
-
-
+    
+    
+    
     //////////////////////////////////////////////////////////////////////
     // Internal state.
     //////////////////////////////////////////////////////////////////////
@@ -169,10 +178,10 @@ public class SAXException extends Exception {
 
     /**
      * @serial The embedded exception if tunnelling, or null.
-     */
+     */    
     private Exception exception;
-
-    // Added serialVersionUID to preserve binary compatibility
+    
+    // Added serialVersionUID to preserve binary compatibility 
     static final long serialVersionUID = 583241635256073760L;
 }
 

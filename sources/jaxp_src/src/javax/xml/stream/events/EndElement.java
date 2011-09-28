@@ -23,7 +23,7 @@
  */
 
 /*
- * Copyright (c) 2003 by BEA Systems, Inc. All Rights Reserved.
+ * Copyright (c) 2009 by Oracle Corporation. All Rights Reserved.
  */
 
 package javax.xml.stream.events;
@@ -34,7 +34,8 @@ import javax.xml.namespace.QName;
  * An interface for the end element event.  An EndElement is reported
  * for each End Tag in the document.
  *
- * @author Copyright (c) 2003 by BEA Systems. All Rights Reserved.
+ * @version 1.0
+ * @author Copyright (c) 2009 by Oracle Corporation. All Rights Reserved.
  * @see XMLEvent
  * @since 1.6
  */

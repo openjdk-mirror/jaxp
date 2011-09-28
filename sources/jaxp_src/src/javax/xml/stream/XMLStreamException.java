@@ -23,7 +23,7 @@
  */
 
 /*
- * Copyright (c) 2003 by BEA Systems, Inc. All Rights Reserved.
+ * Copyright (c) 2009 by Oracle Corporation. All Rights Reserved.
  */
 
 package javax.xml.stream;
@@ -32,9 +32,11 @@ package javax.xml.stream;
  * The base exception for unexpected processing errors.  This Exception
  * class is used to report well-formedness errors as well as unexpected
  * processing conditions.
- * @author Copyright (c) 2003 by BEA Systems. All Rights Reserved.
+ * @version 1.0
+ * @author Copyright (c) 2009 by Oracle Corporation. All Rights Reserved.
  * @since 1.6
  */
+
 public class XMLStreamException extends Exception {
 
   protected Throwable nested;

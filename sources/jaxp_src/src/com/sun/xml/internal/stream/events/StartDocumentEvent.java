@@ -38,30 +38,30 @@ import javax.xml.stream.XMLStreamConstants;
 
 public class StartDocumentEvent extends DummyEvent
 implements StartDocument {
-
+    
     protected String fSystemId;
     protected String fEncodingScheam;
     protected boolean fStandalone;
     protected String fVersion;
     private boolean fEncodingSchemeSet;
     private boolean fStandaloneSet;
-
+    
     public StartDocumentEvent() {
         this("UTF-8","1.0",true,null);
     }
-
+    
     public StartDocumentEvent(String encoding){
         this(encoding,"1.0",true,null);
     }
-
+    
     public StartDocumentEvent(String encoding, String version){
         this(encoding,version,true,null);
     }
-
+    
     public StartDocumentEvent(String encoding, String version, boolean standalone){
         this(encoding,version,standalone,null);
     }
-
+    
     public StartDocumentEvent(String encoding, String version, boolean standalone,Location loc){
         init();
         this.fEncodingScheam = encoding;
@@ -76,32 +76,32 @@ implements StartDocument {
     protected void init() {
         setEventType(XMLStreamConstants.START_DOCUMENT);
     }
-
+    
     public String getSystemId() {
         if(fLocation == null )
             return "";
         else
             return fLocation.getSystemId();
     }
-
-
+    
+    
     public String getCharacterEncodingScheme() {
         return fEncodingScheam;
     }
-
+    
     public boolean isStandalone() {
         return fStandalone;
     }
-
+    
     public String getVersion() {
         return fVersion;
     }
-
+    
     public void setStandalone(boolean flag) {
         fStandaloneSet = true;
         fStandalone = flag;
     }
-
+    
     public void setStandalone(String s) {
         fStandaloneSet = true;
         if(s == null) {
@@ -113,27 +113,27 @@ implements StartDocument {
         else
             fStandalone = false;
     }
-
+    
     public boolean encodingSet() {
         return fEncodingSchemeSet;
     }
-
+    
     public boolean standaloneSet() {
         return fStandaloneSet;
     }
-
+    
     public void setEncoding(String encoding) {
         fEncodingScheam = encoding;
     }
-
+    
     void setDeclaredEncoding(boolean value){
         fEncodingSchemeSet = value;
     }
-
+    
     public void setVersion(String s) {
         fVersion = s;
     }
-
+    
     void clear() {
         fEncodingScheam = "UTF-8";
         fStandalone = true;
@@ -141,7 +141,7 @@ implements StartDocument {
         fEncodingSchemeSet = false;
         fStandaloneSet = false;
     }
-
+    
     public String toString() {
         String s = "<?xml version=\"" + fVersion + "\"";
         s = s + " encoding='" + fEncodingScheam + "'";
@@ -155,8 +155,14 @@ implements StartDocument {
         }
         return s;
     }
-
+    
     public boolean isStartDocument() {
         return true;
+    }
+    
+    protected void writeAsEncodedUnicodeEx(java.io.Writer writer) 
+    throws java.io.IOException
+    {
+        writer.write(toString());
     }
 }

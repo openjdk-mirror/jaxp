@@ -27,6 +27,9 @@ import com.sun.org.apache.xerces.internal.xni.XNIException;
 import com.sun.org.apache.xerces.internal.xni.parser.XMLInputSource;
 import com.sun.org.apache.xerces.internal.xni.parser.XMLParserConfiguration;
 
+import org.xml.sax.SAXNotSupportedException;
+import org.xml.sax.SAXNotRecognizedException;
+
 /**
  * Base class of all XML-related parsers.
  * <p>
@@ -44,6 +47,7 @@ import com.sun.org.apache.xerces.internal.xni.parser.XMLParserConfiguration;
  * @author Arnaud  Le Hors, IBM
  * @author Andy Clark, IBM
  *
+ * @version $Id: XMLParser.java,v 1.5 2007/07/20 14:11:21 spericas Exp $
  */
 public abstract class XMLParser {
 
@@ -54,11 +58,11 @@ public abstract class XMLParser {
     // properties
 
     /** Property identifier: entity resolver. */
-    protected static final String ENTITY_RESOLVER =
+    protected static final String ENTITY_RESOLVER = 
         Constants.XERCES_PROPERTY_PREFIX + Constants.ENTITY_RESOLVER_PROPERTY;
 
     /** Property identifier: error handler. */
-    protected static final String ERROR_HANDLER =
+    protected static final String ERROR_HANDLER = 
         Constants.XERCES_PROPERTY_PREFIX + Constants.ERROR_HANDLER_PROPERTY;
 
     /** Recognized properties. */
@@ -78,6 +82,15 @@ public abstract class XMLParser {
     // Constructors
     //
 
+    /**
+     * Query the state of a feature.
+     */
+    public boolean getFeature(String featureId) 
+            throws SAXNotSupportedException, SAXNotRecognizedException {
+        return fConfiguration.getFeature(featureId);
+
+    }
+    
     /**
      * Default Constructor.
      */
@@ -103,13 +116,13 @@ public abstract class XMLParser {
      * @exception XNIException
      * @exception java.io.IOException
      */
-    public void parse(XMLInputSource inputSource)
+    public void parse(XMLInputSource inputSource) 
         throws XNIException, IOException {
 
         reset();
         fConfiguration.parse(inputSource);
 
-    } // parse(XMLInputSource)
+    } // parse(XMLInputSource) 
 
     //
     // Protected methods

@@ -90,7 +90,7 @@ public class ErrorMessages_sk extends ListResourceBundle {
  */
 
     // These message should be read from a locale-specific resource bundle
-    /** Get the lookup table for error messages.
+    /** Get the lookup table for error messages.   
      *
      * @return The message lookup table.
      */
@@ -847,7 +847,10 @@ public class ErrorMessages_sk extends ListResourceBundle {
          * stylesheet (see above).
          */
         {ErrorMsg.RUNTIME_ERROR_KEY,
-        "Chyby transletu:"}
+        "Chyby transletu:"},
+
+        {ErrorMsg.JAXP_SECUREPROCESSING_FEATURE,
+        "FEATURE_SECURE_PROCESSING: Cannot set the feature to false when security manager is present."}
     };
     }
 }

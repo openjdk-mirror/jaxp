@@ -44,56 +44,50 @@ import com.sun.xml.internal.stream.util.ReadOnlyIterator;
 
 public class EndElementEvent extends DummyEvent
 implements EndElement {
-
+    
     List fNamespaces = null;
     QName fQName ;
-
+    
     public EndElementEvent() {
         init();
     }
-
+    
     protected void init() {
         setEventType(XMLEvent.END_ELEMENT);
         fNamespaces = new ArrayList();
     }
-
-
+    
+    
     public EndElementEvent(String prefix,  String uri, String localpart) {
         this(new QName(uri,localpart,prefix));
     }
-
+    
     public EndElementEvent(QName qname) {
         this.fQName = qname;
         init();
     }
-
+    
     public QName getName() {
         return fQName;
     }
-
+    
     public void setName(QName qname) {
         this.fQName = qname;
     }
-
-
-    /** This method will write the XMLEvent as per the XML 1.0 specification as Unicode characters.
-     * No indentation or whitespace should be outputted.
-     *
-     * Any user defined event type SHALL have this method
-     * called when being written to on an output stream.
-     * Built in Event types MUST implement this method,
-     * but implementations MAY choose not call these methods
-     * for optimizations reasons when writing out built in
-     * Events to an output stream.
-     * The output generated MUST be equivalent in terms of the
-     * infoset expressed.
-     *
-     * @param writer The writer that will output the data
-     * @throws XMLStreamException if there is a fatal error writing the event
-     */
-    public void writeAsEncodedUnicode(Writer writer) throws javax.xml.stream.XMLStreamException {
-    }
-
+        
+    protected void writeAsEncodedUnicodeEx(java.io.Writer writer) 
+    throws java.io.IOException
+    {
+        writer.write("</");
+        String prefix = fQName.getPrefix();
+        if (prefix != null && prefix.length() > 0) {
+            writer.write(prefix);
+            writer.write(':');
+     }
+        writer.write(fQName.getLocalPart());
+        writer.write('>');
+    }    
+    
     /** Returns an Iterator of namespaces that have gone out
      * of scope.  Returns an empty iterator if no namespaces have gone
      * out of scope.
@@ -105,19 +99,19 @@ implements EndElement {
             fNamespaces.iterator();
         return new ReadOnlyIterator();
     }
-
+    
     void addNamespace(Namespace attr){
         if(attr != null){
             fNamespaces.add(attr);
         }
     }
-
+    
     public String toString() {
         String s = "</" + nameAsString();
         s = s + ">";
         return s;
     }
-
+    
     public String nameAsString() {
         if("".equals(fQName.getNamespaceURI()))
             return fQName.getLocalPart();
@@ -126,5 +120,5 @@ implements EndElement {
         else
             return "['" + fQName.getNamespaceURI() + "']:" + fQName.getLocalPart();
     }
-
+    
 }

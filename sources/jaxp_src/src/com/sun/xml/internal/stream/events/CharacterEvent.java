@@ -27,6 +27,7 @@ package com.sun.xml.internal.stream.events ;
 
 import javax.xml.stream.events.Characters;
 import java.io.Writer;
+import java.io.IOException;
 import javax.xml.stream.events.XMLEvent;
 import com.sun.org.apache.xerces.internal.util.XMLChar;
 
@@ -49,12 +50,12 @@ implements Characters {
     private boolean fIsSpace = false;
     /*used to prevent scanning of  data multiple times */
     private boolean fCheckIfSpaceNeeded = true;
-
+    
     public CharacterEvent() {
         fIsCData = false;
         init();
     }
-
+    
     /**
      *
      * @param data Character Data.
@@ -64,7 +65,7 @@ implements Characters {
         init();
         fData = data;
     }
-
+    
     /**
      *
      * @param data Character Data.
@@ -75,7 +76,7 @@ implements Characters {
         fData = data;
         fIsCData = flag;
     }
-
+    
     /**
      *
      * @param data Character Data.
@@ -88,11 +89,11 @@ implements Characters {
         fIsCData = flag;
         fIsIgnorableWhitespace = isIgnorableWhiteSpace ;
     }
-
+    
     protected void init() {
         setEventType(XMLEvent.CHARACTERS);
     }
-
+    
     /**
      *
      * @return return data.
@@ -100,7 +101,7 @@ implements Characters {
     public String getData() {
         return fData;
     }
-
+    
     /**
      *
      * @param String data
@@ -109,7 +110,7 @@ implements Characters {
         fData = data;
         fCheckIfSpaceNeeded = true;
     }
-
+    
     /**
      *
      * @return boolean returns true if the data is CData
@@ -117,7 +118,7 @@ implements Characters {
     public boolean isCData() {
         return fIsCData;
     }
-
+    
     /**
      *
      * @return String return the String representation of this event.
@@ -128,7 +129,7 @@ implements Characters {
         else
             return fData;
     }
-
+    
     /** This method will write the XMLEvent as per the XML 1.0 specification as Unicode characters.
      * No indentation or whitespace should be outputted.
      *
@@ -144,9 +145,15 @@ implements Characters {
      * @param writer The writer that will output the data
      * @throws XMLStreamException if there is a fatal error writing the event
      */
-    public void writeAsEncodedUnicode(Writer writer) throws javax.xml.stream.XMLStreamException {
-    }
-
+    protected void writeAsEncodedUnicodeEx(Writer writer) throws IOException
+    {
+        if (fIsCData) {
+            writer.write("<![CDATA[" + getData() + "]]>");
+        } else {
+            charEncode(writer, fData);         
+        }
+     }
+    
     /**
      * Return true if this is ignorableWhiteSpace.  If
      * this event is ignorableWhiteSpace its event type will
@@ -156,7 +163,7 @@ implements Characters {
     public boolean isIgnorableWhiteSpace() {
         return fIsIgnorableWhitespace;
     }
-
+    
     /**
      * Returns true if this set of Characters
      * is all whitespace.  Whitspace inside a document
@@ -173,7 +180,7 @@ implements Characters {
         }
         return fIsSpace;
     }
-
+    
     private void checkWhiteSpace(){
         //for now - remove dependancy of XMLChar
         if(fData != null && fData.length() >0 ){

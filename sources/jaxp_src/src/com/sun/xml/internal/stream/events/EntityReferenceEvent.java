@@ -38,53 +38,43 @@ public class EntityReferenceEvent extends DummyEvent
 implements EntityReference {
     private EntityDeclaration fEntityDeclaration ;
     private String fEntityName;
-
+    
     public EntityReferenceEvent() {
         init();
     }
-
+    
     public EntityReferenceEvent(String entityName , EntityDeclaration entityDeclaration) {
         init();
         fEntityName = entityName;
         fEntityDeclaration = entityDeclaration ;
     }
-
+    
     public String getName() {
         return fEntityName;
     }
-
+    
     public String toString() {
         String text = fEntityDeclaration.getReplacementText();
         if(text == null)
             text = "";
         return "&" + getName() + ";='" + text + "'";
     }
-
-    /** This method will write the XMLEvent as per the XML 1.0 specification as Unicode characters.
-     * No indentation or whitespace should be outputted.
-     *
-     * Any user defined event type SHALL have this method
-     * called when being written to on an output stream.
-     * Built in Event types MUST implement this method,
-     * but implementations MAY choose not call these methods
-     * for optimizations reasons when writing out built in
-     * Events to an output stream.
-     * The output generated MUST be equivalent in terms of the
-     * infoset expressed.
-     *
-     * @param writer The writer that will output the data
-     * @throws XMLStreamException if there is a fatal error writing the event
-     */
-    public void writeAsEncodedUnicode(Writer writer) throws javax.xml.stream.XMLStreamException {
-    }
-
+    
+    protected void writeAsEncodedUnicodeEx(java.io.Writer writer) 
+    throws java.io.IOException
+    {
+        writer.write('&');
+        writer.write(getName());
+        writer.write(';');
+    }    
+    
     public EntityDeclaration getDeclaration(){
         return fEntityDeclaration ;
     }
-
+    
     protected void init() {
         setEventType(XMLEvent.ENTITY_REFERENCE);
     }
-
-
+    
+    
 }

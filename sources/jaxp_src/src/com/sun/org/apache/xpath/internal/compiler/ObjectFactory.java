@@ -47,6 +47,7 @@ import java.io.InputStreamReader;
  * class and modified to be used as a general utility for creating objects
  * dynamically.
  *
+ * @version $Id: ObjectFactory.java,v 1.6 2008/04/02 00:41:02 joehw Exp $
  */
 class ObjectFactory {
 
@@ -142,7 +143,7 @@ class ObjectFactory {
 
         try{
             Object instance = factoryClass.newInstance();
-            debugPrintln("created new instance of factory " + factoryId);
+            if (DEBUG) debugPrintln("created new instance of factory " + factoryId);
             return instance;
         } catch (Exception x) {
             throw new ConfigurationError(
@@ -220,7 +221,7 @@ class ObjectFactory {
             Class providerClass = findProviderClass(factoryClassName,
                                                     cl,
                                                     true);
-            debugPrintln("created new instance of " + providerClass +
+            if (DEBUG) debugPrintln("created new instance of " + providerClass +
                    " using ClassLoader: " + cl);
             return providerClass;
         } catch (ClassNotFoundException x) {
@@ -265,7 +266,7 @@ class ObjectFactory {
         try {
             String systemProp = ss.getSystemProperty(factoryId);
             if (systemProp != null) {
-                debugPrintln("found system property, value=" + systemProp);
+                if (DEBUG) debugPrintln("found system property, value=" + systemProp);
                 return systemProp;
             }
         } catch (SecurityException se) {
@@ -323,13 +324,13 @@ class ObjectFactory {
                         fXalanProperties.load(fis);
                         fis.close();
                     }
-                    } catch (Exception x) {
-                        fXalanProperties = null;
-                        fLastModified = -1;
+	            } catch (Exception x) {
+	                fXalanProperties = null;
+	                fLastModified = -1;
                         // assert(x instanceof FileNotFoundException
-                        //        || x instanceof SecurityException)
-                        // In both cases, ignore and continue w/ next location
-                    }
+	                //        || x instanceof SecurityException)
+	                // In both cases, ignore and continue w/ next location
+	            }
             }
             if(fXalanProperties != null) {
                 factoryClassName = fXalanProperties.getProperty(factoryId);
@@ -349,7 +350,7 @@ class ObjectFactory {
             }
         }
         if (factoryClassName != null) {
-            debugPrintln("found in " + propertiesFilename + ", value="
+            if (DEBUG) debugPrintln("found in " + propertiesFilename + ", value="
                           + factoryClassName);
             return factoryClassName;
         }
@@ -440,7 +441,7 @@ class ObjectFactory {
         try{
             Class providerClass = findProviderClass(className, cl, doFallback);
             Object instance = providerClass.newInstance();
-            debugPrintln("created new instance of " + providerClass +
+            if (DEBUG) debugPrintln("created new instance of " + providerClass +
                    " using ClassLoader: " + cl);
             return instance;
         } catch (ClassNotFoundException x) {
@@ -537,7 +538,7 @@ class ObjectFactory {
             return null;
         }
 
-        debugPrintln("found jar resource=" + serviceId +
+        if (DEBUG) debugPrintln("found jar resource=" + serviceId +
                " using ClassLoader: " + cl);
 
         // Read the service provider name in UTF-8 as specified in
@@ -576,7 +577,7 @@ class ObjectFactory {
 
         if (factoryClassName != null &&
             ! "".equals(factoryClassName)) {
-            debugPrintln("found in resource, value="
+            if (DEBUG) debugPrintln("found in resource, value="
                    + factoryClassName);
 
             // Note: here we do not want to fall back to the current

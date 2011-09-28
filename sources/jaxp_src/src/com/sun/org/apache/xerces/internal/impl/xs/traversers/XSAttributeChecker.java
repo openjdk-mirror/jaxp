@@ -65,6 +65,7 @@ import org.w3c.dom.Element;
  * @xerces.internal
  *
  * @author Sandy Gao, IBM
+ * @version $Id: XSAttributeChecker.java,v 1.9 2007/07/29 20:47:06 joehw Exp $
  */
 
 public class XSAttributeChecker {
@@ -1082,7 +1083,7 @@ public class XSAttributeChecker {
             String attrName = sattr.getName();
             String attrURI = DOMUtil.getNamespaceURI(sattr);
             String attrVal = DOMUtil.getValue(sattr);
-
+            
             if (attrName.startsWith("xml")) {
                 String attrPrefix = DOMUtil.getPrefix(sattr);
                 // we don't want to add namespace declarations to the non-schema attributes
@@ -1213,7 +1214,7 @@ public class XSAttributeChecker {
             int min = ((XInt)attrValues[ATTIDX_MINOCCURS]).intValue();
             int max = ((XInt)attrValues[ATTIDX_MAXOCCURS]).intValue();
             if (max != SchemaSymbols.OCCURRENCE_UNBOUNDED) {
-
+                
                 // maxOccurLimit is only check in secure mode
                 if (fSchemaHandler.fSecureProcessing != null) {
                     String localName = element.getLocalName();
@@ -1223,10 +1224,10 @@ public class XSAttributeChecker {
                     // particle. These are now validated using a constant
                     // space algorithm. The restriction still applies to all
                     // other cases.
-
+                
                     // Determine if constant-space algorithm can be applied
-                    final boolean optimize =
-                            (localName.equals("element") || localName.equals("any")) &&
+                    final boolean optimize = 
+                            (localName.equals("element") || localName.equals("any")) && 
                             (element.getNextSibling() == null) &&
                             (element.getPreviousSibling() == null) &&
                             (element.getParentNode().getLocalName().equals("sequence"));
@@ -1237,15 +1238,15 @@ public class XSAttributeChecker {
                     int maxOccurNodeLimit = fSchemaHandler.fSecureProcessing.getMaxOccurNodeLimit();
                     if (max > maxOccurNodeLimit) {
                         reportSchemaFatalError("maxOccurLimit", new Object[] {new Integer(maxOccurNodeLimit)}, element);
-
+                    
                         // reset max values in case processing continues on error
                         attrValues[ATTIDX_MAXOCCURS] = fXIntPool.getXInt(maxOccurNodeLimit);
-                                                //new Integer(maxOccurNodeLimit);
+						//new Integer(maxOccurNodeLimit);
                         max = maxOccurNodeLimit;
-                    }
+                    } 
                 }
                 }
-
+                
                 if (min > max) {
                     reportSchemaError ("p-props-correct.2.1",
                                        new Object[] {elName, attrValues[ATTIDX_MINOCCURS], attrValues[ATTIDX_MAXOCCURS]},
@@ -1266,7 +1267,7 @@ public class XSAttributeChecker {
         // To validate these types, we don't actually need to normalize the
         // strings. We only need to remove the whitespace from both ends.
         // In some special cases (list types), StringTokenizer can correctly
-        // process the un-normalized whitespace.
+        // process the un-normalized whitespace.        
         /**
          * REVISIT: Trim removes all leading and trailing characters less
          * than or equal to U+0020. This is okay for XML 1.0 since all
@@ -1314,12 +1315,11 @@ public class XSAttributeChecker {
                 throw new InvalidDatatypeValueException("cvc-datatype-valid.1.2.1", new Object[]{value, "positiveInteger"});
             break;
         case DT_BLOCK:
-            // block = (#all | List of (substitution | extension | restriction | list | union))
+            // block = (#all | List of (substitution | extension | restriction))
             choice = 0;
             if (value.equals (SchemaSymbols.ATTVAL_POUNDALL)) {
                 choice = XSConstants.DERIVATION_SUBSTITUTION|XSConstants.DERIVATION_EXTENSION|
-                         XSConstants.DERIVATION_RESTRICTION|XSConstants.DERIVATION_LIST|
-                         XSConstants.DERIVATION_UNION;
+                         XSConstants.DERIVATION_RESTRICTION;
             }
             else {
                 // use the default \t\r\n\f delimiters
@@ -1621,7 +1621,7 @@ public class XSAttributeChecker {
     void reportSchemaFatalError (String key, Object[] args, Element ele) {
         fSchemaHandler.reportSchemaFatalError(key, args, ele);
     }
-
+    
     void reportSchemaError (String key, Object[] args, Element ele) {
         fSchemaHandler.reportSchemaError(key, args, ele);
     }

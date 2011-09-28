@@ -31,11 +31,12 @@ import com.sun.org.apache.xerces.internal.impl.xs.XSParticleDecl;
 /**
  * This class constructs content models for a given grammar.
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Elena Litani, IBM
  * @author Sandy Gao, IBM
  *
+ * @version $Id: CMBuilder.java,v 1.9 2009/08/10 16:52:55 spericas Exp $
  */
 public class CMBuilder {
 
@@ -177,8 +178,11 @@ public class CMBuilder {
             boolean twoChildren = false;
             for (int i = 0; i < group.fParticleCount; i++) {
                 // first convert each child to a CM tree
-                temp = buildSyntaxTree(group.fParticles[i],
-                        optimize && (group.fParticleCount == 1));
+                temp = buildSyntaxTree(group.fParticles[i], 
+                        optimize &&
+                        minOccurs == 1 && maxOccurs == 1 &&
+                        (group.fCompositor == XSModelGroupImpl.MODELGROUP_SEQUENCE ||
+                         group.fParticleCount == 1));
                 // then combine them using binary operation
                 if (temp != null) {
                     if (nodeRet == null) {
@@ -231,13 +235,13 @@ public class CMBuilder {
             //one or more
             nodeRet = fNodeFactory.getCMUniOpNode(XSParticleDecl.PARTICLE_ONE_OR_MORE, node);
         }
-        else if (optimize && node.type() == XSParticleDecl.PARTICLE_ELEMENT ||
+        else if (optimize && node.type() == XSParticleDecl.PARTICLE_ELEMENT ||        
                  node.type() == XSParticleDecl.PARTICLE_WILDCARD) {
             // Only for elements and wildcards, subsume e{n,m} and e{n,unbounded} to e*
-            // or e+ and, once the DFA reaches a final state, check if the actual number
-            // of elements is between minOccurs and maxOccurs. This new algorithm runs
+            // or e+ and, once the DFA reaches a final state, check if the actual number 
+            // of elements is between minOccurs and maxOccurs. This new algorithm runs 
             // in constant space.
-
+            
             // TODO: What is the impact of this optimization on the PSVI?
             nodeRet = fNodeFactory.getCMUniOpNode(
                     minOccurs == 0 ? XSParticleDecl.PARTICLE_ZERO_OR_MORE

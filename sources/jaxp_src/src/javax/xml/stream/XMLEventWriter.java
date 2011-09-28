@@ -23,7 +23,7 @@
  */
 
 /*
- * Copyright (c) 2003 by BEA Systems, Inc. All Rights Reserved.
+ * Copyright (c) 2009 by Oracle Corporation. All Rights Reserved.
  */
 
 package javax.xml.stream;
@@ -39,7 +39,8 @@ import javax.xml.namespace.NamespaceContext;
  * Instances of this interface are not required to validate the
  * form of the XML.
  *
- * @author Copyright (c) 2003 by BEA Systems. All Rights Reserved.
+ * @version 1.0
+ * @author Copyright (c) 2009 by Oracle Corporation. All Rights Reserved.
  * @see XMLEventReader
  * @see javax.xml.stream.events.XMLEvent
  * @see javax.xml.stream.events.Characters

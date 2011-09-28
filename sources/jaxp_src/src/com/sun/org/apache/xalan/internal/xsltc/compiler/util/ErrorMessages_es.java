@@ -90,7 +90,7 @@ public class ErrorMessages_es extends ListResourceBundle {
  */
 
     // These message should be read from a locale-specific resource bundle
-    /** Get the lookup table for error messages.
+    /** Get the lookup table for error messages.   
      *
      * @return The message lookup table.
      */
@@ -847,7 +847,10 @@ public class ErrorMessages_es extends ListResourceBundle {
          * stylesheet (see above).
          */
         {ErrorMsg.RUNTIME_ERROR_KEY,
-        "Errores de translet:"}
+        "Errores de translet:"},
+		
+		{ErrorMsg.JAXP_SECUREPROCESSING_FEATURE,
+        "FEATURE_SECURE_PROCESSING: No se puede cambiar la funci\u00f3n a falso cuando el administrador de seguridad est\u00e1 presente."}
     };
     }
 }

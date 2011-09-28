@@ -88,96 +88,97 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * <redefined> information items).  If any of the schemas imports a
  * schema, other grammars may be constructed as a side-effect.
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Neil Graham, IBM
  * @author Pavani Mukthipudi, Sun Microsystems
- *
+ * 
+ * @version $Id: XSDHandler.java,v 1.5 2007/07/29 20:47:06 joehw Exp $
  */
 public class XSDHandler {
-
+    
     /** Feature identifier: validation. */
     protected static final String VALIDATION =
         Constants.SAX_FEATURE_PREFIX + Constants.VALIDATION_FEATURE;
-
+    
     /** feature identifier: XML Schema validation */
     protected static final String XMLSCHEMA_VALIDATION =
         Constants.XERCES_FEATURE_PREFIX + Constants.SCHEMA_VALIDATION_FEATURE;
-
+    
     /** Feature identifier:  allow java encodings */
     protected static final String ALLOW_JAVA_ENCODINGS =
         Constants.XERCES_FEATURE_PREFIX + Constants.ALLOW_JAVA_ENCODINGS_FEATURE;
-
+    
     /** Feature identifier:  continue after fatal error */
     protected static final String CONTINUE_AFTER_FATAL_ERROR =
         Constants.XERCES_FEATURE_PREFIX + Constants.CONTINUE_AFTER_FATAL_ERROR_FEATURE;
-
+    
     /** Feature identifier:  allow java encodings */
     protected static final String STANDARD_URI_CONFORMANT_FEATURE =
         Constants.XERCES_FEATURE_PREFIX + Constants.STANDARD_URI_CONFORMANT_FEATURE;
-
+    
     /** Feature: disallow doctype*/
     protected static final String DISALLOW_DOCTYPE =
         Constants.XERCES_FEATURE_PREFIX + Constants.DISALLOW_DOCTYPE_DECL_FEATURE;
-
+    
     /** Feature: generate synthetic annotations */
-    protected static final String GENERATE_SYNTHETIC_ANNOTATIONS =
+    protected static final String GENERATE_SYNTHETIC_ANNOTATIONS = 
         Constants.XERCES_FEATURE_PREFIX + Constants.GENERATE_SYNTHETIC_ANNOTATIONS_FEATURE;
-
+    
     /** Feature identifier: validate annotations. */
     protected static final String VALIDATE_ANNOTATIONS =
         Constants.XERCES_FEATURE_PREFIX + Constants.VALIDATE_ANNOTATIONS_FEATURE;
-
+    
     /** Feature identifier: honour all schemaLocations */
-    protected static final String HONOUR_ALL_SCHEMALOCATIONS =
+    protected static final String HONOUR_ALL_SCHEMALOCATIONS = 
       Constants.XERCES_FEATURE_PREFIX + Constants.HONOUR_ALL_SCHEMALOCATIONS_FEATURE;
-
+    
     /** Feature identifier: namespace prefixes. */
     private static final String NAMESPACE_PREFIXES =
         Constants.SAX_FEATURE_PREFIX + Constants.NAMESPACE_PREFIXES_FEATURE;
-
+    
     /** Feature identifier: string interning. */
     protected static final String STRING_INTERNING =
         Constants.SAX_FEATURE_PREFIX + Constants.STRING_INTERNING_FEATURE;
-
+   
     /** Property identifier: error handler. */
     protected static final String ERROR_HANDLER =
         Constants.XERCES_PROPERTY_PREFIX + Constants.ERROR_HANDLER_PROPERTY;
-
+    
     /** Property identifier: JAXP schema source. */
     protected static final String JAXP_SCHEMA_SOURCE =
         Constants.JAXP_PROPERTY_PREFIX + Constants.SCHEMA_SOURCE;
-
+    
     /** Property identifier: entity resolver. */
     public static final String ENTITY_RESOLVER =
         Constants.XERCES_PROPERTY_PREFIX + Constants.ENTITY_RESOLVER_PROPERTY;
     /** Property identifier: entity manager. */
     protected static final String ENTITY_MANAGER =
         Constants.XERCES_PROPERTY_PREFIX + Constants.ENTITY_MANAGER_PROPERTY;
-
+    
     /** Property identifier: error reporter. */
     public static final String ERROR_REPORTER =
         Constants.XERCES_PROPERTY_PREFIX + Constants.ERROR_REPORTER_PROPERTY;
-
+    
     /** Property identifier: grammar pool. */
     public static final String XMLGRAMMAR_POOL =
         Constants.XERCES_PROPERTY_PREFIX + Constants.XMLGRAMMAR_POOL_PROPERTY;
-
+    
     /** Property identifier: symbol table. */
     public static final String SYMBOL_TABLE =
         Constants.XERCES_PROPERTY_PREFIX + Constants.SYMBOL_TABLE_PROPERTY;
-
+    
     /** Property identifier: security manager. */
     protected static final String SECURITY_MANAGER =
         Constants.XERCES_PROPERTY_PREFIX + Constants.SECURITY_MANAGER_PROPERTY;
-
+    
     private static final String SECURE_PROCESSING =
         Constants.XERCES_PROPERTY_PREFIX + Constants.SECURITY_MANAGER_PROPERTY;
-
+   
     protected static final boolean DEBUG_NODE_POOL = false;
-
+    
     // Data
-
+    
     // different sorts of declarations; should make lookup and
     // traverser calling more efficient/less bulky.
     final static int ATTRIBUTE_TYPE          = 1;
@@ -187,26 +188,26 @@ public class XSDHandler {
     final static int IDENTITYCONSTRAINT_TYPE = 5;
     final static int NOTATION_TYPE           = 6;
     final static int TYPEDECL_TYPE           = 7;
-
+    
     // this string gets appended to redefined names; it's purpose is to be
     // as unlikely as possible to cause collisions.
     public final static String REDEF_IDENTIFIER = "_fn3dktizrknc9pi";
-
+    
     //
     //protected data that can be accessable by any traverser
     // stores <notation> decl
     protected Hashtable fNotationRegistry = new Hashtable();
-
+    
     protected XSDeclarationPool fDeclPool = null;
-
+   
     /**
      * <p>Security manager in effect.</p>
-     *
+     * 
      * <p>Protected to allow access by any traverser.</p>
      */
     protected SecurityManager fSecureProcessing = null;
 
-
+    
     // These tables correspond to the symbol spaces defined in the
     // spec.
     // They are keyed with a QName (that is, String("URI,localpart) and
@@ -221,7 +222,7 @@ public class XSDHandler {
     private Hashtable fUnparsedIdentityConstraintRegistry = new Hashtable();
     private Hashtable fUnparsedNotationRegistry = new Hashtable();
     private Hashtable fUnparsedTypeRegistry = new Hashtable();
-    // Compensation for the above hashtables to locate XSDocumentInfo,
+    // Compensation for the above hashtables to locate XSDocumentInfo, 
     // Since we may take Schema Element directly, so can not get the
     // corresponding XSDocumentInfo object just using above hashtables.
     private Hashtable fUnparsedAttributeRegistrySub = new Hashtable();
@@ -231,7 +232,7 @@ public class XSDHandler {
     private Hashtable fUnparsedIdentityConstraintRegistrySub = new Hashtable();
     private Hashtable fUnparsedNotationRegistrySub = new Hashtable();
     private Hashtable fUnparsedTypeRegistrySub = new Hashtable();
-
+    
     // this is keyed with a documentNode (or the schemaRoot nodes
     // contained in the XSDocumentInfo objects) and its value is the
     // XSDocumentInfo object corresponding to that document.
@@ -239,12 +240,12 @@ public class XSDHandler {
     // between the nodes we fetch from calls to the fUnparsed*
     // arrays and the XSDocumentInfos they live in.
     private Hashtable fXSDocumentInfoRegistry = new Hashtable();
-
+    
     // this hashtable is keyed on by XSDocumentInfo objects.  Its values
     // are Vectors containing the XSDocumentInfo objects <include>d,
     // <import>ed or <redefine>d by the key XSDocumentInfo.
     private Hashtable fDependencyMap = new Hashtable();
-
+    
     // this hashtable is keyed on by a target namespace.  Its values
     // are Vectors containing namespaces imported by schema documents
     // with the key target namespace.
@@ -256,11 +257,11 @@ public class XSDHandler {
     private Vector fAllTNSs = new Vector();
     // stores instance document mappings between namespaces and schema hints
     private Hashtable fLocationPairs = null;
-
-    //this hashtable is keyded on by DOM node objects.
+    
+    //this hashtable is keyded on by DOM node objects. 
     //The table stores the hidden nodes
     private Hashtable fHiddenNodes = null;
-
+    
     // convenience methods
     private String null2EmptyString(String ns) {
         return ns == null ? XMLSymbols.EMPTY_STRING : ns;
@@ -279,32 +280,32 @@ public class XSDHandler {
         }
         return documentURI != null ? documentURI : (String) fDoc2SystemId.get(ele);
     }
-
+    
     // This vector stores strings which are combinations of the
     // publicId and systemId of the inputSource corresponding to a
     // schema document.  This combination is used so that the user's
     // EntityResolver can provide a consistent way of identifying a
     // schema document that is included in multiple other schemas.
     private Hashtable fTraversed = new Hashtable();
-
+    
     // this hashtable contains a mapping from Schema Element to its systemId
     // this is useful to resolve a uri relative to the referring document
     private Hashtable fDoc2SystemId = new Hashtable();
-
+    
     // the primary XSDocumentInfo we were called to parse
     private XSDocumentInfo fRoot = null;
-
+    
     // This hashtable's job is to act as a link between the Schema Element and its
     // XSDocumentInfo object.
     private Hashtable fDoc2XSDocumentMap = new Hashtable();
-
+    
     // map between <redefine> elements and the XSDocumentInfo
     // objects that correspond to the documents being redefined.
     private Hashtable fRedefine2XSDMap = new Hashtable();
-
+    
     // map between <redefine> elements and the namespace support
     private Hashtable fRedefine2NSSupport = new Hashtable();
-
+    
     // these objects store a mapping between the names of redefining
     // groups/attributeGroups and the groups/AttributeGroups which
     // they redefine by restriction (implicitly).  It is up to the
@@ -312,36 +313,36 @@ public class XSDHandler {
     // validity.
     private Hashtable fRedefinedRestrictedAttributeGroupRegistry = new Hashtable();
     private Hashtable fRedefinedRestrictedGroupRegistry = new Hashtable();
-
+    
     // a variable storing whether the last schema document
     // processed (by getSchema) was a duplicate.
     private boolean fLastSchemaWasDuplicate;
-
+    
     // validate annotations feature
     private boolean fValidateAnnotations = false;
-
+    
     //handle multiple import feature
     private boolean fHonourAllSchemaLocations = false;
 
     // the XMLErrorReporter
     private XMLErrorReporter fErrorReporter;
     private XMLEntityResolver fEntityResolver;
-
+    
     // the XSAttributeChecker
     private XSAttributeChecker fAttributeChecker;
-
+    
     // the symbol table
     private SymbolTable fSymbolTable;
-
+    
     // the GrammarResolver
     private XSGrammarBucket fGrammarBucket;
-
+    
     // the Grammar description
     private XSDDescription fSchemaGrammarDescription;
-
+    
     // the Grammar Pool
     private XMLGrammarPool fGrammarPool;
-
+    
     //************ Traversers **********
     XSDAttributeGroupTraverser fAttributeGroupTraverser;
     XSDAttributeTraverser fAttributeTraverser;
@@ -353,63 +354,63 @@ public class XSDHandler {
     XSDSimpleTypeTraverser fSimpleTypeTraverser;
     XSDUniqueOrKeyTraverser fUniqueOrKeyTraverser;
     XSDWildcardTraverser fWildCardTraverser;
-
+    
     SchemaDOMParser fSchemaParser;
     SchemaContentHandler fXSContentHandler;
     XML11Configuration fAnnotationValidator;
     XSAnnotationGrammarPool fGrammarBucketAdapter;
-
+    
     // these data members are needed for the deferred traversal
     // of local elements.
-
+    
     // the initial size of the array to store deferred local elements
     private static final int INIT_STACK_SIZE = 30;
     // the incremental size of the array to store deferred local elements
     private static final int INC_STACK_SIZE  = 10;
     // current position of the array (# of deferred local elements)
     private int fLocalElemStackPos = 0;
-
+    
     private XSParticleDecl[] fParticle = new XSParticleDecl[INIT_STACK_SIZE];
     private Element[] fLocalElementDecl = new Element[INIT_STACK_SIZE];
     private XSDocumentInfo[] fLocalElementDecl_schema = new XSDocumentInfo[INIT_STACK_SIZE]; //JACK
     private int[] fAllContext = new int[INIT_STACK_SIZE];
     private XSObject[] fParent = new XSObject[INIT_STACK_SIZE];
     private String [][] fLocalElemNamespaceContext = new String [INIT_STACK_SIZE][1];
-
+    
     // these data members are needed for the deferred traversal
     // of keyrefs.
-
+    
     // the initial size of the array to store deferred keyrefs
     private static final int INIT_KEYREF_STACK = 2;
     // the incremental size of the array to store deferred keyrefs
     private static final int INC_KEYREF_STACK_AMOUNT = 2;
     // current position of the array (# of deferred keyrefs)
     private int fKeyrefStackPos = 0;
-
+    
     private Element [] fKeyrefs = new Element[INIT_KEYREF_STACK];
     private XSDocumentInfo [] fKeyrefsMapXSDocumentInfo = new XSDocumentInfo[INIT_KEYREF_STACK];
     private XSElementDecl [] fKeyrefElems = new XSElementDecl [INIT_KEYREF_STACK];
     private String [][] fKeyrefNamespaceContext = new String[INIT_KEYREF_STACK][1];
-
+    
     // Constructors
     public XSDHandler(){
-        fHiddenNodes = new Hashtable();
+        fHiddenNodes = new Hashtable();       
         fSchemaParser = new SchemaDOMParser(new SchemaParsingConfig());
     }
-
+    
     // it should be possible to use the same XSDHandler to parse
     // multiple schema documents; this will allow one to be
     // constructed.
     public XSDHandler (XSGrammarBucket gBucket) {
         this();
         fGrammarBucket = gBucket;
-
+        
         // Note: don't use SchemaConfiguration internally
         //       we will get stack overflaw because
         //       XMLSchemaValidator will be instantiating XSDHandler...
         fSchemaGrammarDescription = new XSDDescription();
     } // end constructor
-
+       
     /**
      * This method initiates the parse of a schema.  It will likely be
      * called from the Validator and it will make the
@@ -425,7 +426,7 @@ public class XSDHandler {
             Hashtable locationPairs)
     throws IOException {
         fLocationPairs = locationPairs;
-        fSchemaParser.resetNodePool();
+        fSchemaParser.resetNodePool();   
         SchemaGrammar grammar = null;
         String schemaNamespace  = null;
         short referType = desc.getContextType();
@@ -451,11 +452,11 @@ public class XSDHandler {
                 schemaNamespace = fSymbolTable.addSymbol(schemaNamespace);
             }
         }
-
+        
         // before parsing a schema, need to clear registries associated with
         // parsing schemas
-        prepareForParse();
-
+        prepareForParse();       
+        
         Document schemaRootDoc = null;
         Element schemaRoot = null;
         // first phase:  construct trees.
@@ -463,7 +464,7 @@ public class XSDHandler {
             //clean up the field fHiddenNodes, used for DOMInputSource
             fHiddenNodes.clear();
             Node domNode = ((DOMInputSource)is).getNode();
-
+            
             if (domNode instanceof Document) {
                 schemaRootDoc = (Document)domNode;
                 schemaRoot = DOMUtil.getRoot(schemaRootDoc);
@@ -477,7 +478,7 @@ public class XSDHandler {
         } // DOMInputSource
         else if (is instanceof SAXInputSource) {
             XMLReader parser = ((SAXInputSource)is).getXMLReader();
-            InputSource inputSource = ((SAXInputSource)is).getInputSource();
+            InputSource inputSource = ((SAXInputSource)is).getInputSource(); 
             boolean namespacePrefixes = false;
             if (parser != null) {
                 try {
@@ -513,37 +514,37 @@ public class XSDHandler {
             if (fXSContentHandler == null) {
                 fXSContentHandler = new SchemaContentHandler();
             }
-            fXSContentHandler.reset(fSchemaParser, fSymbolTable,
+            fXSContentHandler.reset(fSchemaParser, fSymbolTable, 
                     namespacePrefixes, stringsInternalized);
             parser.setContentHandler(fXSContentHandler);
             parser.setErrorHandler(fErrorReporter.getSAXErrorHandler());
-                try {
-                parser.parse(inputSource);
-                }
-                catch (SAXException se) {
-                        return null;
-                }
-                schemaRootDoc = fXSContentHandler.getDocument();
+        	try {
+            	parser.parse(inputSource);	
+        	}
+        	catch (SAXException se) {
+        		return null;
+        	}
+        	schemaRootDoc = fXSContentHandler.getDocument();
             if (schemaRootDoc == null) {
                 // something went wrong right off the hop
                 return null;
             }
-                schemaRoot = DOMUtil.getRoot(schemaRootDoc);
-        }
+        	schemaRoot = DOMUtil.getRoot(schemaRootDoc);          
+        }            
         else {
-                schemaRoot = getSchemaDocument(schemaNamespace, is,
+        	schemaRoot = getSchemaDocument(schemaNamespace, is,
                   referType == XSDDescription.CONTEXT_PREPARSE,
                   referType, null);
-
+             
         }//is instanceof XMLInputSource
 
         if(schemaRoot == null){
             // something went wrong right off the hop
             return null;
-        }
-
+        }      
+        
         if ( referType == XSDDescription.CONTEXT_PREPARSE) {
-                Element schemaElem = schemaRoot;
+        	Element schemaElem = schemaRoot;
             schemaNamespace = DOMUtil.getAttrValue(schemaElem, SchemaSymbols.ATT_TARGETNAMESPACE);
             if(schemaNamespace != null && schemaNamespace.length() > 0) {
                 // Since now we've discovered a namespace, we need to update xsd key
@@ -561,36 +562,36 @@ public class XSDHandler {
             XSDKey key = new XSDKey(schemaId, referType, schemaNamespace);
             fTraversed.put(key, schemaRoot);
             if (schemaId != null) {
-                fDoc2SystemId.put(schemaRoot, schemaId);
+            	fDoc2SystemId.put(schemaRoot, schemaId);
             }
         }
-
+        
         // before constructing trees and traversing a schema, need to reset
         // all traversers and clear all registries
         prepareForTraverse();
-
+        
         fRoot = constructTrees(schemaRoot, is.getSystemId(), desc);
         if (fRoot == null) {
             return null;
         }
-
+        
         // second phase:  fill global registries.
         buildGlobalNameRegistries();
-
+        
         // third phase:  call traversers
         ArrayList annotationInfo = fValidateAnnotations ? new ArrayList() : null;
         traverseSchemas(annotationInfo);
-
+        
         // fourth phase: handle local element decls
         traverseLocalElements();
-
+        
         // fifth phase:  handle Keyrefs
         resolveKeyRefs();
-
+        
         // sixth phase:  validate attribute of non-schema namespaces
         // REVISIT: skip this for now. we really don't want to do it.
         //fAttributeChecker.checkNonSchemaAttributes(fGrammarBucket);
-
+        
         // seventh phase:  store imported grammars
         // for all grammars with <import>s
         for (int i = fAllTNSs.size() - 1; i >= 0; i--) {
@@ -616,7 +617,7 @@ public class XSDHandler {
             // set the imported grammars
             sg.setImportedGrammars(ins);
         }
-
+        
         /** validate annotations **/
         if (fValidateAnnotations && annotationInfo.size() > 0) {
             validateAnnotations(annotationInfo);
@@ -625,7 +626,7 @@ public class XSDHandler {
         // and return.
         return fGrammarBucket.getGrammar(fRoot.fTargetNamespace);
     } // end parseSchema
-
+    
     private void validateAnnotations(ArrayList annotationInfo) {
         if (fAnnotationValidator == null) {
             createAnnotationValidator();
@@ -646,7 +647,7 @@ public class XSDHandler {
             }
         }
     }
-
+    
     private void createAnnotationValidator() {
         fAnnotationValidator = new XML11Configuration();
         fGrammarBucketAdapter = new XSAnnotationGrammarPool();
@@ -665,7 +666,7 @@ public class XSDHandler {
     SchemaGrammar getGrammar(String tns) {
         return fGrammarBucket.getGrammar(tns);
     }
-
+    
     /**
      * First try to find a grammar in the bucket, if failed, consult the
      * grammar pool. If a grammar is found in the pool, then add it (and all
@@ -690,10 +691,10 @@ public class XSDHandler {
         }
         return sg;
     }
-
+    
     // may wish to have setter methods for ErrorHandler,
     // EntityResolver...
-
+    
     private static final String[][] NS_ERROR_CODES = {
             {"src-include.2.1", "src-include.2.1"},
             {"src-redefine.3.1", "src-redefine.3.1"},
@@ -704,12 +705,12 @@ public class XSDHandler {
             {"TargetNamespace.1", "TargetNamespace.2"},
             {"TargetNamespace.1", "TargetNamespace.2"}
     };
-
+    
     private static final String[] ELE_ERROR_CODES = {
             "src-include.1", "src-redefine.2", "src-import.2", "schema_reference.4",
             "schema_reference.4", "schema_reference.4", "schema_reference.4", "schema_reference.4"
     };
-
+    
     // This method does several things:
     // It constructs an instance of an XSDocumentInfo object using the
     // schemaRoot node.  Then, for each <include>,
@@ -724,7 +725,7 @@ public class XSDHandler {
         if (schemaRoot == null) return null;
         String callerTNS = desc.getTargetNamespace();
         short referType = desc.getContextType();
-
+        
         XSDocumentInfo currSchemaInfo = null;
         try {
             // note that attributes are freed at end of traverseSchemas()
@@ -732,7 +733,7 @@ public class XSDHandler {
         } catch (XMLSchemaException se) {
             reportSchemaError(ELE_ERROR_CODES[referType],
                     new Object[]{locationHint},
-                                          schemaRoot);
+					  schemaRoot);
             return null;
         }
         // targetNamespace="" is not valid, issue a warning, and ignore it
@@ -740,10 +741,10 @@ public class XSDHandler {
                 currSchemaInfo.fTargetNamespace.length() == 0) {
             reportSchemaWarning("EmptyTargetNamespace",
                     new Object[]{locationHint},
-                                        schemaRoot);
+					schemaRoot);
             currSchemaInfo.fTargetNamespace = null;
         }
-
+        
         if (callerTNS != null) {
             // the second index to the NS_ERROR_CODES array
             // if the caller/expected NS is not absent, we use the first column
@@ -762,7 +763,7 @@ public class XSDHandler {
                 else if (callerTNS != currSchemaInfo.fTargetNamespace) {
                     reportSchemaError(NS_ERROR_CODES[referType][secondIdx],
                             new Object [] {callerTNS, currSchemaInfo.fTargetNamespace},
-                                                        schemaRoot);
+							schemaRoot);
                     return null;
                 }
             }
@@ -770,7 +771,7 @@ public class XSDHandler {
             else if (referType != XSDDescription.CONTEXT_PREPARSE && callerTNS != currSchemaInfo.fTargetNamespace) {
                 reportSchemaError(NS_ERROR_CODES[referType][secondIdx],
                         new Object [] {callerTNS, currSchemaInfo.fTargetNamespace},
-                                                schemaRoot);
+						schemaRoot);
                 return null;
             }
         }
@@ -788,18 +789,18 @@ public class XSDHandler {
                 int secondIdx = 1;
                 reportSchemaError(NS_ERROR_CODES[referType][secondIdx],
                         new Object [] {callerTNS, currSchemaInfo.fTargetNamespace},
-                                                schemaRoot);
+						schemaRoot);
                 return null;
             }
         }
         // the other cases (callerTNS == currSchemaInfo.fTargetNamespce == null)
         // are valid
-
+        
         // a schema document can always access it's own target namespace
         currSchemaInfo.addAllowedNS(currSchemaInfo.fTargetNamespace);
-
+        
         SchemaGrammar sg = null;
-
+        
         if (referType == XSDDescription.CONTEXT_INCLUDE ||
                 referType == XSDDescription.CONTEXT_REDEFINE) {
             sg = fGrammarBucket.getGrammar(currSchemaInfo.fTargetNamespace);
@@ -815,15 +816,15 @@ public class XSDHandler {
             sg = new SchemaGrammar(currSchemaInfo.fTargetNamespace, desc.makeClone(), fSymbolTable);
             fGrammarBucket.putGrammar(sg);
         }
-
+        
         // store the document and its location
         // REVISIT: don't expose the DOM tree
         sg.addDocument(null, (String)fDoc2SystemId.get(currSchemaInfo.fSchemaElement));
-
+        
         fDoc2XSDocumentMap.put(schemaRoot, currSchemaInfo);
         Vector dependencies = new Vector();
         Element rootNode = schemaRoot;
-
+        
         Element newSchemaRoot = null;
         for (Element child = DOMUtil.getFirstChildElement(rootNode);
         child != null;
@@ -831,9 +832,9 @@ public class XSDHandler {
             String schemaNamespace=null;
             String schemaHint=null;
             String localName = DOMUtil.getLocalName(child);
-
+            
             short refType = -1;
-
+            
             if (localName.equals(SchemaSymbols.ELT_ANNOTATION))
                 continue;
             else if (localName.equals(SchemaSymbols.ELT_IMPORT)) {
@@ -849,7 +850,7 @@ public class XSDHandler {
                 if (schemaNamespace == currSchemaInfo.fTargetNamespace) {
                     reportSchemaError("src-import.1.1", new Object [] {schemaNamespace}, child);
                 }
-
+                
                 // check contents and process optional annotations
                 Element importChild = DOMUtil.getFirstChildElement(child);
                 if(importChild != null ) {
@@ -872,7 +873,7 @@ public class XSDHandler {
                     }
                 }
                 fAttributeChecker.returnAttrArray(importAttrs, currSchemaInfo);
-
+                
                 // if this namespace has not been imported by this document,
                 //  then import if multiple imports support is enabled.
                 if(currSchemaInfo.isAllowedNS(schemaNamespace)) {
@@ -898,13 +899,13 @@ public class XSDHandler {
                 else if (!ins.contains(schemaNamespace)){
                     ins.addElement(schemaNamespace);
                 }
-
+                
                 fSchemaGrammarDescription.reset();
                 fSchemaGrammarDescription.setContextType(XSDDescription.CONTEXT_IMPORT);
                 fSchemaGrammarDescription.setBaseSystemId(doc2SystemId(schemaRoot));
                 fSchemaGrammarDescription.setLocationHints(new String[]{schemaHint});
                 fSchemaGrammarDescription.setTargetNamespace(schemaNamespace);
-
+                
                 // if a grammar with the same namespace and location exists (or being
                 // built), ignore this one (don't traverse it).
                 if ((!fHonourAllSchemaLocations && findGrammar(fSchemaGrammarDescription) != null) || isExistingGrammar(fSchemaGrammarDescription))
@@ -922,7 +923,7 @@ public class XSDHandler {
                 if (localName.equals(SchemaSymbols.ELT_REDEFINE)) {
                     fRedefine2NSSupport.put(child, new SchemaNamespaceSupport(currSchemaInfo.fNamespaceSupport));
                 }
-
+                
                 // check annotations.  Must do this here to avoid having to
                 // re-parse attributes later
                 if(localName.equals(SchemaSymbols.ELT_INCLUDE)) {
@@ -994,7 +995,7 @@ public class XSDHandler {
                 // schema...
                 break;
             }
-
+            
             // If the schema is duplicate, we needn't call constructTrees() again.
             // To handle mutual <include>s
             XSDocumentInfo newSchemaInfo = null;
@@ -1002,9 +1003,9 @@ public class XSDHandler {
                 newSchemaInfo = newSchemaRoot == null ? null : (XSDocumentInfo)fDoc2XSDocumentMap.get(newSchemaRoot);
             }
             else {
-                newSchemaInfo = constructTrees(newSchemaRoot, schemaHint, fSchemaGrammarDescription);
+               	newSchemaInfo = constructTrees(newSchemaRoot, schemaHint, fSchemaGrammarDescription);
             }
-
+            
             if (localName.equals(SchemaSymbols.ELT_REDEFINE) &&
                     newSchemaInfo != null) {
                 // must record which schema we're redefining so that we can
@@ -1017,11 +1018,11 @@ public class XSDHandler {
                 newSchemaRoot = null;
             }
         }
-
+        
         fDependencyMap.put(currSchemaInfo, dependencies);
         return currSchemaInfo;
     } // end constructTrees
-
+    
     private boolean isExistingGrammar(XSDDescription desc) {
         SchemaGrammar sg = fGrammarBucket.getGrammar(desc.getTargetNamespace());
         if(sg == null) {
@@ -1035,14 +1036,14 @@ public class XSDHandler {
             }
         }
     }
-
+    
     // This method builds registries for all globally-referenceable
     // names.  A registry will be built for each symbol space defined
     // by the spec.  It is also this method's job to rename redefined
     // components, and to record which components redefine others (so
     // that implicit redefinitions of groups and attributeGroups can be handled).
     protected void buildGlobalNameRegistries() {
-
+        
 
         // Starting with fRoot, we examine each child of the schema
         // element.  Skipping all imports and includes, we record the names
@@ -1053,14 +1054,14 @@ public class XSDHandler {
         // it again; then we look to its Dependency map entry.  We keep a
         // stack of schemas that we haven't yet finished processing; this
         // is a depth-first traversal.
-
+            
         Stack schemasToProcess = new Stack();
         schemasToProcess.push(fRoot);
-
-        while (!schemasToProcess.empty()) {
+       
+        while (!schemasToProcess.empty()) {            
             XSDocumentInfo currSchemaDoc =
                 (XSDocumentInfo)schemasToProcess.pop();
-            Element currDoc = currSchemaDoc.fSchemaElement;
+            Element currDoc = currSchemaDoc.fSchemaElement; 
             if(DOMUtil.isHidden(currDoc, fHiddenNodes)){
                 // must have processed this already!
                 continue;
@@ -1165,9 +1166,9 @@ public class XSDHandler {
                     }
                 }
             } // end for
-
+            
             // now we're done with this one!
-                DOMUtil.setHidden(currDoc, fHiddenNodes);
+           	DOMUtil.setHidden(currDoc, fHiddenNodes);
             // now add the schemas this guy depends on
             Vector currSchemaDepends = (Vector)fDependencyMap.get(currSchemaDoc);
             for (int i = 0; i < currSchemaDepends.size(); i++) {
@@ -1176,7 +1177,7 @@ public class XSDHandler {
         } // while
 
     } // end buildGlobalNameRegistries
-
+    
     // Beginning at the first schema processing was requested for
     // (fRoot), this method
     // examines each child (global schema information item) of each
@@ -1200,7 +1201,7 @@ public class XSDHandler {
             XSDocumentInfo currSchemaDoc =
                 (XSDocumentInfo)schemasToProcess.pop();
             Element currDoc = currSchemaDoc.fSchemaElement;
-
+       
             SchemaGrammar currSG = fGrammarBucket.getGrammar(currSchemaDoc.fTargetNamespace);
 
             if(DOMUtil.isHidden(currDoc, fHiddenNodes)) {
@@ -1214,7 +1215,7 @@ public class XSDHandler {
                 DOMUtil.getFirstVisibleChildElement(currRoot, fHiddenNodes);
             globalComp != null;
             globalComp = DOMUtil.getNextVisibleSiblingElement(globalComp, fHiddenNodes)) {
-                DOMUtil.setHidden(globalComp, fHiddenNodes);
+                DOMUtil.setHidden(globalComp, fHiddenNodes); 
                 String componentType = DOMUtil.getLocalName(globalComp);
                 // includes and imports will not show up here!
                 if (DOMUtil.getLocalName(globalComp).equals(SchemaSymbols.ELT_REDEFINE)) {
@@ -1277,14 +1278,14 @@ public class XSDHandler {
                     reportSchemaError("s4s-elt-invalid-content.1", new Object [] {SchemaSymbols.ELT_SCHEMA, DOMUtil.getLocalName(globalComp)}, globalComp);
                 }
             } // end for
-
+            
             if (!sawAnnotation) {
                 String text = DOMUtil.getSyntheticAnnotation(currRoot);
                 if (text != null) {
                     currSG.addAnnotation(fElementTraverser.traverseSyntheticAnnotation(currRoot, text, currSchemaDoc.getSchemaAttrs(), true, currSchemaDoc));
                 }
             }
-
+            
             /** Collect annotation information for validation. **/
             if (annotationInfo != null) {
                 XSAnnotationInfo info = currSchemaDoc.getAnnotations();
@@ -1305,7 +1306,7 @@ public class XSDHandler {
             }
         } // while
     } // end traverseSchemas
-
+    
     // store whether we have reported an error about that no grammar
     // is found for the given namespace uri
     private Vector fReportedTNS = null;
@@ -1320,7 +1321,7 @@ public class XSDHandler {
         fReportedTNS.addElement(uri);
         return true;
     }
-
+    
     private static final String[] COMP_TYPE = {
             null,               // index 0
             "attribute declaration",
@@ -1331,7 +1332,7 @@ public class XSDHandler {
             "notation",
             "type definition",
     };
-
+    
     private static final String[] CIRCULAR_CODES = {
             "Internal-Error",
             "Internal-Error",
@@ -1342,7 +1343,7 @@ public class XSDHandler {
             "Internal-Error",
             "st-props-correct.2",       //or ct-props-correct.3
     };
-
+    
     // since it is forbidden for traversers to talk to each other
     // directly (except wen a traverser encounters a local declaration),
     // this provides a generic means for a traverser to call
@@ -1364,7 +1365,7 @@ public class XSDHandler {
             int declType,
             QName declToTraverse,
             Element elmNode) {
-
+        
         if (DEBUG_NODE_POOL) {
             System.out.println("TRAVERSE_GL: "+declToTraverse.toString());
         }
@@ -1381,7 +1382,7 @@ public class XSDHandler {
                     return retObj;
             }
         }
-
+        
         // now check whether this document can access the requsted namespace
         if (!currSchema.isAllowedNS(declToTraverse.uri)) {
             // cannot get to this schema from the one containing the requesting decl
@@ -1391,7 +1392,7 @@ public class XSDHandler {
             }
             return null;
         }
-
+        
         // check whether there is grammar for the requested namespace
         SchemaGrammar sGrammar = fGrammarBucket.getGrammar(declToTraverse.uri);
         if (sGrammar == null) {
@@ -1399,7 +1400,7 @@ public class XSDHandler {
                 reportSchemaError("src-resolve", new Object[]{declToTraverse.rawname, COMP_TYPE[declType]}, elmNode);
             return null;
         }
-
+        
         // if there is such grammar, check whether the requested component is in the grammar
         Object retObj = null;
         switch (declType) {
@@ -1425,15 +1426,15 @@ public class XSDHandler {
             retObj = sGrammar.getGlobalTypeDecl(declToTraverse.localpart);
             break;
         }
-
+        
         // if the component is parsed, return it
         if (retObj != null)
             return retObj;
-
+        
         XSDocumentInfo schemaWithDecl = null;
         Element decl = null;
         XSDocumentInfo declDoc = null;
-
+        
         // the component is not parsed, try to find a DOM element for it
         String declKey = declToTraverse.uri == null? ","+declToTraverse.localpart:
             declToTraverse.uri+","+declToTraverse.localpart;
@@ -1469,13 +1470,13 @@ public class XSDHandler {
         default:
             reportSchemaError("Internal-Error", new Object [] {"XSDHandler asked to locate component of type " + declType + "; it does not recognize this type!"}, elmNode);
         }
-
+        
         // no DOM element found, so the component can't be located
         if (decl == null) {
             reportSchemaError("src-resolve", new Object[]{declToTraverse.rawname, COMP_TYPE[declType]}, elmNode);
             return null;
         }
-
+        
         // get the schema doc containing the component to be parsed
         // it should always return non-null value, but since null-checking
         // comes for free, let's be safe and check again
@@ -1499,7 +1500,7 @@ public class XSDHandler {
             reportSchemaError(code, new Object [] {declToTraverse.prefix+":"+declToTraverse.localpart}, elmNode);
             return null;
         }
-
+        
         DOMUtil.setHidden(decl, fHiddenNodes);
         SchemaNamespaceSupport nsSupport = null;
         // if the parent is <redefine> use the namespace delcs for it.
@@ -1509,7 +1510,7 @@ public class XSDHandler {
         // back up the current SchemaNamespaceSupport, because we need to provide
         // a fresh one to the traverseGlobal methods.
         schemaWithDecl.backupNSSupport(nsSupport);
-
+        
         // traverse the referenced global component
         switch (declType) {
         case ATTRIBUTE_TYPE :
@@ -1538,14 +1539,14 @@ public class XSDHandler {
             else
                 retObj = fSimpleTypeTraverser.traverseGlobal(decl, schemaWithDecl, sGrammar);
         }
-
+        
         // restore the previous SchemaNamespaceSupport, so that the caller can get
         // proper namespace binding.
         schemaWithDecl.restoreNSSupport();
-
+        
         return retObj;
     } // getGlobalDecl(XSDocumentInfo, int, QName):  Object
-
+    
     // This method determines whether there is a group
     // (attributeGroup) which the given one has redefined by
     // restriction.  If so, it returns it; else it returns null.
@@ -1587,7 +1588,7 @@ public class XSDHandler {
         }
         return retObj;
     } // getGrpOrAttrGrpRedefinedByRestriction(int, QName, XSDocumentInfo):  Object
-
+    
     // Since ID constraints can occur in local elements, unless we
     // wish to completely traverse all our DOM trees looking for ID
     // constraints while we're building our global name registries,
@@ -1605,23 +1606,23 @@ public class XSDHandler {
             SchemaGrammar keyrefGrammar = fGrammarBucket.getGrammar(keyrefSchemaDoc.fTargetNamespace);
             // need to set <keyref> to hidden before traversing it,
             // because it has global scope
-                DOMUtil.setHidden(fKeyrefs[i], fHiddenNodes);
+           	DOMUtil.setHidden(fKeyrefs[i], fHiddenNodes);
             fKeyrefTraverser.traverse(fKeyrefs[i], fKeyrefElems[i], keyrefSchemaDoc, keyrefGrammar);
         }
     } // end resolveKeyRefs
-
+    
     // an accessor method.  Just makes sure callers
     // who want the Identity constraint registry vaguely know what they're about.
     protected Hashtable getIDRegistry() {
         return fUnparsedIdentityConstraintRegistry;
     }
-    // an accessor method.
+    // an accessor method.  
     protected Hashtable getIDRegistry_sub() {
         return fUnparsedIdentityConstraintRegistrySub;
     }
-
-
-
+    
+   
+    
     // This method squirrels away <keyref> declarations--along with the element
     // decls and namespace bindings they might find handy.
     protected void storeKeyRef (Element keyrefToStore, XSDocumentInfo schemaDoc,
@@ -1633,7 +1634,7 @@ public class XSDHandler {
             checkForDuplicateNames(keyrefQName, fUnparsedIdentityConstraintRegistry, fUnparsedIdentityConstraintRegistrySub, keyrefToStore, schemaDoc);
         }
         // now set up all the registries we'll need...
-
+        
         // check array sizes
         if (fKeyrefStackPos == fKeyrefs.length) {
             Element [] elemArray = new Element [fKeyrefStackPos + INC_KEYREF_STACK_AMOUNT];
@@ -1645,20 +1646,20 @@ public class XSDHandler {
             String[][] stringArray = new String [fKeyrefStackPos + INC_KEYREF_STACK_AMOUNT][];
             System.arraycopy(fKeyrefNamespaceContext, 0, stringArray, 0, fKeyrefStackPos);
             fKeyrefNamespaceContext = stringArray;
-
+            
             XSDocumentInfo [] xsDocumentInfo = new XSDocumentInfo [fKeyrefStackPos + INC_KEYREF_STACK_AMOUNT];
             System.arraycopy(fKeyrefsMapXSDocumentInfo, 0, xsDocumentInfo, 0, fKeyrefStackPos);
             fKeyrefsMapXSDocumentInfo = xsDocumentInfo;
-
+            
         }
         fKeyrefs[fKeyrefStackPos] = keyrefToStore;
         fKeyrefElems[fKeyrefStackPos] = currElemDecl;
         fKeyrefNamespaceContext[fKeyrefStackPos] = schemaDoc.fNamespaceSupport.getEffectiveLocalContext();
-
-        fKeyrefsMapXSDocumentInfo[fKeyrefStackPos++] = schemaDoc;
+        
+        fKeyrefsMapXSDocumentInfo[fKeyrefStackPos++] = schemaDoc; 
     } // storeKeyref (Element, XSDocumentInfo, XSElementDecl): void
-
-
+    
+    
     /**
      * resolveSchema method is responsible for resolving location of the schema (using XMLEntityResolver),
      * and if it was succefully resolved getting the schema Document.
@@ -1688,7 +1689,7 @@ public class XSDHandler {
         if (schemaSource instanceof DOMInputSource) {
             fHiddenNodes.clear();
             Node node = ((DOMInputSource)schemaSource).getNode();
-
+ 
             if (node instanceof Document) {
                 return DOMUtil.getRoot((Document) node);
             }
@@ -1701,7 +1702,7 @@ public class XSDHandler {
         } // DOMInputSource
         else if (schemaSource instanceof SAXInputSource) {
             XMLReader parser = ((SAXInputSource)schemaSource).getXMLReader();
-            InputSource inputSource = ((SAXInputSource)schemaSource).getInputSource();
+            InputSource inputSource = ((SAXInputSource)schemaSource).getInputSource(); 
             boolean namespacePrefixes = false;
             if (parser != null) {
                 try {
@@ -1737,12 +1738,12 @@ public class XSDHandler {
             if (fXSContentHandler == null) {
                 fXSContentHandler = new SchemaContentHandler();
             }
-            fXSContentHandler.reset(fSchemaParser, fSymbolTable,
+            fXSContentHandler.reset(fSchemaParser, fSymbolTable, 
                     namespacePrefixes, stringsInternalized);
             parser.setContentHandler(fXSContentHandler);
             parser.setErrorHandler(fErrorReporter.getSAXErrorHandler());
             try {
-                parser.parse(inputSource);
+                parser.parse(inputSource);  
             }
             catch (SAXException se) {
                 return null;
@@ -1755,11 +1756,11 @@ public class XSDHandler {
                 // something went wrong right off the hop
                 return null;
             }
-            return DOMUtil.getRoot(root);
-        }
+            return DOMUtil.getRoot(root);          
+        }       
         return getSchemaDocument(desc.getTargetNamespace(), schemaSource, mustResolve, desc.getContextType(), referElement);
     } // getSchema(String, String, String, boolean, short):  Document
-
+    
     /**
      * getSchemaDocument method uses XMLInputSource to parse a schema document.
      * @param schemaNamespace
@@ -1771,7 +1772,7 @@ public class XSDHandler {
      */
     private Element getSchemaDocument(String schemaNamespace, XMLInputSource schemaSource,
             boolean mustResolve, short referType, Element referElement) {
-
+        
         boolean hasInput = true;
         // contents of this method will depend on the system we adopt for entity resolution--i.e., XMLEntityHandler, EntityHandler, etc.
         Element schemaElement = null;
@@ -1786,7 +1787,7 @@ public class XSDHandler {
                     (schemaSource.getSystemId() != null ||
                             schemaSource.getByteStream() != null ||
                             schemaSource.getCharacterStream() != null)) {
-
+                
                 // When the system id of the input source is used, first try to
                 // expand it, and check whether the same document has been
                 // parsed before. If so, return the document corresponding to
@@ -1801,10 +1802,10 @@ public class XSDHandler {
                         return schemaElement;
                     }
                 }
-
+                
                 fSchemaParser.parse(schemaSource);
                 schemaElement = fSchemaParser.getDocument2() == null ? null: DOMUtil.getRoot(fSchemaParser.getDocument2());
-
+                
                 // now we need to store the mapping information from system id
                 // to the document. also from the document to the system id.
                 if (key != null)
@@ -1820,7 +1821,7 @@ public class XSDHandler {
         }
         catch (IOException ex) {
         }
-
+        
         // either an error occured (exception), or empty input source was
         // returned, we need to report an error or a warning
         if (mustResolve) {
@@ -1840,15 +1841,15 @@ public class XSDHandler {
                     new Object[]{schemaSource.getSystemId()},
                     referElement);
         }
-
+        
         fLastSchemaWasDuplicate = false;
         return null;
     } // getSchema(String, XMLInputSource, boolean, boolean): Document
-
+    
     // initialize all the traversers.
     // this should only need to be called once during the construction
     // of this object; it creates the traversers that will be used to
-
+    
     // construct schemaGrammars.
     private void createTraversers() {
         fAttributeChecker = new XSAttributeChecker(this);
@@ -1863,7 +1864,7 @@ public class XSDHandler {
         fUniqueOrKeyTraverser = new XSDUniqueOrKeyTraverser(this, fAttributeChecker);
         fWildCardTraverser = new XSDWildcardTraverser(this, fAttributeChecker);
     } // createTraversers()
-
+    
     // before parsing a schema, need to clear registries associated with
     // parsing schemas
     void prepareForParse() {
@@ -1872,7 +1873,7 @@ public class XSDHandler {
         fHiddenNodes.clear();
         fLastSchemaWasDuplicate = false;
     }
-
+    
     // before traversing a schema's parse tree, need to reset all traversers and
     // clear all registries
     void prepareForTraverse() {
@@ -1883,7 +1884,7 @@ public class XSDHandler {
         fUnparsedIdentityConstraintRegistry.clear();
         fUnparsedNotationRegistry.clear();
         fUnparsedTypeRegistry.clear();
-
+        
         fUnparsedAttributeRegistrySub.clear();
         fUnparsedAttributeGroupRegistrySub.clear();
         fUnparsedElementRegistrySub.clear();
@@ -1891,7 +1892,7 @@ public class XSDHandler {
         fUnparsedIdentityConstraintRegistrySub.clear();
         fUnparsedNotationRegistrySub.clear();
         fUnparsedTypeRegistrySub.clear();
-
+        
         fXSDocumentInfoRegistry.clear();
         fDependencyMap.clear();
         fDoc2XSDocumentMap.clear();
@@ -1900,7 +1901,7 @@ public class XSDHandler {
         fAllTNSs.removeAllElements();
         fImportMap.clear();
         fRoot = null;
-
+        
         // clear local element stack
         for (int i = 0; i < fLocalElemStackPos; i++) {
             fParticle[i] = null;
@@ -1909,7 +1910,7 @@ public class XSDHandler {
             fLocalElemNamespaceContext[i] = null;
         }
         fLocalElemStackPos = 0;
-
+        
         // and do same for keyrefs.
         for (int i = 0; i < fKeyrefStackPos; i++) {
             fKeyrefs[i] = null;
@@ -1918,12 +1919,12 @@ public class XSDHandler {
             fKeyrefsMapXSDocumentInfo[i] = null;
         }
         fKeyrefStackPos = 0;
-
+        
         // create traversers if necessary
         if (fAttributeChecker == null) {
             createTraversers();
         }
-
+        
         // reset traversers
         fAttributeChecker.reset(fSymbolTable);
         fAttributeGroupTraverser.reset(fSymbolTable, fValidateAnnotations);
@@ -1936,19 +1937,19 @@ public class XSDHandler {
         fSimpleTypeTraverser.reset(fSymbolTable, fValidateAnnotations);
         fUniqueOrKeyTraverser.reset(fSymbolTable, fValidateAnnotations);
         fWildCardTraverser.reset(fSymbolTable, fValidateAnnotations);
-
+        
         fRedefinedRestrictedAttributeGroupRegistry.clear();
         fRedefinedRestrictedGroupRegistry.clear();
     }
     public void setDeclPool (XSDeclarationPool declPool){
         fDeclPool = declPool;
     }
-
+    
     public void reset(XMLComponentManager componentManager) {
-
+        
         // set symbol table
         fSymbolTable = (SymbolTable) componentManager.getProperty(SYMBOL_TABLE);
-
+        
         fSecureProcessing = null;
         if( componentManager!=null ) {
             try {
@@ -1957,13 +1958,13 @@ public class XSDHandler {
                 ;
             }
         }
-
+        
         //set entity resolver
         fEntityResolver = (XMLEntityResolver) componentManager.getProperty(ENTITY_MANAGER);
         XMLEntityResolver er = (XMLEntityResolver)componentManager.getProperty(ENTITY_RESOLVER);
         if (er != null)
             fSchemaParser.setEntityResolver(er);
-
+        
         // set error reporter
         fErrorReporter =
             (XMLErrorReporter) componentManager.getProperty(ERROR_REPORTER);
@@ -1976,17 +1977,17 @@ public class XSDHandler {
                 fSchemaParser.setProperty(ERROR_HANDLER, (currErrorHandler != null) ? currErrorHandler : new DefaultErrorHandler());
                 if (fAnnotationValidator != null) {
                     fAnnotationValidator.setProperty(ERROR_HANDLER, (currErrorHandler != null) ? currErrorHandler : new DefaultErrorHandler());
-                }
+            	}
             }
         } catch (XMLConfigurationException e) {
         }
-
+        
         try {
             fValidateAnnotations = componentManager.getFeature(VALIDATE_ANNOTATIONS);
         } catch (XMLConfigurationException e) {
             fValidateAnnotations = false;
         }
-
+        
         try {
             fHonourAllSchemaLocations = componentManager.getFeature(HONOUR_ALL_SCHEMALOCATIONS);
         } catch (XMLConfigurationException e) {
@@ -1999,7 +2000,7 @@ public class XSDHandler {
                     fErrorReporter.getFeature(CONTINUE_AFTER_FATAL_ERROR));
         } catch (XMLConfigurationException e) {
         }
-
+        
         try {
             fSchemaParser.setFeature(
                     ALLOW_JAVA_ENCODINGS,
@@ -2012,7 +2013,7 @@ public class XSDHandler {
                     componentManager.getFeature(STANDARD_URI_CONFORMANT_FEATURE));
         } catch (XMLConfigurationException e) {
         }
-
+        
         try {
             fGrammarPool =
                 (XMLGrammarPool) componentManager.getProperty(XMLGRAMMAR_POOL);
@@ -2032,17 +2033,17 @@ public class XSDHandler {
             }
         } catch (XMLConfigurationException e) {
         }
-
+        
     } // reset(XMLComponentManager)
-
-
+    
+    
     /**
      * Traverse all the deferred local elements. This method should be called
      * by traverseSchemas after we've done with all the global declarations.
      */
     void traverseLocalElements() {
         fElementTraverser.fDeferTraversingLocalElements = false;
-
+        
         for (int i = 0; i < fLocalElemStackPos; i++) {
             Element currElem = fLocalElementDecl[i];
             //XSDocumentInfo currSchema = (XSDocumentInfo)fDoc2XSDocumentMap.get(DOMUtil.getDocument(currElem));
@@ -2066,7 +2067,7 @@ public class XSDHandler {
             }
         }
     }
-
+    
     private boolean removeParticle(XSModelGroupImpl group, XSParticleDecl particle) {
         XSParticleDecl member;
         for (int i = 0; i < group.fParticleCount; i++) {
@@ -2084,7 +2085,7 @@ public class XSDHandler {
         }
         return false;
     }
-
+    
     // the purpose of this method is to keep up-to-date structures
     // we'll need for the feferred traversal of local elements.
     void fillInLocalElemInfo(Element elmDecl,
@@ -2092,7 +2093,7 @@ public class XSDHandler {
             int allContextFlags,
             XSObject parent,
             XSParticleDecl particle) {
-
+        
         // if the stack is full, increase the size
         if (fParticle.length == fLocalElemStackPos) {
             // increase size
@@ -2115,7 +2116,7 @@ public class XSDHandler {
             System.arraycopy(fLocalElemNamespaceContext, 0, newStackN, 0, fLocalElemStackPos);
             fLocalElemNamespaceContext = newStackN;
         }
-
+        
         fParticle[fLocalElemStackPos] = particle;
         fLocalElementDecl[fLocalElemStackPos] = elmDecl;
         fLocalElementDecl_schema[fLocalElemStackPos] = schemaDoc;
@@ -2123,7 +2124,7 @@ public class XSDHandler {
         fParent[fLocalElemStackPos] = parent;
         fLocalElemNamespaceContext[fLocalElemStackPos++] = schemaDoc.fNamespaceSupport.getEffectiveLocalContext();
     } // end fillInLocalElemInfo(...)
-
+    
     /** This method makes sure that
      * if this component is being redefined that it lives in the
      * right schema.  It then renames the component correctly.  If it
@@ -2133,8 +2134,8 @@ public class XSDHandler {
      * or because we've found the thing we're redefining.
      */
     void checkForDuplicateNames(String qName,
-                Hashtable registry, Hashtable registry_sub, Element currComp,
-                        XSDocumentInfo currSchema) {
+    		Hashtable registry, Hashtable registry_sub, Element currComp,
+			XSDocumentInfo currSchema) {
         Object objElem = null;
         // REVISIT:  when we add derivation checking, we'll have to make
         // sure that ID constraint collisions don't necessarily result in error messages.
@@ -2142,7 +2143,7 @@ public class XSDHandler {
             // just add it in!
             registry.put(qName, currComp);
             registry_sub.put(qName, currSchema);
-
+            
         }
         else {
             Element collidingElem = (Element)objElem;
@@ -2168,7 +2169,7 @@ public class XSDHandler {
                     reportSchemaError("sch-props-correct.2", new Object[]{qName}, currComp);
                     return;
                 }
-
+                
                 String newName = qName.substring(qName.lastIndexOf(',')+1)+REDEF_IDENTIFIER;
                 if (redefinedSchema == currSchema) { // object comp. okay here
                     // now have to do some renaming...
@@ -2183,9 +2184,9 @@ public class XSDHandler {
                     }
                     // and take care of nested redefines by calling recursively:
                     if (currSchema.fTargetNamespace == null)
-                        checkForDuplicateNames(","+newName, registry, registry_sub, currComp, currSchema);
+                    	checkForDuplicateNames(","+newName, registry, registry_sub, currComp, currSchema);
                     else
-                        checkForDuplicateNames(currSchema.fTargetNamespace+","+newName, registry, registry_sub, currComp, currSchema);
+                    	checkForDuplicateNames(currSchema.fTargetNamespace+","+newName, registry, registry_sub, currComp, currSchema);
                 }
                 else { // we may be redefining the wrong schema
                     if (collidedWithRedefine) {
@@ -2206,7 +2207,7 @@ public class XSDHandler {
             }
         }
     } // checkForDuplicateNames(String, Hashtable, Element, XSDocumentInfo):void
-
+    
     // the purpose of this method is to take the component of the
     // specified type and rename references to itself so that they
     // refer to the object being redefined.  It takes special care of
@@ -2359,7 +2360,7 @@ public class XSDHandler {
         // if we get here then we must have reported an error and failed somewhere...
         //        return false;
     } // renameRedefiningComponents(XSDocumentInfo, Element, String, String, String):void
-
+    
     // this method takes a name of the form a:b, determines the URI mapped
     // to by a in the current SchemaNamespaceSupport object, and returns this
     // information in the form (nsURI,b) suitable for lookups in the global
@@ -2385,7 +2386,7 @@ public class XSDHandler {
             return ","+localpart;
         return uri+","+localpart;
     } // findQName(String, XSDocumentInfo):  String
-
+    
     // This function looks among the children of curr for an element of type elementSought.
     // If it finds one, it evaluates whether its ref attribute contains a reference
     // to originalQName.  If it does, it returns 1 + the value returned by
@@ -2429,7 +2430,7 @@ public class XSDHandler {
         }
         return result;
     } // changeRedefineGroup
-
+    
     // this method returns the XSDocumentInfo object that contains the
     // component corresponding to decl.  If components from this
     // document cannot be referred to from those of currSchema, this
@@ -2440,7 +2441,7 @@ public class XSDHandler {
     // this method is superficial now. ---Jack
     private XSDocumentInfo findXSDocumentForDecl(XSDocumentInfo currSchema,
             Element decl, XSDocumentInfo decl_Doc) {
-
+        
         if (DEBUG_NODE_POOL) {
             System.out.println("DOCUMENT NS:"+ currSchema.fTargetNamespace+" hashcode:"+ ((Object)currSchema.fSchemaElement).hashCode());
         }
@@ -2465,7 +2466,7 @@ public class XSDHandler {
             return null;
             **********/
     } // findXSDocumentForDecl(XSDocumentInfo, Element):  XSDocumentInfo
-
+    
     // returns whether more than <annotation>s occur in children of elem
     private boolean nonAnnotationContent(Element elem) {
         for(Element child = DOMUtil.getFirstChildElement(elem); child != null; child = DOMUtil.getNextSiblingElement(child)) {
@@ -2473,11 +2474,11 @@ public class XSDHandler {
         }
         return false;
     } // nonAnnotationContent(Element):  boolean
-
+    
     private void setSchemasVisible(XSDocumentInfo startSchema) {
         if (DOMUtil.isHidden(startSchema.fSchemaElement, fHiddenNodes)) {
             // make it visible
-            DOMUtil.setVisible(startSchema.fSchemaElement, fHiddenNodes);
+            DOMUtil.setVisible(startSchema.fSchemaElement, fHiddenNodes);           
             Vector dependingSchemas = (Vector)fDependencyMap.get(startSchema);
             for (int i = 0; i < dependingSchemas.size(); i++) {
                 setSchemasVisible((XSDocumentInfo)dependingSchemas.elementAt(i));
@@ -2485,9 +2486,9 @@ public class XSDHandler {
         }
         // if it's visible already than so must be its children
     } // setSchemasVisible(XSDocumentInfo): void
-
+    
     private SimpleLocator xl = new SimpleLocator();
-
+    
     /**
      * Extract location information from an Element node, and create a
      * new SimpleLocator object from such information. Returning null means
@@ -2496,11 +2497,11 @@ public class XSDHandler {
     public SimpleLocator element2Locator(Element e) {
         if (!( e instanceof ElementImpl))
             return null;
-
+        
         SimpleLocator l = new SimpleLocator();
         return element2Locator(e, l) ? l : null;
     }
-
+    
     /**
      * Extract location information from an Element node, store such
      * information in the passed-in SimpleLocator object, then return
@@ -2522,7 +2523,7 @@ public class XSDHandler {
         }
         return false;
     }
-
+    
     void reportSchemaFatalError(String key, Object[] args, Element ele) {
         reportSchemaErr(key, args, ele, XMLErrorReporter.SEVERITY_FATAL_ERROR);
     }
@@ -2530,7 +2531,7 @@ public class XSDHandler {
     void reportSchemaError(String key, Object[] args, Element ele) {
         reportSchemaErr(key, args, ele, XMLErrorReporter.SEVERITY_ERROR);
     }
-
+    
     void reportSchemaWarning(String key, Object[] args, Element ele) {
         reportSchemaErr(key, args, ele, XMLErrorReporter.SEVERITY_WARNING);
     }
@@ -2545,7 +2546,7 @@ public class XSDHandler {
                     key, args, type);
         }
     }
-
+    
     /**
      * Grammar pool used for validating annotations. This will return all of the
      * grammars from the grammar bucket. It will also return an object for the
@@ -2553,10 +2554,10 @@ public class XSDHandler {
      * for annotations.
      */
     private static class XSAnnotationGrammarPool implements XMLGrammarPool {
-
+        
         private XSGrammarBucket fGrammarBucket;
         private Grammar [] fInitialGrammarSet;
-
+        
         public Grammar[] retrieveInitialGrammarSet(String grammarType) {
             if (grammarType == XMLGrammarDescription.XML_SCHEMA) {
                 if (fInitialGrammarSet == null) {
@@ -2565,7 +2566,7 @@ public class XSDHandler {
                     }
                     else {
                         SchemaGrammar [] schemaGrammars = fGrammarBucket.getGrammars();
-                        /**
+                        /** 
                          * If the grammar bucket already contains the schema for schemas
                          * then we already have the definitions for the parts relevant
                          * to annotations.
@@ -2588,7 +2589,7 @@ public class XSDHandler {
         }
 
         public void cacheGrammars(String grammarType, Grammar[] grammars) {
-
+            
         }
 
         public Grammar retrieveGrammar(XMLGrammarDescription desc) {
@@ -2606,7 +2607,7 @@ public class XSDHandler {
             }
             return null;
         }
-
+        
         public void refreshGrammars(XSGrammarBucket gBucket) {
             fGrammarBucket = gBucket;
             fInitialGrammarSet = null;
@@ -2662,50 +2663,50 @@ public class XSDHandler {
         // for inclue/redefine, this is the enclosing namespace
         // for import/preparse/instance, this is the target namespace
         String referNS;
-
+        
         XSDKey(String systemId, short referType, String referNS) {
             this.systemId = systemId;
             this.referType = referType;
             this.referNS = referNS;
         }
-
+        
         public int hashCode() {
             // according to the description at the beginning of this class,
             // we use the hashcode of the namespace as the hashcoe of this key.
             return referNS == null ? 0 : referNS.hashCode();
         }
-
+        
         public boolean equals(Object obj) {
             if (!(obj instanceof XSDKey)) {
                 return false;
             }
             XSDKey key = (XSDKey)obj;
-
+            
             // condition 1: both are redefine
             if (referType == XSDDescription.CONTEXT_REDEFINE ||
                     key.referType == XSDDescription.CONTEXT_REDEFINE) {
                 if (referType != key.referType)
                     return false;
             }
-
+            
             // condition 2: same namespace
             if (referNS != key.referNS)
                 return false;
-
+            
             // condition 3: same non-null locatoin
             if (systemId == null || !systemId.equals(key.systemId)) {
                 return false;
             }
-
+            
             return true;
         }
     }
-
+    
     /**
      * @param state
      */
     public void setGenerateSyntheticAnnotations(boolean state) {
         fSchemaParser.setFeature(GENERATE_SYNTHETIC_ANNOTATIONS, state);
     }
-
+    
 } // XSDHandler

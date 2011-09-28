@@ -23,7 +23,7 @@
  */
 
 /*
- * Copyright (c) 2003 by BEA Systems, Inc. All Rights Reserved.
+ * Copyright (c) 2009 by Oracle Corporation. All Rights Reserved.
  */
 
 package javax.xml.stream.util;
@@ -43,7 +43,8 @@ import javax.xml.stream.XMLStreamException;
  * does nothing but call the corresponding method on the
  * parent interface.
  *
- * @author Copyright (c) 2003 by BEA Systems. All Rights Reserved.
+ * @version 1.0
+ * @author Copyright (c) 2009 by Oracle Corporation. All Rights Reserved.
  * @see javax.xml.stream.XMLStreamReader
  * @see EventReaderDelegate
  * @since 1.6

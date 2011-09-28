@@ -48,7 +48,7 @@ import com.sun.org.apache.xml.internal.serializer.utils.WrappedRuntimeException;
  * lookup.
  *
  * DEVELOPERS: See Known Issue in the constructor.
- *
+ * 
  * @xsl.usage internal
  */
 final class CharInfo
@@ -60,14 +60,14 @@ final class CharInfo
      * The name of the HTML entities file.
      * If specified, the file will be resource loaded with the default class loader.
      */
-    public static final String HTML_ENTITIES_RESOURCE =
+    public static final String HTML_ENTITIES_RESOURCE = 
                 "com.sun.org.apache.xml.internal.serializer.HTMLEntities";
 
     /**
      * The name of the XML entities file.
      * If specified, the file will be resource loaded with the default class loader.
      */
-    public static final String XML_ENTITIES_RESOURCE =
+    public static final String XML_ENTITIES_RESOURCE = 
                 "com.sun.org.apache.xml.internal.serializer.XMLEntities";
 
     /** The horizontal tab character, which the parser should always normalize. */
@@ -78,24 +78,24 @@ final class CharInfo
 
     /** The carriage return character, which the parser should always normalize. */
     public static final char S_CARRIAGERETURN = 0x0D;
-
-    /** This flag is an optimization for HTML entities. It false if entities
+    
+    /** This flag is an optimization for HTML entities. It false if entities 
      * other than quot (34), amp (38), lt (60) and gt (62) are defined
      * in the range 0 to 127.
      * @xsl.usage internal
-     */
+     */    
     final boolean onlyQuotAmpLtGt;
-
+    
     /** Copy the first 0,1 ... ASCII_MAX values into an array */
     private static final int ASCII_MAX = 128;
-
-    /** Array of values is faster access than a set of bits
-     * to quickly check ASCII characters in attribute values.
+    
+    /** Array of values is faster access than a set of bits 
+     * to quickly check ASCII characters in attribute values. 
      */
     private boolean[] isSpecialAttrASCII = new boolean[ASCII_MAX];
-
-    /** Array of values is faster access than a set of bits
-     * to quickly check ASCII characters in text nodes.
+    
+    /** Array of values is faster access than a set of bits 
+     * to quickly check ASCII characters in text nodes. 
      */
     private boolean[] isSpecialTextASCII = new boolean[ASCII_MAX];
 
@@ -105,10 +105,10 @@ final class CharInfo
      * Although information in this array is complete, the
      * isSpecialAttrASCII array is used first because access to its values
      * is common and faster.
-     */
+     */   
     private int array_of_bits[] = createEmptySetOfIntegers(65535);
-
-
+     
+    
     // 5 for 32 bit words,  6 for 64 bit words ...
     /*
      * This constant is used to shift an integer to quickly
@@ -116,18 +116,18 @@ final class CharInfo
      * 5 for 32 bit words (int) ,  6 for 64 bit words (long)
      */
     private static final int SHIFT_PER_WORD = 5;
-
+    
     /*
      * A mask to get the low order bits which are used to
      * calculate the value of the bit within a given word,
-     * that will represent the presence of the integer in the
+     * that will represent the presence of the integer in the 
      * set.
-     *
+     * 
      * 0x1F for 32 bit words (int),
-     * or 0x3F for 64 bit words (long)
+     * or 0x3F for 64 bit words (long) 
      */
     private static final int LOW_ORDER_BITMASK = 0x1f;
-
+    
     /*
      * This is used for optimizing the lookup of bits representing
      * the integers in the set. It is the index of the first element
@@ -152,7 +152,7 @@ final class CharInfo
      * quot 34
      * amp 38
      * </pre>
-     *
+     *    
      * @param entitiesResource Name of properties or resource file that should
      * be loaded, which describes that mapping of characters to entity
      * references.
@@ -175,7 +175,7 @@ final class CharInfo
         //      file
         //   3) try treating the resource a URI
 
-        if (internal) {
+        if (internal) { 
             try {
                 // Load entity property files by using PropertyResourceBundle,
                 // cause of security issure for applets
@@ -227,7 +227,7 @@ final class CharInfo
                 }
 
                 // Fix Bugzilla#4000: force reading in UTF-8
-                //  This creates the de facto standard that Xalan's resource
+                //  This creates the de facto standard that Xalan's resource 
                 //  files must be encoded in UTF-8. This should work in all
                 // JVMs.
                 //
@@ -306,7 +306,7 @@ final class CharInfo
                 }
             }
         }
-
+          
         /* initialize the array isCleanTextASCII[] with a cache of values
          * for use by ToStream.character(char[], int , int)
          * and the array isSpecialTextASCII[] with the opposite values
@@ -321,27 +321,27 @@ final class CharInfo
         }
         else {
             isCleanTextASCII[ch] = false;
-            isSpecialTextASCII[ch] = true;
-        }
-
+            isSpecialTextASCII[ch] = true;     
+        }       
+        
 
 
         onlyQuotAmpLtGt = noExtraEntities;
 
         // initialize the array with a cache of the BitSet values
         for (int i=0; i<ASCII_MAX; i++)
-            isSpecialAttrASCII[i] = get(i);
-
+            isSpecialAttrASCII[i] = get(i);   
+            
         /* Now that we've used get(ch) just above to initialize the
-         * two arrays we will change by adding a tab to the set of
+         * two arrays we will change by adding a tab to the set of 
          * special chars for XML (but not HTML!).
          * We do this because a tab is always a
-         * special character in an XML attribute,
-         * but only a special character in XML text
+         * special character in an XML attribute, 
+         * but only a special character in XML text 
          * if it has an entity defined for it.
          * This is the reason for this delay.
          */
-        if (Method.XML.equals(method))
+        if (Method.XML.equals(method)) 
         {
             isSpecialAttrASCII[S_HORIZONAL_TAB] = true;
         }
@@ -364,11 +364,9 @@ final class CharInfo
         sb.append(name);
         sb.append(';');
         String entityString = sb.toString();
-
+        
         defineChar2StringMapping(entityString, value);
     }
-
-    private CharKey m_charKey = new CharKey();
 
     /**
      * Map a character to a String. For example given
@@ -392,20 +390,20 @@ final class CharInfo
      * @return The String that the character is mapped to, or null if not found.
      * @xsl.usage internal
      */
-    synchronized String getOutputStringForChar(char value)
+    String getOutputStringForChar(char value)
     {
-        // CharKey m_charKey = new CharKey(); //Alternative to synchronized
-        m_charKey.setChar(value);
-        return (String) m_charToString.get(m_charKey);
+        CharKey charKey = new CharKey(); 
+        charKey.setChar(value);
+        return (String) m_charToString.get(charKey);
     }
-
+    
     /**
      * Tell if the character argument that is from
      * an attribute value should have special treatment.
-     *
+     * 
      * @param value the value of a character that is in an attribute value
-     * @return true if the character should have any special treatment,
-     * such as when writing out attribute values,
+     * @return true if the character should have any special treatment, 
+     * such as when writing out attribute values, 
      * or entity references.
      * @xsl.usage internal
      */
@@ -420,15 +418,15 @@ final class CharInfo
         // rather than java.util.BitSet, our private
         // implementation is faster (and less general).
         return get(value);
-    }
+    }    
 
     /**
-     * Tell if the character argument that is from a
+     * Tell if the character argument that is from a 
      * text node should have special treatment.
-     *
+     * 
      * @param value the value of a character that is in a text node
-     * @return true if the character should have any special treatment,
-     * such as when writing out attribute values,
+     * @return true if the character should have any special treatment, 
+     * such as when writing out attribute values, 
      * or entity references.
      * @xsl.usage internal
      */
@@ -444,7 +442,7 @@ final class CharInfo
         // implementation is faster (and less general).
         return get(value);
     }
-
+    
     /**
      * This method is used to determine if an ASCII character in
      * a text node (not an attribute value) is "clean".
@@ -456,27 +454,27 @@ final class CharInfo
     {
         return isCleanTextASCII[value];
     }
-
+    
 //  In the future one might want to use the array directly and avoid
 //  the method call, but I think the JIT alreay inlines this well enough
-//  so don't do it (for now) - bjm
+//  so don't do it (for now) - bjm    
 //    public final boolean[] getASCIIClean()
 //    {
 //        return isCleanTextASCII;
 //    }
 
-
+     
     private static CharInfo getCharInfoBasedOnPrivilege(
-        final String entitiesFileName, final String method,
+        final String entitiesFileName, final String method, 
         final boolean internal){
             return (CharInfo) AccessController.doPrivileged(
                 new PrivilegedAction() {
                         public Object run() {
-                            return new CharInfo(entitiesFileName,
+                            return new CharInfo(entitiesFileName, 
                               method, internal);}
-            });
+            });            
     }
-
+     
     /**
      * Factory that reads in a resource file that describes the mapping of
      * characters to entity references.
@@ -493,7 +491,7 @@ final class CharInfo
      * @param entitiesResource Name of entities resource file that should
      * be loaded, which describes that mapping of characters to entity references.
      * @param method the output method type, which should be one of "xml", "html", "text"...
-     *
+     * 
      * @xsl.usage internal
      */
     static CharInfo getCharInfo(String entitiesFileName, String method)
@@ -505,7 +503,7 @@ final class CharInfo
 
         // try to load it internally - cache
         try {
-            charInfo = getCharInfoBasedOnPrivilege(entitiesFileName,
+            charInfo = getCharInfoBasedOnPrivilege(entitiesFileName, 
                                         method, true);
             m_getCharInfoCache.put(entitiesFileName, charInfo);
             return charInfo;
@@ -513,7 +511,7 @@ final class CharInfo
 
         // try to load it externally - do not cache
         try {
-            return getCharInfoBasedOnPrivilege(entitiesFileName,
+            return getCharInfoBasedOnPrivilege(entitiesFileName, 
                                 method, false);
         } catch (Exception e) {}
 
@@ -531,7 +529,7 @@ final class CharInfo
             }
         }
 
-        return getCharInfoBasedOnPrivilege(entitiesFileName,
+        return getCharInfoBasedOnPrivilege(entitiesFileName, 
                                 method, false);
     }
 
@@ -542,7 +540,7 @@ final class CharInfo
      * Returns the array element holding the bit value for the
      * given integer
      * @param i the integer that might be in the set of integers
-     *
+     * 
      */
     private static int arrayIndex(int i) {
         return (i >> SHIFT_PER_WORD);
@@ -563,39 +561,39 @@ final class CharInfo
      * @param max the maximum integer to be in the set.
      */
     private int[] createEmptySetOfIntegers(int max) {
-        firstWordNotUsed = 0; // an optimization
+        firstWordNotUsed = 0; // an optimization 
 
         int[] arr = new int[arrayIndex(max - 1) + 1];
             return arr;
-
+ 
     }
 
     /**
      * Adds the integer (character) to the set of integers.
-     * @param i the integer to add to the set, valid values are
+     * @param i the integer to add to the set, valid values are 
      * 0, 1, 2 ... up to the maximum that was specified at
      * the creation of the set.
      */
-    private final void set(int i) {
+    private final void set(int i) {   
         setASCIIdirty(i);
-
+             
         int j = (i >> SHIFT_PER_WORD); // this word is used
-        int k = j + 1;
-
+        int k = j + 1;       
+        
         if(firstWordNotUsed < k) // for optimization purposes.
             firstWordNotUsed = k;
-
+            
         array_of_bits[j] |= (1 << (i & LOW_ORDER_BITMASK));
     }
 
 
     /**
      * Return true if the integer (character)is in the set of integers.
-     *
+     * 
      * This implementation uses an array of integers with 32 bits per
-     * integer.  If a bit is set to 1 the corresponding integer is
+     * integer.  If a bit is set to 1 the corresponding integer is 
      * in the set of integers.
-     *
+     * 
      * @param i an integer that is tested to see if it is the
      * set of integers, or not.
      */
@@ -606,16 +604,16 @@ final class CharInfo
         // an optimization here, ... a quick test to see
         // if this integer is beyond any of the words in use
         if(j < firstWordNotUsed)
-            in_the_set = (array_of_bits[j] &
+            in_the_set = (array_of_bits[j] & 
                           (1 << (i & LOW_ORDER_BITMASK))
             ) != 0;  // 0L for 64 bit words
         return in_the_set;
     }
-
+    
     // record if there are any entities other than
     // quot, amp, lt, gt  (probably user defined)
     /**
-     * @return true if the entity
+     * @return true if the entity 
      * @param code The value of the character that has an entity defined
      * for it.
      */
@@ -631,26 +629,26 @@ final class CharInfo
                 case 60 : // lt
                 case 62 : // gt
                     break;
-                default : // other entity in range 0 to 127
+                default : // other entity in range 0 to 127  
                     extra = true;
             }
         }
         return extra;
-    }
-
+    }    
+    
     /**
      * If the character is a printable ASCII character then
      * mark it as not clean and needing replacement with
      * a String on output.
      * @param ch
      */
-    private void setASCIIdirty(int j)
+    private void setASCIIdirty(int j) 
     {
-        if (0 <= j && j < ASCII_MAX)
+        if (0 <= j && j < ASCII_MAX) 
         {
             isCleanTextASCII[j] = false;
             isSpecialTextASCII[j] = true;
-        }
+        } 
     }
 
     /**
@@ -658,30 +656,30 @@ final class CharInfo
      * mark it as and not needing replacement with
      * a String on output.
      * @param ch
-     */
+     */    
     private void setASCIIclean(int j)
     {
-        if (0 <= j && j < ASCII_MAX)
-        {
+        if (0 <= j && j < ASCII_MAX) 
+        {        
             isCleanTextASCII[j] = true;
             isSpecialTextASCII[j] = false;
         }
     }
-
-    private void defineChar2StringMapping(String outputString, char inputChar)
+    
+    private void defineChar2StringMapping(String outputString, char inputChar) 
     {
         CharKey character = new CharKey(inputChar);
         m_charToString.put(character, outputString);
-        set(inputChar);
+        set(inputChar);        
     }
 
     /**
      * Simple class for fast lookup of char values, when used with
      * hashtables.  You can set the char, then use it as a key.
-     *
-     * This class is a copy of the one in com.sun.org.apache.xml.internal.utils.
+     * 
+     * This class is a copy of the one in com.sun.org.apache.xml.internal.utils. 
      * It exists to cut the serializers dependancy on that package.
-     *
+     *  
      * @xsl.usage internal
      */
     private static class CharKey extends Object
@@ -699,7 +697,7 @@ final class CharInfo
       {
         m_char = key;
       }
-
+  
       /**
        * Default constructor for a CharKey.
        *
@@ -708,9 +706,9 @@ final class CharInfo
       public CharKey()
       {
       }
-
+  
       /**
-       * Get the hash value of the character.
+       * Get the hash value of the character.  
        *
        * @return hash value of the character.
        */
@@ -722,7 +720,7 @@ final class CharInfo
 
 
       /**
-       * Get the hash value of the character.
+       * Get the hash value of the character.  
        *
        * @return hash value of the character.
        */
@@ -732,17 +730,17 @@ final class CharInfo
       }
 
       /**
-       * Override of equals() for this object
+       * Override of equals() for this object 
        *
        * @param obj to compare to
        *
-       * @return True if this object equals this string value
+       * @return True if this object equals this string value 
        */
       public final boolean equals(Object obj)
       {
         return ((CharKey)obj).m_char == m_char;
       }
     }
-
+   
 
 }

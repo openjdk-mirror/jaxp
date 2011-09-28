@@ -38,10 +38,10 @@ import com.sun.java_cup.internal.runtime.Symbol;
 %yyeof
 
 %{
-        int last;
+        int last, beforeLast;
 
         void initialize() {
-            last = -1;
+            last, beforeLast = -1;
         }
 
         static boolean isWhitespace(int c) {
@@ -76,10 +76,13 @@ import com.sun.java_cup.internal.runtime.Symbol;
         /**
          * If symbol is first token or if it follows any of the operators
          * listed in http://www.w3.org/TR/xpath#exprlex then treat as a 
-         * name instead of a keyword (Jira-1912).
+         * name instead of a keyword (Jira-1912). Look two tokens behind
+         * to desambiguate expressions like "* and *" or "and * and".
          */ 
         Symbol disambiguateOperator(int ss) throws Exception {
             switch (last) {
+            case sym.STAR:
+                if (beforeLast != sym.QNAME) break;
             case -1:    // first token
             case sym.ATSIGN:
             case sym.DCOLON:
@@ -90,7 +93,6 @@ import com.sun.java_cup.internal.runtime.Symbol;
             case sym.OR:
             case sym.MOD:
             case sym.DIV:
-            case sym.STAR:
             case sym.SLASH:
             case sym.DSLASH:
             case sym.VBAR:
@@ -108,21 +110,25 @@ import com.sun.java_cup.internal.runtime.Symbol;
         }
 
         Symbol newSymbol(int ss) {
+            beforeLast = last;    
             last = ss;
             return new Symbol(ss);
         }
 
         Symbol newSymbol(int ss, String value) {
+            beforeLast = last;    
             last = ss;
             return new Symbol(ss, value);
         }
 
         Symbol newSymbol(int ss, Long value) {
+            beforeLast = last;    
             last = ss;
             return new Symbol(ss, value);
         }
 
         Symbol newSymbol(int ss, Double value) {
+            beforeLast = last;    
             last = ss;
             return new Symbol(ss, value);
         }

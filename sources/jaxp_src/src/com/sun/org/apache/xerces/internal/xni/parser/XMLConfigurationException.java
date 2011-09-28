@@ -29,13 +29,14 @@ import com.sun.org.apache.xerces.internal.xni.XNIException;
  *
  * @author Andy Clark, IBM
  *
+ * @version $Id: XMLConfigurationException.java,v 1.5 2009/07/28 23:48:32 joehw Exp $
  */
 public class XMLConfigurationException
     extends XNIException {
 
     /** Serialization version. */
     static final long serialVersionUID = -5437427404547669188L;
-
+    
     //
     // Constants
     //
@@ -46,6 +47,9 @@ public class XMLConfigurationException
     /** Exception type: identifier not supported. */
     public static final short NOT_SUPPORTED = 1;
 
+    /** Exception type: feature-change not allowed. */
+    public static final short NOT_ALLOWED = 2;
+    
     //
     // Data
     //
@@ -60,7 +64,7 @@ public class XMLConfigurationException
     // Constructors
     //
 
-    /**
+    /** 
      * Constructs a configuration exception with the specified type
      * and feature/property identifier.
      *
@@ -76,7 +80,7 @@ public class XMLConfigurationException
         fIdentifier = identifier;
     } // <init>(short,String)
 
-    /**
+    /** 
      * Constructs a configuration exception with the specified type,
      * feature/property identifier, and error message
      *
@@ -98,8 +102,8 @@ public class XMLConfigurationException
     // Public methods
     //
 
-    /**
-     * Returns the exception type.
+    /** 
+     * Returns the exception type. 
      *
      * @see #NOT_RECOGNIZED
      * @see #NOT_SUPPORTED

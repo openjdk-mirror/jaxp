@@ -90,7 +90,7 @@ public class ErrorMessages_it extends ListResourceBundle {
  */
 
     // These message should be read from a locale-specific resource bundle
-    /** Get the lookup table for error messages.
+    /** Get the lookup table for error messages.   
      *
      * @return The message lookup table.
      */
@@ -847,7 +847,10 @@ public class ErrorMessages_it extends ListResourceBundle {
          * stylesheet (see above).
          */
         {ErrorMsg.RUNTIME_ERROR_KEY,
-        "Errori del translet:"}
+        "Errori del translet:"},
+
+		{ErrorMsg.JAXP_SECUREPROCESSING_FEATURE,
+        "FEATURE_SECURE_PROCESSING: Impossibile impostare la funzionalit\u00e0 su False in presenza di strumenti di gestione della protezione."}
     };
     }
 }
