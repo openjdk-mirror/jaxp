@@ -33,7 +33,7 @@ import javax.xml.xpath.XPathVariableResolver;
 /**
  * The XPathFactory builds XPaths.
  *
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  * @author  Ramesh Mandava
  */
 public  class XPathFactoryImpl extends XPathFactory {
@@ -56,7 +56,7 @@ public  class XPathFactoryImpl extends XPathFactory {
 	/**
 	 * <p>State of secure processing feature.</p>
 	 */
-	private boolean featureSecureProcessing = false;
+	private boolean _isNotSecureProcessing = true;
         /**
          * <p>State of secure mode.</p>
          */
@@ -67,7 +67,7 @@ public  class XPathFactoryImpl extends XPathFactory {
         public XPathFactoryImpl() {
             if (System.getSecurityManager() != null) {
                 _isSecureMode = true;
-                featureSecureProcessing = true;
+                _isNotSecureProcessing = false;
             }
         }
 		
@@ -119,7 +119,7 @@ public  class XPathFactoryImpl extends XPathFactory {
 	public javax.xml.xpath.XPath newXPath() {
 	    return new com.sun.org.apache.xpath.internal.jaxp.XPathImpl(
                     xPathVariableResolver, xPathFunctionResolver,
-                    featureSecureProcessing );
+                    !_isNotSecureProcessing );
 	}
 	    
 	/**
@@ -168,7 +168,7 @@ public  class XPathFactoryImpl extends XPathFactory {
                     throw new XPathFactoryConfigurationException( fmsg );
                 }
 
-                featureSecureProcessing = value;
+                _isNotSecureProcessing = !value;
 						
                 // all done processing feature
                 return;
@@ -217,7 +217,7 @@ public  class XPathFactoryImpl extends XPathFactory {
 		
             // secure processing?
             if (name.equals(XMLConstants.FEATURE_SECURE_PROCESSING)) {
-                return featureSecureProcessing;
+                return !_isNotSecureProcessing;
             }
 		
             // unknown feature

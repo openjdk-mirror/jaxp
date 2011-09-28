@@ -280,7 +280,24 @@ public class XMLInputFactoryImpl extends javax.xml.stream.XMLInputFactory {
     }
     
     XMLInputSource jaxpSourcetoXMLInputSource(Source source){
-        throw new UnsupportedOperationException("Cannot create " +
+         if(source instanceof StreamSource){
+             StreamSource stSource = (StreamSource)source;
+             String systemId = stSource.getSystemId();
+             String publicId = stSource.getPublicId();
+             InputStream istream = stSource.getInputStream();
+             Reader reader = stSource.getReader();
+
+             if(istream != null){
+                 return new XMLInputSource(publicId, systemId, null, istream, null);
+             }
+             else if(reader != null){
+                 return new XMLInputSource(publicId, systemId,null, reader, null);
+             }else{
+                 return new XMLInputSource(publicId, systemId, null);
+             }
+         }
+
+         throw new UnsupportedOperationException("Cannot create " +
                 "XMLStreamReader or XMLEventReader from a " +
                 source.getClass().getName());
     }

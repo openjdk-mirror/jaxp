@@ -28,7 +28,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.security.AccessController;
@@ -54,7 +54,7 @@ import com.sun.org.apache.xml.internal.serializer.utils.WrappedRuntimeException;
 final class CharInfo
 {
     /** Given a character, lookup a String to output (e.g. a decorated entity reference). */
-    private Hashtable m_charToString = new Hashtable();
+    private HashMap m_charToString = new HashMap();
 
     /**
      * The name of the HTML entities file.
@@ -360,7 +360,7 @@ final class CharInfo
      */
     private void defineEntity(String name, char value)
     {
-        StringBuffer sb = new StringBuffer("&");
+        StringBuilder sb = new StringBuilder("&");
         sb.append(name);
         sb.append(';');
         String entityString = sb.toString();
@@ -534,7 +534,7 @@ final class CharInfo
     }
 
     /** Table of user-specified char infos. */
-    private static Hashtable m_getCharInfoCache = new Hashtable();
+    private static HashMap m_getCharInfoCache = new HashMap();
 
     /**
      * Returns the array element holding the bit value for the

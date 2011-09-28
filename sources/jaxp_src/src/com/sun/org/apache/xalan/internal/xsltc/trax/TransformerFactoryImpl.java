@@ -207,7 +207,7 @@ public class TransformerFactoryImpl
     /**
      * <p>State of secure processing feature.</p>
      */
-    private boolean _isSecureProcessing = false;
+    private boolean _isNotSecureProcessing = true;
     /**
      * <p>State of secure mode.</p>
      */
@@ -219,7 +219,7 @@ public class TransformerFactoryImpl
         m_DTMManagerClass = XSLTCDTMManager.getDTMManagerClass();
         if (System.getSecurityManager() != null) {
             _isSecureMode = true;
-            _isSecureProcessing = true;
+            _isNotSecureProcessing = false;
         }
     }
 
@@ -416,7 +416,7 @@ public class TransformerFactoryImpl
                 ErrorMsg err = new ErrorMsg(ErrorMsg.JAXP_SECUREPROCESSING_FEATURE);
                 throw new TransformerConfigurationException(err.toString());
             }
-	    _isSecureProcessing = value;		
+	    _isNotSecureProcessing = !value;
 	    // all done processing feature
 	    return;
 	}
@@ -465,7 +465,7 @@ public class TransformerFactoryImpl
 	}
 	// secure processing?
 	if (name.equals(XMLConstants.FEATURE_SECURE_PROCESSING)) {
-		return _isSecureProcessing;
+		return !_isNotSecureProcessing;
 	}
 
 	// Feature not supported
@@ -546,7 +546,7 @@ public class TransformerFactoryImpl
                 SAXParserFactory factory = SAXParserFactory.newInstance();
                 factory.setNamespaceAware(true);
                 
-                if (_isSecureProcessing) {
+                if (!_isNotSecureProcessing) {
                     try {
                         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
                     }
@@ -610,7 +610,7 @@ public class TransformerFactoryImpl
 	    result.setURIResolver(_uriResolver);
 	}
 	
-	if (_isSecureProcessing) {
+	if (!_isNotSecureProcessing) {
 	    result.setSecureProcessing(true);
 	}
 	return result;
@@ -756,7 +756,7 @@ public class TransformerFactoryImpl
 	final XSLTC xsltc = new XSLTC();
 	if (_debug) xsltc.setDebug(true);
 	if (_enableInlining) xsltc.setTemplateInlining(true);
-	if (_isSecureProcessing) xsltc.setSecureProcessing(true);
+	if (!_isNotSecureProcessing) xsltc.setSecureProcessing(true);
 	xsltc.init();
 
 	// Set a document loader (for xsl:include/import) if defined

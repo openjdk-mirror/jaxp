@@ -34,6 +34,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Vector;
@@ -43,6 +44,7 @@ import java.util.Iterator;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.stream.StreamResult;
@@ -159,6 +161,13 @@ public final class XMLStreamWriterImpl extends AbstractMap implements XMLStreamW
      * chars are escaped using XML numeric entities.
      */
     private CharsetEncoder fEncoder = null;
+
+     /**
+     * This is used to hold the namespace for attributes which happen to have
+     * the same uri as the default namespace; It's added to avoid changing the 
+     * current impl. which has many redundant code for the repair mode
+     */
+    HashMap fAttrNamespace = null;
 
     /**
      * Creates a new instance of XMLStreamWriterImpl. Uses platform's default
@@ -1482,7 +1491,7 @@ public final class XMLStreamWriterImpl extends AbstractMap implements XMLStreamW
 
             if (fIsRepairingNamespace) {
                 repair();
-                correctPrefix(currentElement);
+                correctPrefix(currentElement, XMLStreamConstants.START_ELEMENT);
 
                 if ((currentElement.prefix != null) &&
                         (currentElement.prefix != XMLConstants.DEFAULT_NS_PREFIX)) {
@@ -1518,8 +1527,13 @@ public final class XMLStreamWriterImpl extends AbstractMap implements XMLStreamW
                             String tmp = fInternalNamespaceContext.getPrefix(attr.uri);
 
                             if ((tmp == null) || (tmp != attr.prefix)) {
-                                if (fInternalNamespaceContext.declarePrefix(attr.prefix,
-                                    attr.uri)) {
+                                tmp = getAttrPrefix(attr.uri);
+                                if (tmp == null) {
+                                    if (fInternalNamespaceContext.declarePrefix(attr.prefix,
+                                        attr.uri)) {
+                                        writenamespace(attr.prefix, attr.uri);
+                                    }
+                                } else {
                                     writenamespace(attr.prefix, attr.uri);
                                 }
                             }
@@ -1529,7 +1543,7 @@ public final class XMLStreamWriterImpl extends AbstractMap implements XMLStreamW
                     writeAttributeWithPrefix(attr.prefix, attr.localpart,
                         attr.value);
                 }
-
+                fAttrNamespace = null;
                 fAttributeCache.clear();
             }
 
@@ -1561,18 +1575,19 @@ public final class XMLStreamWriterImpl extends AbstractMap implements XMLStreamW
      * @param uri
      * @return
      */
-    private void correctPrefix(QName attr) {
+    private void correctPrefix(QName attr, int type) {
         String tmpPrefix = null;
         String prefix;
         String uri;
         prefix = attr.prefix;
         uri = attr.uri;
+        boolean isSpecialCaseURI = false;
 
         if (prefix == null || prefix.equals("")) {
             if (uri == null) {
                 return;
             }
-
+            
             if (prefix == XMLConstants.DEFAULT_NS_PREFIX && uri == XMLConstants.DEFAULT_NS_PREFIX)
                 return;
             
@@ -1593,7 +1608,14 @@ public final class XMLStreamWriterImpl extends AbstractMap implements XMLStreamW
             tmpPrefix = fNamespaceContext.getPrefix(uri);
 
             if (tmpPrefix == XMLConstants.DEFAULT_NS_PREFIX) {
-                return;
+                if (type == XMLStreamConstants.START_ELEMENT) {
+                    return;
+                }
+                else if (type == XMLStreamConstants.ATTRIBUTE) {
+                    //the uri happens to be the same as that of the default namespace
+                    tmpPrefix = getAttrPrefix(uri);
+                    isSpecialCaseURI = true;
+                }
             }
 
             if (tmpPrefix == null) {
@@ -1610,17 +1632,36 @@ public final class XMLStreamWriterImpl extends AbstractMap implements XMLStreamW
             }
 
             if (tmpPrefix == null) {
-                QName qname = new QName();
-                qname.setValues(prefix, XMLConstants.XMLNS_ATTRIBUTE, null, uri);
-                fNamespaceDecls.add(qname);
-                fInternalNamespaceContext.declarePrefix(fSymbolTable.addSymbol(
+                if (isSpecialCaseURI) {
+                    addAttrNamespace(prefix, uri);
+                } else {
+                    QName qname = new QName();
+                    qname.setValues(prefix, XMLConstants.XMLNS_ATTRIBUTE, null, uri);
+                    fNamespaceDecls.add(qname);
+                    fInternalNamespaceContext.declarePrefix(fSymbolTable.addSymbol(
                         prefix), uri);
+                }                
             }
         }
 
         attr.prefix = prefix;
     }
 
+    /**
+     * return the prefix if the attribute has an uri the same as that of the default namespace
+     */
+    private String getAttrPrefix(String uri) {
+        if (fAttrNamespace != null) {
+            return (String)fAttrNamespace.get(uri);
+        }
+        return null;
+    }
+    private void addAttrNamespace(String prefix, String uri) {
+        if (fAttrNamespace == null) {
+            fAttrNamespace = new HashMap();
+        }
+        fAttrNamespace.put(prefix, uri);
+    }
     /**
      * @param uri
      * @return
@@ -1713,7 +1754,7 @@ public final class XMLStreamWriterImpl extends AbstractMap implements XMLStreamW
 
         for (i = 0; i < fAttributeCache.size(); i++) {
             attr = (Attribute) fAttributeCache.get(i);
-            correctPrefix(attr);
+            correctPrefix(attr, XMLStreamConstants.ATTRIBUTE);
         }
     }
 

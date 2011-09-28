@@ -40,7 +40,7 @@ import java.util.Vector;
  * 
  * @xerces.internal
  *
- * @version $Id: DeferredDocumentImpl.java,v 1.6 2009/09/09 23:09:49 joehw Exp $
+ * @version $Id: DeferredDocumentImpl.java,v 1.7 2009/12/01 06:12:02 joehw Exp $
  * @since  PR-DOM-Level-1-19980818.
  */
 public class DeferredDocumentImpl
@@ -132,7 +132,7 @@ public class DeferredDocumentImpl
     //
     // private data
     //
-    private transient final StringBuffer fBufferStr = new StringBuffer();
+    private transient final StringBuilder fBufferStr = new StringBuilder();
     private transient final Vector fStrChunks = new Vector();
 
     //
@@ -430,8 +430,6 @@ public class DeferredDocumentImpl
 		// get element's last attribute
 		int lastAttrNodeIndex = getChunkIndex(fNodeExtra, elementChunk, elementIndex);
 		if (lastAttrNodeIndex != 0) {
-			int lastAttrChunk = lastAttrNodeIndex >> CHUNK_SHIFT;
-			int lastAttrIndex = lastAttrNodeIndex & CHUNK_MASK;
 			// add link from new attribute to last attribute
 			setChunkIndex(fNodePrevSib, lastAttrNodeIndex, attrChunk, attrIndex);
 		}

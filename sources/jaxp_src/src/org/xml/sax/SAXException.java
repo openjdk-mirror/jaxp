@@ -163,7 +163,7 @@ public class SAXException extends Exception {
     public String toString ()
     {
 	if (exception != null) {
-	    return exception.toString();
+	    return super.toString() + "\n" + exception.toString();
 	} else {
 	    return super.toString();
 	}

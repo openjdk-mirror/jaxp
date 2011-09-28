@@ -22,7 +22,7 @@
  */
 package com.sun.org.apache.xml.internal.utils;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
@@ -58,7 +58,7 @@ public class XMLReaderManager {
     /**
      * Keeps track of whether an XMLReader object is in use.
      */
-    private Hashtable m_inUse;
+    private HashMap m_inUse;
 
     /**
      * Hidden constructor
@@ -81,7 +81,6 @@ public class XMLReaderManager {
      */
     public synchronized XMLReader getXMLReader() throws SAXException {
         XMLReader reader;
-        boolean readerInUse;
 
         if (m_readers == null) {
             // When the m_readers.get() method is called for the first time
@@ -90,7 +89,7 @@ public class XMLReaderManager {
         }
 
         if (m_inUse == null) {
-            m_inUse = new Hashtable();
+            m_inUse = new HashMap();
         }
 
         // If the cached reader for this thread is in use, construct a new
