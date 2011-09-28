@@ -60,7 +60,6 @@
  */
 
 package com.sun.org.apache.xerces.internal.impl;
-
 import java.util.Hashtable;
 import java.util.Locale;
 
@@ -112,6 +111,7 @@ import org.xml.sax.ErrorHandler;
  * @author Eric Ye, IBM
  * @author Andy Clark, IBM
  *
+ * @version $Id: XMLErrorReporter.java,v 1.5 2010-11-01 04:39:41 joehw Exp $
  */
 public class XMLErrorReporter
     implements XMLComponent {
@@ -207,6 +207,9 @@ public class XMLErrorReporter
      * reported by users of the parser.
      */
     protected XMLErrorHandler fDefaultErrorHandler;
+
+    /** A SAX proxy to the error handler contained in this error reporter. */
+    private ErrorHandler fSaxProxy = null;
 
     //
     // Constructors
@@ -311,15 +314,38 @@ public class XMLErrorReporter
      * @param arguments The replacement arguments for the error message,
      *                  if needed.
      * @param severity  The severity of the error.
+     * @return          The formatted error message.
      *
      * @see #SEVERITY_WARNING
      * @see #SEVERITY_ERROR
      * @see #SEVERITY_FATAL_ERROR
      */
-    public void reportError(String domain, String key, Object[] arguments,
+    public String reportError(String domain, String key, Object[] arguments,
                             short severity) throws XNIException {
-        reportError(fLocator, domain, key, arguments, severity);
-    } // reportError(String,String,Object[],short)
+        return reportError(fLocator, domain, key, arguments, severity);
+    } // reportError(String,String,Object[],short):String
+
+    /**
+     * Reports an error. The error message passed to the error handler
+     * is formatted for the locale by the message formatter installed
+     * for the specified error domain.
+     *
+     * @param domain    The error domain.
+     * @param key       The key of the error message.
+     * @param arguments The replacement arguments for the error message,
+     *                  if needed.
+     * @param severity  The severity of the error.
+     * @param exception The exception to wrap.
+     * @return          The formatted error message.
+     *
+     * @see #SEVERITY_WARNING
+     * @see #SEVERITY_ERROR
+     * @see #SEVERITY_FATAL_ERROR
+     */
+    public String reportError(String domain, String key, Object[] arguments,
+            short severity, Exception exception) throws XNIException {
+        return reportError(fLocator, domain, key, arguments, severity, exception);
+    } // reportError(String,String,Object[],short,Exception):String
 
     /**
      * Reports an error at a specific location.
@@ -330,14 +356,37 @@ public class XMLErrorReporter
      * @param arguments The replacement arguments for the error message,
      *                  if needed.
      * @param severity  The severity of the error.
+     * @return          The formatted error message.
      *
      * @see #SEVERITY_WARNING
      * @see #SEVERITY_ERROR
      * @see #SEVERITY_FATAL_ERROR
      */
-    public void reportError(XMLLocator location,
+    public String reportError(XMLLocator location,
+            String domain, String key, Object[] arguments,
+            short severity) throws XNIException {
+        return reportError(location, domain, key, arguments, severity, null);
+    } // reportError(XMLLocator,String,String,Object[],short):String
+
+    /**
+     * Reports an error at a specific location.
+     *
+     * @param location  The error location.
+     * @param domain    The error domain.
+     * @param key       The key of the error message.
+     * @param arguments The replacement arguments for the error message,
+     *                  if needed.
+     * @param severity  The severity of the error.
+     * @param exception The exception to wrap.
+     * @return          The formatted error message.
+     *
+     * @see #SEVERITY_WARNING
+     * @see #SEVERITY_ERROR
+     * @see #SEVERITY_FATAL_ERROR
+     */
+    public String reportError(XMLLocator location,
                             String domain, String key, Object[] arguments,
-                            short severity) throws XNIException {
+                            short severity, Exception exception) throws XNIException {
 
         // REVISIT: [Q] Should we do anything about invalid severity
         //              parameter? -Ac
@@ -365,7 +414,8 @@ public class XMLErrorReporter
             }
             message = str.toString();
         }
-        XMLParseException parseException =
+        XMLParseException parseException = (exception != null) ?
+            new XMLParseException(location, message, exception) :
             new XMLParseException(location, message);
 
         // get error handler
@@ -395,8 +445,9 @@ public class XMLErrorReporter
                 break;
             }
         }
+        return message;
 
-    } // reportError(XMLLocator,String,String,Object[],short)
+    } // reportError(XMLLocator,String,String,Object[],short,Exception):String
 
     //
     // XMLComponent methods
@@ -488,7 +539,7 @@ public class XMLErrorReporter
         //
 
         if (featureId.startsWith(Constants.XERCES_FEATURE_PREFIX)) {
-                final int suffixLength = featureId.length() - Constants.XERCES_FEATURE_PREFIX.length();
+        	final int suffixLength = featureId.length() - Constants.XERCES_FEATURE_PREFIX.length();
 
             //
             // http://apache.org/xml/features/continue-after-fatal-error
@@ -589,20 +640,19 @@ public class XMLErrorReporter
         return fErrorHandler;
     }
 
-
-    private ErrorHandler fSaxProxy = null;
-
     /**
      * Gets the internal XMLErrorHandler
      * as SAX ErrorHandler.
      */
     public ErrorHandler getSAXErrorHandler() {
-        if( fSaxProxy==null )
+        if (fSaxProxy == null) {
             fSaxProxy = new ErrorHandlerProxy() {
                 protected XMLErrorHandler getErrorHandler() {
                     return fErrorHandler;
                 }
             };
+        }
         return fSaxProxy;
     }
+
 } // class XMLErrorReporter

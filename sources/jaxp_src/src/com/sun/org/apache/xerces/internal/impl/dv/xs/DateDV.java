@@ -29,11 +29,12 @@ import com.sun.org.apache.xerces.internal.impl.dv.ValidationContext;
 /**
  * Validator for <date> datatype (W3C Schema datatypes)
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Elena Litani
  * @author Gopal Sharma, SUN Microsystems Inc.
  *
+ * @version $Id: DateDV.java,v 1.7 2010-11-01 04:39:46 joehw Exp $
  */
 public class DateDV extends DateTimeDV {
 
@@ -85,8 +86,10 @@ public class DateDV extends DateTimeDV {
     }
 
     protected XMLGregorianCalendar getXMLGregorianCalendar(DateTimeData date) {
-        return factory.newXMLGregorianCalendar(date.unNormYear, date.unNormMonth, date.unNormDay
-                , DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, date.timezoneHr * 60 + date.timezoneMin);
+        return datatypeFactory.newXMLGregorianCalendar(date.unNormYear, date.unNormMonth,
+                date.unNormDay, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED,
+                DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED,
+                date.hasTimeZone() ? (date.timezoneHr * 60 + date.timezoneMin) : DatatypeConstants.FIELD_UNDEFINED);
     }
 
 }

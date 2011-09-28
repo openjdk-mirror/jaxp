@@ -21,7 +21,6 @@
 package com.sun.org.apache.xerces.internal.jaxp;
 
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -33,7 +32,6 @@ import javax.xml.validation.Schema;
 import com.sun.org.apache.xerces.internal.impl.Constants;
 import com.sun.org.apache.xerces.internal.impl.validation.ValidationManager;
 import com.sun.org.apache.xerces.internal.impl.xs.XMLSchemaValidator;
-import com.sun.org.apache.xerces.internal.impl.xs.XSMessageFormatter;
 import com.sun.org.apache.xerces.internal.jaxp.validation.XSGrammarPoolContainer;
 import com.sun.org.apache.xerces.internal.util.SAXMessageFormatter;
 import com.sun.org.apache.xerces.internal.util.SecurityManager;
@@ -41,7 +39,6 @@ import com.sun.org.apache.xerces.internal.xni.XMLDocumentHandler;
 import com.sun.org.apache.xerces.internal.xni.parser.XMLComponent;
 import com.sun.org.apache.xerces.internal.xni.parser.XMLComponentManager;
 import com.sun.org.apache.xerces.internal.xni.parser.XMLConfigurationException;
-import com.sun.org.apache.xerces.internal.xni.parser.XMLDTDFilter;
 import com.sun.org.apache.xerces.internal.xni.parser.XMLDocumentSource;
 import com.sun.org.apache.xerces.internal.xni.parser.XMLParserConfiguration;
 import com.sun.org.apache.xerces.internal.xs.AttributePSVI;
@@ -49,20 +46,23 @@ import com.sun.org.apache.xerces.internal.xs.ElementPSVI;
 import com.sun.org.apache.xerces.internal.xs.PSVIProvider;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
+import org.xml.sax.HandlerBase;
 import org.xml.sax.InputSource;
 import org.xml.sax.Parser;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * This is the implementation specific class for the
  * <code>javax.xml.parsers.SAXParser</code>.
- *
+ * 
  * @author Rajiv Mordani
  * @author Edwin Goei
- *
+ * 
+ * @version $Id: SAXParserImpl.java,v 1.7 2010-11-01 04:40:06 joehw Exp $
  */
 public class SAXParserImpl extends javax.xml.parsers.SAXParser
     implements JAXPConstants, PSVIProvider {
@@ -91,13 +91,14 @@ public class SAXParserImpl extends javax.xml.parsers.SAXParser
     private static final String SECURITY_MANAGER =
         Constants.XERCES_PROPERTY_PREFIX + Constants.SECURITY_MANAGER_PROPERTY;
 
-    private JAXPSAXParser xmlReader;
+    private final JAXPSAXParser xmlReader;
     private String schemaLanguage = null;     // null means DTD
     private final Schema grammar;
 
-    private XMLComponent fSchemaValidator;
-    private XMLComponentManager fSchemaValidatorComponentManager;
-    private ValidationManager fSchemaValidationManager;
+    private final XMLComponent fSchemaValidator;
+    private final XMLComponentManager fSchemaValidatorComponentManager;
+    private final ValidationManager fSchemaValidationManager;
+    private final UnparsedEntityHandler fUnparsedEntityHandler;
 
     /** Initial ErrorHandler */
     private final ErrorHandler fInitErrorHandler;
@@ -170,16 +171,18 @@ public class SAXParserImpl extends javax.xml.parsers.SAXParser
             if (grammar instanceof XSGrammarPoolContainer) {
                 validatorComponent = new XMLSchemaValidator();
                 fSchemaValidationManager = new ValidationManager();
-                XMLDTDFilter entityHandler = new UnparsedEntityHandler(fSchemaValidationManager);
-                config.setDTDHandler(entityHandler);
-                entityHandler.setDTDHandler(xmlReader);
-                xmlReader.setDTDSource(entityHandler);
+                fUnparsedEntityHandler = new UnparsedEntityHandler(fSchemaValidationManager);
+                config.setDTDHandler(fUnparsedEntityHandler);
+                fUnparsedEntityHandler.setDTDHandler(xmlReader);
+                xmlReader.setDTDSource(fUnparsedEntityHandler);
                 fSchemaValidatorComponentManager = new SchemaValidatorConfiguration(config,
                         (XSGrammarPoolContainer) grammar, fSchemaValidationManager);
             }
             /** For third party grammars, use the JAXP validator component. **/
             else {
                 validatorComponent = new JAXPValidatorComponent(grammar.newValidatorHandler());
+                fSchemaValidationManager = null;
+                fUnparsedEntityHandler = null;
                 fSchemaValidatorComponentManager = config;
             }
             config.addRecognizedFeatures(validatorComponent.getRecognizedFeatures());
@@ -188,6 +191,12 @@ public class SAXParserImpl extends javax.xml.parsers.SAXParser
             ((XMLDocumentSource)validatorComponent).setDocumentHandler(xmlReader);
             xmlReader.setDocumentSource((XMLDocumentSource) validatorComponent);
             fSchemaValidator = validatorComponent;
+        }
+        else {
+            fSchemaValidationManager = null;
+            fUnparsedEntityHandler = null;
+            fSchemaValidatorComponentManager = null;
+            fSchemaValidator = null;
         }
 
         // Initial EntityResolver
@@ -204,9 +213,11 @@ public class SAXParserImpl extends javax.xml.parsers.SAXParser
     private void setFeatures(Hashtable features)
         throws SAXNotSupportedException, SAXNotRecognizedException {
         if (features != null) {
-            for (Enumeration e = features.keys(); e.hasMoreElements();) {
-                String feature = (String)e.nextElement();
-                boolean value = ((Boolean)features.get(feature)).booleanValue();
+            Iterator entries = features.entrySet().iterator();
+            while (entries.hasNext()) {
+                Map.Entry entry = (Map.Entry) entries.next();
+                String feature = (String) entry.getKey();
+                boolean value = ((Boolean) entry.getValue()).booleanValue();
                 xmlReader.setFeature0(feature, value);
             }
         }
@@ -275,6 +286,36 @@ public class SAXParserImpl extends javax.xml.parsers.SAXParser
         return xmlReader.getProperty(name);
     }
 
+    public void parse(InputSource is, DefaultHandler dh)
+        throws SAXException, IOException {
+        if (is == null) {
+            throw new IllegalArgumentException();
+        }
+        if (dh != null) {
+            xmlReader.setContentHandler(dh);
+            xmlReader.setEntityResolver(dh);
+            xmlReader.setErrorHandler(dh);
+            xmlReader.setDTDHandler(dh);
+            xmlReader.setDocumentHandler(null);
+        }
+        xmlReader.parse(is);
+    }
+
+    public void parse(InputSource is, HandlerBase hb)
+        throws SAXException, IOException {
+        if (is == null) {
+            throw new IllegalArgumentException();
+        }
+        if (hb != null) {
+            xmlReader.setDocumentHandler(hb);
+            xmlReader.setEntityResolver(hb);
+            xmlReader.setErrorHandler(hb);
+            xmlReader.setDTDHandler(hb);
+            xmlReader.setContentHandler(null);
+        }
+        xmlReader.parse(is);
+    }
+
     public Schema getSchema() {
         return grammar;
     }
@@ -323,12 +364,12 @@ public class SAXParserImpl extends javax.xml.parsers.SAXParser
      */
     public static class JAXPSAXParser extends com.sun.org.apache.xerces.internal.parsers.SAXParser {
 
-        private HashMap fInitFeatures = new HashMap();
-        private HashMap fInitProperties = new HashMap();
-        private SAXParserImpl fSAXParser;
+        private final HashMap fInitFeatures = new HashMap();
+        private final HashMap fInitProperties = new HashMap();
+        private final SAXParserImpl fSAXParser;
 
         public JAXPSAXParser() {
-            super();
+            this(null);
         }
 
         JAXPSAXParser(SAXParserImpl saxParser) {
@@ -519,6 +560,7 @@ public class SAXParserImpl extends javax.xml.parsers.SAXParser
             if (fSAXParser != null && fSAXParser.fSchemaValidator != null) {
                 if (fSAXParser.fSchemaValidationManager != null) {
                     fSAXParser.fSchemaValidationManager.reset();
+                    fSAXParser.fUnparsedEntityHandler.reset();
                 }
                 resetSchemaValidator();
             }
@@ -530,6 +572,7 @@ public class SAXParserImpl extends javax.xml.parsers.SAXParser
             if (fSAXParser != null && fSAXParser.fSchemaValidator != null) {
                 if (fSAXParser.fSchemaValidationManager != null) {
                     fSAXParser.fSchemaValidationManager.reset();
+                    fSAXParser.fUnparsedEntityHandler.reset();
                 }
                 resetSchemaValidator();
             }

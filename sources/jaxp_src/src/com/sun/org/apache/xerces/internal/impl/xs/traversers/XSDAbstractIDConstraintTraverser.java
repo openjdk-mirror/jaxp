@@ -26,6 +26,7 @@ import com.sun.org.apache.xerces.internal.impl.xs.identity.Field;
 import com.sun.org.apache.xerces.internal.impl.xs.identity.IdentityConstraint;
 import com.sun.org.apache.xerces.internal.impl.xs.identity.Selector;
 import com.sun.org.apache.xerces.internal.util.DOMUtil;
+import com.sun.org.apache.xerces.internal.util.XMLChar;
 import org.w3c.dom.Element;
 
 /**
@@ -33,8 +34,9 @@ import org.w3c.dom.Element;
  * traversers (the XSDUniqueTraverser, XSDKeyTraverser and
  * XSDKeyrefTraverser) rely upon.
  *
- * @xerces.internal
+ * @xerces.internal 
  *
+ * @version $Id: XSDAbstractIDConstraintTraverser.java,v 1.7 2010-11-01 04:40:02 joehw Exp $
  */
 class XSDAbstractIDConstraintTraverser extends XSDAbstractTraverser {
 
@@ -43,7 +45,7 @@ class XSDAbstractIDConstraintTraverser extends XSDAbstractTraverser {
         super(handler, gAttrCheck);
     }
 
-    void traverseIdentityConstraint(IdentityConstraint ic,
+    boolean traverseIdentityConstraint(IdentityConstraint ic,
             Element icElem, XSDocumentInfo schemaDoc, Object [] icElemAttrs) {
 
         // General Attribute Checking will have been done on icElem by caller
@@ -54,7 +56,7 @@ class XSDAbstractIDConstraintTraverser extends XSDAbstractTraverser {
             reportSchemaError("s4s-elt-must-match.2",
                     new Object[]{"identity constraint", "(annotation?, selector, field+)"},
                     icElem);
-            return;
+            return false;
         }
 
         // General Attribute Checking on sElem
@@ -65,7 +67,7 @@ class XSDAbstractIDConstraintTraverser extends XSDAbstractTraverser {
             // if no more children report an error
             if(sElem == null) {
                 reportSchemaError("s4s-elt-must-match.2", new Object[]{"identity constraint", "(annotation?, selector, field+)"}, icElem);
-                return;
+                return false;
             }
         }
         else {
@@ -75,13 +77,14 @@ class XSDAbstractIDConstraintTraverser extends XSDAbstractTraverser {
             }
         }
 
-        Object [] attrValues = fAttrChecker.checkAttributes(sElem, false, schemaDoc);
-
-        // if more than one annotation report an error
+        // must be <selector>
         if(!DOMUtil.getLocalName(sElem).equals(SchemaSymbols.ELT_SELECTOR)) {
             reportSchemaError("s4s-elt-must-match.1", new Object[]{"identity constraint", "(annotation?, selector, field+)", SchemaSymbols.ELT_SELECTOR}, sElem);
+            return false;
         }
-        // and make sure <selector>'s content is fine:
+        Object [] attrValues = fAttrChecker.checkAttributes(sElem, false, schemaDoc);
+
+        // make sure <selector>'s content is fine:
         Element selChild = DOMUtil.getFirstChildElement(sElem);
 
         if (selChild !=null) {
@@ -107,9 +110,9 @@ class XSDAbstractIDConstraintTraverser extends XSDAbstractTraverser {
         String sText = ((String)attrValues[XSAttributeChecker.ATTIDX_XPATH]);
         if(sText == null) {
             reportSchemaError("s4s-att-must-appear", new Object [] {SchemaSymbols.ELT_SELECTOR, SchemaSymbols.ATT_XPATH}, sElem);
-            return;
+            return false;
         }
-        sText = sText.trim();
+        sText = XMLChar.trim(sText);
 
         Selector.XPath sXpath = null;
         try {
@@ -122,7 +125,7 @@ class XSDAbstractIDConstraintTraverser extends XSDAbstractTraverser {
             reportSchemaError(e.getKey(), new Object[]{sText}, sElem);
             // put back attr values...
             fAttrChecker.returnAttrArray(attrValues, schemaDoc);
-            return;
+            return false;
         }
 
         // put back attr values...
@@ -132,13 +135,17 @@ class XSDAbstractIDConstraintTraverser extends XSDAbstractTraverser {
         Element fElem = DOMUtil.getNextSiblingElement(sElem);
         if(fElem == null) {
             reportSchemaError("s4s-elt-must-match.2", new Object[]{"identity constraint", "(annotation?, selector, field+)"}, sElem);
+            return false;
         }
         while (fElem != null) {
+            if(!DOMUtil.getLocalName(fElem).equals(SchemaSymbols.ELT_FIELD)) {
+                reportSchemaError("s4s-elt-must-match.1", new Object[]{"identity constraint", "(annotation?, selector, field+)", SchemaSymbols.ELT_FIELD}, fElem);
+                fElem = DOMUtil.getNextSiblingElement(fElem);
+                continue;
+            }
+
             // General Attribute Checking
             attrValues = fAttrChecker.checkAttributes(fElem, false, schemaDoc);
-
-            if(!DOMUtil.getLocalName(fElem).equals(SchemaSymbols.ELT_FIELD))
-                reportSchemaError("s4s-elt-must-match.1", new Object[]{"identity constraint", "(annotation?, selector, field+)", SchemaSymbols.ELT_FIELD}, fElem);
 
             // and make sure <field>'s content is fine:
             Element fieldChild = DOMUtil.getFirstChildElement(fElem);
@@ -159,11 +166,12 @@ class XSDAbstractIDConstraintTraverser extends XSDAbstractTraverser {
                 }
             }
             String fText = ((String)attrValues[XSAttributeChecker.ATTIDX_XPATH]);
-            if(fText == null) {
+            if (fText == null) {
                 reportSchemaError("s4s-att-must-appear", new Object [] {SchemaSymbols.ELT_FIELD, SchemaSymbols.ATT_XPATH}, fElem);
-                return;
+                fAttrChecker.returnAttrArray(attrValues, schemaDoc);
+                return false;
             }
-            fText = fText.trim();
+            fText = XMLChar.trim(fText);
             try {
                 Field.XPath fXpath = new Field.XPath(fText, fSymbolTable,
                         schemaDoc.fNamespaceSupport);
@@ -174,12 +182,14 @@ class XSDAbstractIDConstraintTraverser extends XSDAbstractTraverser {
                 reportSchemaError(e.getKey(), new Object[]{fText}, fElem);
                 // put back attr values...
                 fAttrChecker.returnAttrArray(attrValues, schemaDoc);
-                return;
+                return false;
             }
             fElem = DOMUtil.getNextSiblingElement(fElem);
             // put back attr values...
             fAttrChecker.returnAttrArray(attrValues, schemaDoc);
         }
 
+        return ic.getFieldCount() > 0;
     } // traverseIdentityConstraint(IdentityConstraint,Element, XSDocumentInfo)
 } // XSDAbstractIDConstraintTraverser
+

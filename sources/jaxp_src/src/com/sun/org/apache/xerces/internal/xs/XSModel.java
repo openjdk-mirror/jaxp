@@ -21,7 +21,7 @@
 package com.sun.org.apache.xerces.internal.xs;
 
 /**
- * This interface represents an XML Schema.
+ * This interface represents an XML Schema. 
  */
 public interface XSModel {
     /**
@@ -144,5 +144,18 @@ public interface XSModel {
      */
     public XSNotationDeclaration getNotationDeclaration(String name,
                                                         String namespace);
+
+    /**
+     * Convenience method. Returns a list containing the members of the
+     * substitution group for the given <code>XSElementDeclaration</code>
+     * or an empty <code>XSObjectList</code> if the substitution group
+     * contains no members.
+     * @param head The substitution group head.
+     * @return A list containing the members of the substitution group
+     *  for the given <code>XSElementDeclaration</code> or an empty
+     *  <code>XSObjectList</code> if the substitution group contains
+     *  no members.
+     */
+    public XSObjectList getSubstitutionGroup(XSElementDeclaration head);
 
 }

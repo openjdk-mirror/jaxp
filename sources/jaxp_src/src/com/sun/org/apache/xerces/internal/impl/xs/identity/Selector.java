@@ -22,6 +22,7 @@ package com.sun.org.apache.xerces.internal.impl.xs.identity;
 
 import com.sun.org.apache.xerces.internal.impl.xpath.XPathException;
 import com.sun.org.apache.xerces.internal.util.SymbolTable;
+import com.sun.org.apache.xerces.internal.util.XMLChar;
 import com.sun.org.apache.xerces.internal.xni.NamespaceContext;
 import com.sun.org.apache.xerces.internal.xni.QName;
 import com.sun.org.apache.xerces.internal.xni.XMLAttributes;
@@ -31,9 +32,10 @@ import com.sun.org.apache.xerces.internal.xs.XSTypeDefinition;
 /**
  * Schema identity constraint selector.
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Andy Clark, IBM
+ * @version $Id: Selector.java,v 1.7 2010-11-01 04:39:57 joehw Exp $
  */
 public class Selector {
 
@@ -42,10 +44,10 @@ public class Selector {
     //
 
     /** XPath. */
-    protected Selector.XPath fXPath;
+    protected final Selector.XPath fXPath;
 
     /** Identity constraint. */
-    protected IdentityConstraint fIdentityConstraint;
+    protected final IdentityConstraint fIdentityConstraint;
 
     // the Identity constraint we're the matcher for.  Only
     // used for selectors!
@@ -104,6 +106,7 @@ public class Selector {
      * Schema identity constraint selector XPath expression.
      *
      * @author Andy Clark, IBM
+     * @version $Id: Selector.java,v 1.7 2010-11-01 04:39:57 joehw Exp $
      */
     public static class XPath
     extends com.sun.org.apache.xerces.internal.impl.xpath.XPath {
@@ -138,7 +141,7 @@ public class Selector {
             StringBuffer modifiedXPath = new StringBuffer(xpath.length()+5);
             int unionIndex = -1;
             do {
-                if(!(xpath.trim().startsWith("/") ||xpath.trim().startsWith("."))) {
+                if(!(XMLChar.trim(xpath).startsWith("/") || XMLChar.trim(xpath).startsWith("."))) {
                     modifiedXPath.append("./");
                 }
                 unionIndex = xpath.indexOf('|');
@@ -167,10 +170,10 @@ public class Selector {
         //
 
         /** Field activator. */
-        protected FieldActivator fFieldActivator;
+        protected final FieldActivator fFieldActivator;
 
         /** Initial depth in the document at which this matcher was created. */
-        protected int fInitialDepth;
+        protected final int fInitialDepth;
 
         /** Element depth. */
         protected int fElementDepth;

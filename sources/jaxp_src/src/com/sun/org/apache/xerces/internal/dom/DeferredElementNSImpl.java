@@ -28,15 +28,17 @@
 
 package com.sun.org.apache.xerces.internal.dom;
 
+import com.sun.org.apache.xerces.internal.xni.NamespaceContext;
 import com.sun.org.apache.xerces.internal.xs.XSTypeDefinition;
 import org.w3c.dom.NamedNodeMap;
 
+
 /**
  * DeferredElementNSImpl is to ElementNSImpl, what DeferredElementImpl is to
- * ElementImpl.
- *
+ * ElementImpl. 
+ * 
  * @xerces.internal
- *
+ * 
  * @see DeferredElementImpl
  */
 public class DeferredElementNSImpl
@@ -111,7 +113,7 @@ public class DeferredElementNSImpl
             localName = name.substring(index + 1);
         }
 
-            namespaceURI = ownerDocument.getNodeURI(fNodeIndex);
+	    namespaceURI = ownerDocument.getNodeURI(fNodeIndex);
         type = (XSTypeDefinition)ownerDocument.getTypeInfo(fNodeIndex);
 
         // attributes
@@ -119,10 +121,22 @@ public class DeferredElementNSImpl
         int attrIndex = ownerDocument.getNodeExtra(fNodeIndex);
         if (attrIndex != -1) {
             NamedNodeMap attrs = getAttributes();
+            boolean seenSchemaDefault = false;
             do {
-                NodeImpl attr =
-                    (NodeImpl)ownerDocument.getNodeObject(attrIndex);
-                attrs.setNamedItem(attr);
+                AttrImpl attr = (AttrImpl) ownerDocument.getNodeObject(attrIndex);
+                // Take special care of schema defaulted attributes. Calling the
+                // non-namespace aware setAttributeNode() method could overwrite
+                // another attribute with the same local name.
+                if (!attr.getSpecified() && (seenSchemaDefault ||
+                    (attr.getNamespaceURI() != null &&
+                    attr.getNamespaceURI() != NamespaceContext.XMLNS_URI &&
+                    attr.getName().indexOf(':') < 0))) {
+                    seenSchemaDefault = true;
+                    attrs.setNamedItemNS(attr);
+                }
+                else {
+                    attrs.setNamedItem(attr);
+                }
                 attrIndex = ownerDocument.getPrevSibling(attrIndex);
             } while (attrIndex != -1);
         }

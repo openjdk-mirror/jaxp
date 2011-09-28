@@ -26,35 +26,38 @@ import com.sun.org.apache.xerces.internal.impl.xs.XSAnnotationImpl;
 import com.sun.org.apache.xerces.internal.impl.xs.XSParticleDecl;
 import com.sun.org.apache.xerces.internal.impl.xs.XSWildcardDecl;
 import com.sun.org.apache.xerces.internal.impl.xs.util.XInt;
+import com.sun.org.apache.xerces.internal.impl.xs.util.XSObjectListImpl;
 import com.sun.org.apache.xerces.internal.util.DOMUtil;
+import com.sun.org.apache.xerces.internal.xs.XSObjectList;
 import org.w3c.dom.Element;
 
 /**
  * The wildcard schema component traverser.
  *
- * <any
+ * &lt;any
  *   id = ID
  *   maxOccurs = (nonNegativeInteger | unbounded)  : 1
  *   minOccurs = nonNegativeInteger : 1
  *   namespace = ((##any | ##other) | List of (anyURI | (##targetNamespace | ##local)) )  : ##any
  *   processContents = (lax | skip | strict) : strict
- *   {any attributes with non-schema namespace . . .}>
+ *   {any attributes with non-schema namespace . . .}&gt;
  *   Content: (annotation?)
- * </any>
+ * &lt;/any&gt;
  *
- * <anyAttribute
+ * &lt;anyAttribute
  *   id = ID
  *   namespace = ((##any | ##other) | List of (anyURI | (##targetNamespace | ##local)) )  : ##any
  *   processContents = (lax | skip | strict) : strict
- *   {any attributes with non-schema namespace . . .}>
+ *   {any attributes with non-schema namespace . . .}&gt;
  *   Content: (annotation?)
- * </anyAttribute>
+ * &lt;/anyAttribute&gt;
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Rahul Srivastava, Sun Microsystems Inc.
  * @author Sandy Gao, IBM
  *
+ * @version $Id: XSDWildcardTraverser.java,v 1.7 2010-11-01 04:40:02 joehw Exp $
  */
 class XSDWildcardTraverser extends XSDAbstractTraverser {
 
@@ -72,7 +75,7 @@ class XSDWildcardTraverser extends XSDAbstractTraverser {
 
 
     /**
-     * Traverse <any>
+     * Traverse &lt;any&gt;
      *
      * @param  elmNode
      * @param  schemaDoc
@@ -102,6 +105,7 @@ class XSDWildcardTraverser extends XSDAbstractTraverser {
                 particle.fValue = wildcard;
                 particle.fMinOccurs = min;
                 particle.fMaxOccurs = max;
+                particle.fAnnotations = wildcard.fAnnotations;
             }
         }
 
@@ -112,7 +116,7 @@ class XSDWildcardTraverser extends XSDAbstractTraverser {
 
 
     /**
-     * Traverse <anyAttribute>
+     * Traverse &lt;anyAttribute&gt;
      *
      * @param  elmNode
      * @param  schemaDoc
@@ -182,7 +186,14 @@ class XSDWildcardTraverser extends XSDAbstractTraverser {
                 annotation = traverseSyntheticAnnotation(elmNode, text, attrValues, false, schemaDoc);
             }
         }
-        wildcard.fAnnotation = annotation;
+        XSObjectList annotations;
+        if (annotation != null) {
+            annotations = new XSObjectListImpl();
+            ((XSObjectListImpl) annotations).addXSObject(annotation);
+        } else {
+            annotations = XSObjectListImpl.EMPTY_LIST;
+        }
+        wildcard.fAnnotations = annotations;
 
         return wildcard;
 

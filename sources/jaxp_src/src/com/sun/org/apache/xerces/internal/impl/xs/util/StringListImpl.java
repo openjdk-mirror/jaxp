@@ -20,45 +20,41 @@
 
 package com.sun.org.apache.xerces.internal.impl.xs.util;
 
-import com.sun.org.apache.xerces.internal.xs.StringList;
+import java.lang.reflect.Array;
+import java.util.AbstractList;
 import java.util.Vector;
+
+import com.sun.org.apache.xerces.internal.xs.StringList;
+
 /**
  * Containts a list of Object's.
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Sandy Gao, IBM
  *
+ * @version $Id: StringListImpl.java,v 1.7 2010-11-01 04:40:06 joehw Exp $
  */
-public class StringListImpl implements StringList {
+public final class StringListImpl extends AbstractList implements StringList {
 
     /**
      * An immutable empty list.
      */
-    public static final StringList EMPTY_LIST = new StringList () {
-        public int getLength() {
-            return 0;
-        }
-        public boolean contains(String item) {
-            return false;
-        }
-        public String item(int index) {
-            return null;
-        }
-    };
+    public static final StringListImpl EMPTY_LIST = new StringListImpl(new String[0], 0);
 
     // The array to hold all data
-    private String[] fArray = null;
+    private final String[] fArray;
     // Number of elements in this list
-    private int fLength = 0;
+    private final int fLength;
 
     // REVISIT: this is temp solution. In general we need to use this class
     //          instead of the Vector.
-    private Vector fVector;
+    private final Vector fVector;
 
     public StringListImpl(Vector v) {
         fVector = v;
         fLength = (v == null) ? 0 : v.size();
+        fArray = null;
     }
 
     /**
@@ -70,6 +66,7 @@ public class StringListImpl implements StringList {
     public StringListImpl(String[] array, int length) {
         fArray = array;
         fLength = length;
+        fVector = null;
     }
 
     /**
@@ -89,9 +86,9 @@ public class StringListImpl implements StringList {
      *   <code>item</code>.
      */
     public boolean contains(String item) {
-        if (fVector != null)
+        if (fVector != null) {
             return fVector.contains(item);
-
+        }
         if (item == null) {
             for (int i = 0; i < fLength; i++) {
                 if (fArray[i] == null)
@@ -108,12 +105,62 @@ public class StringListImpl implements StringList {
     }
 
     public String item(int index) {
-        if (index < 0 || index >= fLength)
+        if (index < 0 || index >= fLength) {
             return null;
+        }
         if (fVector != null) {
             return (String)fVector.elementAt(index);
         }
         return fArray[index];
     }
 
-} // class XSParticle
+    /*
+     * List methods
+     */
+
+    public Object get(int index) {
+        if (index >= 0 && index < fLength) {
+            if (fVector != null) {
+                return fVector.elementAt(index);
+            }
+            return fArray[index];
+        }
+        throw new IndexOutOfBoundsException("Index: " + index);
+    }
+
+    public int size() {
+        return getLength();
+    }
+
+    public Object[] toArray() {
+        if (fVector != null) {
+            return fVector.toArray();
+        }
+        Object[] a = new Object[fLength];
+        toArray0(a);
+        return a;
+    }
+
+    public Object[] toArray(Object[] a) {
+        if (fVector != null) {
+            return fVector.toArray(a);
+        }
+        if (a.length < fLength) {
+            Class arrayClass = a.getClass();
+            Class componentType = arrayClass.getComponentType();
+            a = (Object[]) Array.newInstance(componentType, fLength);
+        }
+        toArray0(a);
+        if (a.length > fLength) {
+            a[fLength] = null;
+        }
+        return a;
+    }
+
+    private void toArray0(Object[] a) {
+        if (fLength > 0) {
+            System.arraycopy(fArray, 0, a, 0, fLength);
+        }
+    }
+
+} // class StringListImpl

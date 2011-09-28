@@ -61,19 +61,19 @@
 
 package com.sun.org.apache.xerces.internal.impl.xs.opti;
 
-import org.w3c.dom.TypeInfo;
 import org.w3c.dom.Attr;
-import org.w3c.dom.Node;
-import org.w3c.dom.Element;
-
 import org.w3c.dom.DOMException;
-
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.TypeInfo;
 
 /**
  * This class represents a single attribute.
  *
  * @author Rahul Srivastava, Sun Microsystems Inc.
  *
+ * @version $Id: AttrImpl.java,v 1.5 2010-11-01 04:40:01 joehw Exp $
  */
 public class AttrImpl extends NodeImpl
                       implements Attr {
@@ -102,11 +102,9 @@ public class AttrImpl extends NodeImpl
         this.value = value;
     }
 
-
     public String getName() {
         return rawname;
     }
-
 
     public boolean getSpecified() {
         return true;
@@ -116,11 +114,17 @@ public class AttrImpl extends NodeImpl
         return value;
     }
 
+    public String getNodeValue() {
+        return getValue();
+    }
 
     public Element getOwnerElement() {
         return element;
     }
 
+    public Document getOwnerDocument() {
+        return element.getOwnerDocument();
+    }
 
     public void setValue(String value) throws DOMException {
         this.value = value;
@@ -133,7 +137,7 @@ public class AttrImpl extends NodeImpl
         return false;
     }
 
-        /**
+    /**
      * Method getSchemaTypeInfo.
      * @return TypeInfo
      */
@@ -141,4 +145,8 @@ public class AttrImpl extends NodeImpl
       return null;
     }
 
+    /** NON-DOM method for debugging convenience */
+    public String toString() {
+        return getName() + "=" + "\"" + getValue() + "\"";
+    }
 }

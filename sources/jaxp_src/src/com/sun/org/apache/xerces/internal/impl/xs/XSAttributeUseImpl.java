@@ -21,19 +21,22 @@
 package com.sun.org.apache.xerces.internal.impl.xs;
 
 import com.sun.org.apache.xerces.internal.impl.dv.ValidatedInfo;
+import com.sun.org.apache.xerces.internal.impl.xs.util.XSObjectListImpl;
 import com.sun.org.apache.xerces.internal.xs.ShortList;
 import com.sun.org.apache.xerces.internal.xs.XSAttributeDeclaration;
 import com.sun.org.apache.xerces.internal.xs.XSAttributeUse;
 import com.sun.org.apache.xerces.internal.xs.XSConstants;
 import com.sun.org.apache.xerces.internal.xs.XSNamespaceItem;
+import com.sun.org.apache.xerces.internal.xs.XSObjectList;
 
 /**
  * The XML representation for an attribute use
  * schema component is a local <attribute> element information item
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Sandy Gao, IBM
+ * @version $Id: XSAttributeUseImpl.java,v 1.7 2010-11-01 04:39:55 joehw Exp $
  */
 public class XSAttributeUseImpl implements XSAttributeUse {
 
@@ -45,12 +48,15 @@ public class XSAttributeUseImpl implements XSAttributeUse {
     public short fConstraintType = XSConstants.VC_NONE;
     // value constraint value
     public ValidatedInfo fDefault = null;
+    // optional annotation
+    public XSObjectList fAnnotations = null;
 
     public void reset(){
         fDefault = null;
         fAttrDecl = null;
         fUse = SchemaSymbols.USE_OPTIONAL;
         fConstraintType = XSConstants.VC_NONE;
+        fAnnotations = null;
     }
 
     /**
@@ -109,12 +115,11 @@ public class XSAttributeUseImpl implements XSAttributeUse {
         // REVISIT: SCAPI: what's the proper representation
         return getConstraintType() == XSConstants.VC_NONE ?
                null :
-               ((fDefault != null && fDefault.actualValue != null) ?
-                       fDefault.actualValue.toString() : null);
+               fDefault.stringValue();
     }
 
     /**
-     * @see com.sun.org.apache.xerces.internal.xs.XSObject#getNamespaceItem()
+     * @see org.apache.xerces.xs.XSObject#getNamespaceItem()
      */
     public XSNamespaceItem getNamespaceItem() {
         return null;
@@ -136,6 +141,13 @@ public class XSAttributeUseImpl implements XSAttributeUse {
         return getConstraintType() == XSConstants.VC_NONE ?
                null :
                fDefault.itemValueTypes;
+    }
+
+    /**
+     * Optional. Annotations.
+     */
+    public XSObjectList getAnnotations() {
+        return (fAnnotations != null) ? fAnnotations : XSObjectListImpl.EMPTY_LIST;
     }
 
 } // class XSAttributeUseImpl

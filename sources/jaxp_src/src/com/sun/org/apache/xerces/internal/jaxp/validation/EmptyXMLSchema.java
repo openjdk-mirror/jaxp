@@ -27,23 +27,17 @@ import com.sun.org.apache.xerces.internal.xni.grammars.XMLGrammarPool;
 /**
  * <p>Implementation of Schema for W3C XML Schemas
  * which contains no schema components.</p>
- *
+ * 
  * @author Michael Glavassevich, IBM
+ * @version $Id: EmptyXMLSchema.java,v 1.6 2010-11-01 04:40:08 joehw Exp $
  */
 final class EmptyXMLSchema extends AbstractXMLSchema implements XMLGrammarPool {
-
-    private static EmptyXMLSchema EMPTY_XML_SCHEMA_INSTANCE = new EmptyXMLSchema();
-
+        
     /** Zero length grammar array. */
     private static final Grammar [] ZERO_LENGTH_GRAMMAR_ARRAY = new Grammar [0];
-
-    /** Returns the one and only instance of this class. */
-    public static EmptyXMLSchema getInstance() {
-        return EMPTY_XML_SCHEMA_INSTANCE;
-    }
-
-    private EmptyXMLSchema() {}
-
+    
+    public EmptyXMLSchema() {}
+    
     /*
      * XMLGrammarPool methods
      */
@@ -63,7 +57,7 @@ final class EmptyXMLSchema extends AbstractXMLSchema implements XMLGrammarPool {
     public void unlockPool() {}
 
     public void clear() {}
-
+    
     /*
      * XSGrammarPoolContainer methods
      */

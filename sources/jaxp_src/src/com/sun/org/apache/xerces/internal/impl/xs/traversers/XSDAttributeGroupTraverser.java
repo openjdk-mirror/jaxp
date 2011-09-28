@@ -23,9 +23,11 @@ import com.sun.org.apache.xerces.internal.impl.xs.SchemaGrammar;
 import com.sun.org.apache.xerces.internal.impl.xs.SchemaSymbols;
 import com.sun.org.apache.xerces.internal.impl.xs.XSAnnotationImpl;
 import com.sun.org.apache.xerces.internal.impl.xs.XSAttributeGroupDecl;
+import com.sun.org.apache.xerces.internal.impl.xs.util.XSObjectListImpl;
 import com.sun.org.apache.xerces.internal.util.DOMUtil;
 import com.sun.org.apache.xerces.internal.util.XMLSymbols;
 import com.sun.org.apache.xerces.internal.xni.QName;
+import com.sun.org.apache.xerces.internal.xs.XSObjectList;
 import org.w3c.dom.Element;
 
 /**
@@ -39,11 +41,12 @@ import org.w3c.dom.Element;
  *   Content: (annotation?, ((attribute | attributeGroup)*, anyAttribute?))
  * </attributeGroup>
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Rahul Srivastava, Sun Microsystems Inc.
  * @author Sandy Gao, IBM
  *
+ * @version $Id: XSDAttributeGroupTraverser.java,v 1.7 2010-11-01 04:40:02 joehw Exp $
  */
 class XSDAttributeGroupTraverser extends XSDAbstractTraverser {
 
@@ -62,7 +65,7 @@ class XSDAttributeGroupTraverser extends XSDAbstractTraverser {
         Object[] attrValues = fAttrChecker.checkAttributes(elmNode, false, schemaDoc);
 
         // get attribute
-        QName   refAttr = (QName)   attrValues[XSAttributeChecker.ATTIDX_REF];
+        QName   refAttr	= (QName)   attrValues[XSAttributeChecker.ATTIDX_REF];
 
         XSAttributeGroupDecl attrGrp = null;
 
@@ -76,7 +79,6 @@ class XSDAttributeGroupTraverser extends XSDAbstractTraverser {
         // get global decl
         attrGrp = (XSAttributeGroupDecl)fSchemaHandler.getGlobalDecl(schemaDoc, XSDHandler.ATTRIBUTEGROUP_TYPE, refAttr, elmNode);
 
-
         // no children are allowed here except annotation, which is optional.
         Element child = DOMUtil.getFirstChildElement(elmNode);
         if (child != null) {
@@ -84,6 +86,11 @@ class XSDAttributeGroupTraverser extends XSDAbstractTraverser {
             if (childName.equals(SchemaSymbols.ELT_ANNOTATION)) {
                 traverseAnnotationDecl(child, attrValues, false, schemaDoc);
                 child = DOMUtil.getNextSiblingElement(child);
+            } else {
+                String text = DOMUtil.getSyntheticAnnotation(child);
+                if (text != null) {
+                    traverseSyntheticAnnotation(child, text, attrValues, false, schemaDoc);
+                }
             }
 
             if (child != null) {
@@ -111,7 +118,7 @@ class XSDAttributeGroupTraverser extends XSDAbstractTraverser {
         // global declaration must have a name
         if (nameAttr == null) {
             reportSchemaError("s4s-att-must-appear", new Object[]{"attributeGroup (global)", "name"}, elmNode);
-            nameAttr = "no name";
+            nameAttr = NO_NAME;
         }
 
         attrGrp.fName = nameAttr;
@@ -142,6 +149,12 @@ class XSDAttributeGroupTraverser extends XSDAbstractTraverser {
             reportSchemaError("s4s-elt-must-match.1", args, nextNode);
         }
 
+        if (nameAttr.equals(NO_NAME)) {
+            // if a global group doesn't have a name, then don't add it.
+            fAttrChecker.returnAttrArray(attrValues, schemaDoc);
+            return null;
+        }
+
         // Remove prohibited attributes from the set
         attrGrp.removeProhibitedAttrs();
 
@@ -158,10 +171,35 @@ class XSDAttributeGroupTraverser extends XSDAbstractTraverser {
             }
         }
 
-        attrGrp.fAnnotation = annotation;
+        XSObjectList annotations;
+        if (annotation != null) {
+            annotations = new XSObjectListImpl();
+            ((XSObjectListImpl)annotations).addXSObject (annotation);
+        } else {
+            annotations = XSObjectListImpl.EMPTY_LIST;
+        }
+
+        attrGrp.fAnnotations = annotations;
 
         // make an entry in global declarations.
-        grammar.addGlobalAttributeGroupDecl(attrGrp);
+        if (grammar.getGlobalAttributeGroupDecl(attrGrp.fName) == null) {
+            grammar.addGlobalAttributeGroupDecl(attrGrp);
+        }
+
+        // also add it to extended map
+        final String loc = fSchemaHandler.schemaDocument2SystemId(schemaDoc);
+        final XSAttributeGroupDecl attrGrp2 = grammar.getGlobalAttributeGroupDecl(attrGrp.fName, loc);
+        if (attrGrp2 == null) {
+            grammar.addGlobalAttributeGroupDecl(attrGrp, loc);
+        }
+
+        // handle duplicates
+        if (fSchemaHandler.fTolerateDuplicates) {
+            if (attrGrp2 != null) {
+                attrGrp = attrGrp2;
+            }
+            fSchemaHandler.addGlobalAttributeGroupDecl(attrGrp);
+        }
 
         fAttrChecker.returnAttrArray(attrValues, schemaDoc);
         return attrGrp;

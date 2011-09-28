@@ -29,11 +29,12 @@ import com.sun.org.apache.xerces.internal.impl.dv.ValidationContext;
 /**
  * Validator for &lt;gYear&gt; datatype (W3C Schema Datatypes)
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Elena Litani
  * @author Gopal Sharma, SUN Microsystem Inc.
  *
+ * @version $Id: YearDV.java,v 1.7 2010-11-01 04:39:47 joehw Exp $
  */
 
 public class YearDV extends AbstractDateTimeDV {
@@ -70,6 +71,15 @@ public class YearDV extends AbstractDateTimeDV {
             start = 1;
         }
         int sign = findUTCSign(str, start, len);
+
+        final int length = ((sign == -1) ? len : sign) - start;
+        if (length < 4) {
+            throw new RuntimeException("Year must have 'CCYY' format");
+        }
+        else if (length > 4 && str.charAt(start) == '0') {
+            throw new RuntimeException("Leading zeros are required if the year value would otherwise have fewer than four digits; otherwise they are forbidden");
+        }
+
         if (sign == -1) {
             date.year=parseIntYear(str, len);
         }
@@ -109,7 +119,11 @@ public class YearDV extends AbstractDateTimeDV {
     }
 
     protected XMLGregorianCalendar getXMLGregorianCalendar(DateTimeData date) {
-        return factory.newXMLGregorianCalendar(date.unNormYear, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED
-                , DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, date.timezoneHr * 60 + date.timezoneMin);
+        return datatypeFactory.newXMLGregorianCalendar(date.unNormYear, DatatypeConstants.FIELD_UNDEFINED,
+                DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED,
+                DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED,
+                date.hasTimeZone() ? date.timezoneHr * 60 + date.timezoneMin : DatatypeConstants.FIELD_UNDEFINED);
     }
 }
+
+

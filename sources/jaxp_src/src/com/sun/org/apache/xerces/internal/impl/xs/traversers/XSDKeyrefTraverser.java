@@ -32,9 +32,10 @@ import org.w3c.dom.Element;
 /**
  * This class contains code that is used to traverse <keyref>s.
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Neil Graham, IBM
+ * @version $Id: XSDKeyrefTraverser.java,v 1.7 2010-11-01 04:40:02 joehw Exp $
  */
 class XSDKeyrefTraverser extends XSDAbstractIDConstraintTraverser {
 
@@ -85,20 +86,41 @@ class XSDKeyrefTraverser extends XSDAbstractIDConstraintTraverser {
 
         KeyRef keyRef = new KeyRef(schemaDoc.fTargetNamespace, krName, element.fName, key);
 
-        // add to element decl
-        traverseIdentityConstraint(keyRef, krElem, schemaDoc, attrValues);
+        // If errors occurred in traversing the identity constraint, then don't
+        // add it to the schema, to avoid errors when processing the instance.
+        if (traverseIdentityConstraint(keyRef, krElem, schemaDoc, attrValues)) {
+            //Schema Component Constraint: Identity-constraint Definition Properties Correct
+            //2 If the {identity-constraint category} is keyref, the cardinality of the {fields} must equal that of the {fields} of the {referenced key}.
+            if(key.getFieldCount() != keyRef.getFieldCount()) {
+                reportSchemaError("c-props-correct.2" , new Object [] {krName,key.getIdentityConstraintName()}, krElem);
+            } else {
+                // add key reference to element decl
+                // and stuff this in the grammar
+                if (grammar.getIDConstraintDecl(keyRef.getIdentityConstraintName()) == null) {
+                    grammar.addIDConstraintDecl(element, keyRef);
+                }
 
-        //Schema Component Constraint: Identity-constraint Definition Properties Correct
-        //2 If the {identity-constraint category} is keyref, the cardinality of the {fields} must equal that of the {fields} of the {referenced key}.
-        if(key.getFieldCount() != keyRef.getFieldCount()) {
-            reportSchemaError("c-props-correct.2" , new Object [] {krName,key.getIdentityConstraintName()}, krElem);
-        } else {
-            // add key reference to element decl
-            // and stuff this in the grammar
-            grammar.addIDConstraintDecl(element, keyRef);
+                // also add it to extended map
+                final String loc = fSchemaHandler.schemaDocument2SystemId(schemaDoc);
+                final IdentityConstraint idc = grammar.getIDConstraintDecl(keyRef.getIdentityConstraintName(), loc);
+                if (idc  == null) {
+                    grammar.addIDConstraintDecl(element, keyRef, loc);
+                }
+
+                // handle duplicates
+                if (fSchemaHandler.fTolerateDuplicates) {
+                    if (idc  != null) {
+                        if (idc instanceof KeyRef) {
+                            keyRef = (KeyRef) idc;
+                        }
+                    }
+                    fSchemaHandler.addIDConstraintDecl(keyRef);
+                }
+            }
         }
 
         // and put back attributes
         fAttrChecker.returnAttrArray(attrValues, schemaDoc);
     } // traverse(Element,int,XSDocumentInfo, SchemaGrammar)
 } // XSDKeyrefTraverser
+

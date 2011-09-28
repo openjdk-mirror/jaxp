@@ -20,18 +20,21 @@
 
 package com.sun.org.apache.xerces.internal.impl.xs;
 
+import com.sun.org.apache.xerces.internal.impl.xs.util.XSObjectListImpl;
 import com.sun.org.apache.xerces.internal.xs.XSAnnotation;
 import com.sun.org.apache.xerces.internal.xs.XSConstants;
 import com.sun.org.apache.xerces.internal.xs.XSNamespaceItem;
 import com.sun.org.apache.xerces.internal.xs.XSNotationDeclaration;
+import com.sun.org.apache.xerces.internal.xs.XSObjectList;
 
 /**
  * The XML representation for a NOTATION declaration
  * schema component is a global <notation> element information item
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Rahul Srivastava, Sun Microsystems Inc.
+ * @version $Id: XSNotationDecl.java,v 1.7 2010-11-01 04:39:55 joehw Exp $
  */
 public class XSNotationDecl implements XSNotationDeclaration {
 
@@ -45,7 +48,11 @@ public class XSNotationDecl implements XSNotationDeclaration {
     public String fSystemId = null;
 
     // optional annotation
-    public XSAnnotationImpl fAnnotation = null;
+    public XSObjectList fAnnotations = null;
+
+    // The namespace schema information item corresponding to the target namespace
+    // of the notation declaration, if it is globally declared; or null otherwise.
+    private XSNamespaceItem fNamespaceItem = null;
 
     /**
      * Get the type of the object, i.e ELEMENT_DECLARATION.
@@ -90,14 +97,25 @@ public class XSNotationDecl implements XSNotationDeclaration {
      * Optional. Annotation.
      */
     public XSAnnotation getAnnotation() {
-        return fAnnotation;
+        return (fAnnotations != null) ? (XSAnnotation) fAnnotations.item(0) : null;
     }
 
-        /**
-         * @see com.sun.org.apache.xerces.internal.xs.XSObject#getNamespaceItem()
-         */
-        public XSNamespaceItem getNamespaceItem() {
-                return null;
-        }
+    /**
+     * Optional. Annotations.
+     */
+    public XSObjectList getAnnotations() {
+        return (fAnnotations != null) ? fAnnotations : XSObjectListImpl.EMPTY_LIST;
+    }
+
+    /**
+     * @see org.apache.xerces.xs.XSObject#getNamespaceItem()
+     */
+    public XSNamespaceItem getNamespaceItem() {
+        return fNamespaceItem;
+    }
+
+    void setNamespaceItem(XSNamespaceItem namespaceItem) {
+        fNamespaceItem = namespaceItem;
+    }
 
 } // class XSNotationDecl

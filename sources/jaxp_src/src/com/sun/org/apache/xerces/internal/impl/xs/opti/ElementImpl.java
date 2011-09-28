@@ -26,11 +26,12 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 /**
- * @xerces.internal
- *
+ * @xerces.internal  
+ * 
  * @author Rahul Srivastava, Sun Microsystems Inc.
  * @author Sandy Gao, IBM
  *
+ * @version $Id: ElementImpl.java,v 1.7 2010-11-01 04:40:01 joehw Exp $
  */
 public class ElementImpl extends DefaultElement {
 
@@ -43,6 +44,7 @@ public class ElementImpl extends DefaultElement {
     int line;
     int column;
     int charOffset;
+    String fAnnotation;
     String fSyntheticAnnotation;
 
     public ElementImpl(int line, int column, int offset) {
@@ -187,7 +189,7 @@ public class ElementImpl extends DefaultElement {
 
     public String getAttributeNS(String namespaceURI, String localName) {
         for (int i=0; i<attrs.length; i++) {
-            if (attrs[i].getLocalName().equals(localName) && attrs[i].getNamespaceURI().equals(namespaceURI)) {
+            if (attrs[i].getLocalName().equals(localName) && nsEquals(attrs[i].getNamespaceURI(), namespaceURI)) {
                 return attrs[i].getValue();
             }
         }
@@ -197,7 +199,7 @@ public class ElementImpl extends DefaultElement {
 
     public Attr getAttributeNodeNS(String namespaceURI, String localName) {
         for (int i=0; i<attrs.length; i++) {
-            if (attrs[i].getName().equals(localName) && attrs[i].getNamespaceURI().equals(namespaceURI)) {
+            if (attrs[i].getName().equals(localName) && nsEquals(attrs[i].getNamespaceURI(), namespaceURI)) {
                 return attrs[i];
             }
         }
@@ -217,7 +219,7 @@ public class ElementImpl extends DefaultElement {
 
     public boolean hasAttributeNS(String namespaceURI, String localName) {
         for (int i=0; i<attrs.length; i++) {
-            if (attrs[i].getName().equals(localName) && attrs[i].getNamespaceURI().equals(namespaceURI)) {
+            if (attrs[i].getName().equals(localName) && nsEquals(attrs[i].getNamespaceURI(), namespaceURI)) {
                 return true;
             }
         }
@@ -249,7 +251,24 @@ public class ElementImpl extends DefaultElement {
         return charOffset;
     }
 
+    public String getAnnotation() {
+        return fAnnotation;
+    }
+
     public String getSyntheticAnnotation() {
         return fSyntheticAnnotation;
     }
+
+    /**
+     * Compares two namespace URIs with an extra case for null entries
+     */
+    private static boolean nsEquals(String nsURI_1, String nsURI_2) {
+        if (nsURI_1 == null) {
+            return (nsURI_2 == null);
+        }
+        else {
+            return nsURI_1.equals(nsURI_2);
+        }
+    }
+
 }

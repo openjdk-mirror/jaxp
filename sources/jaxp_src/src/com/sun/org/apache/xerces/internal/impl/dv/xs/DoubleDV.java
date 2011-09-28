@@ -27,11 +27,12 @@ import com.sun.org.apache.xerces.internal.xs.datatypes.XSDouble;
 /**
  * Represent the schema type "double"
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Neeraj Bajaj, Sun Microsystems, inc.
  * @author Sandy Gao, IBM
  *
+ * @version $Id: DoubleDV.java,v 1.7 2010-11-01 04:39:46 joehw Exp $
  */
 public class DoubleDV extends TypeValidator {
 
@@ -80,7 +81,7 @@ public class DoubleDV extends TypeValidator {
     }
 
     private static final class XDouble implements XSDouble {
-        private double value;
+        private final double value;
         public XDouble(String s) throws NumberFormatException {
             if (isPossibleFP(s)) {
                 value = Double.parseDouble(s);
@@ -115,6 +116,15 @@ public class DoubleDV extends TypeValidator {
                 return true;
 
             return false;
+        }
+
+        public int hashCode() {
+            // This check is necessary because doubleToLongBits(+0) != doubleToLongBits(-0)
+            if (value == 0d) {
+                return 0;
+            }
+            long v = Double.doubleToLongBits(value);
+            return (int) (v ^ (v >>> 32));
         }
 
         // NOTE: 0.0 is equal but not identical to -0.0

@@ -28,11 +28,12 @@ import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
 /**
  * Represent the schema type "hexBinary"
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Neeraj Bajaj, Sun Microsystems, inc.
  * @author Sandy Gao, IBM
  *
+ * @version $Id: HexBinaryDV.java,v 1.7 2010-11-01 04:39:47 joehw Exp $
  */
 public class HexBinaryDV extends TypeValidator {
 
@@ -79,5 +80,12 @@ public class HexBinaryDV extends TypeValidator {
             return true;
         }
 
+        public int hashCode() {
+            int hash = 0;
+            for (int i = 0; i < data.length; ++i) {
+                hash = hash * 37 + (((int) data[i]) & 0xff);
+            }
+            return hash;
+        }
     }
 }

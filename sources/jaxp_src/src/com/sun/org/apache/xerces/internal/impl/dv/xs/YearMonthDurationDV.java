@@ -30,10 +30,11 @@ import com.sun.org.apache.xerces.internal.impl.dv.ValidationContext;
 /**
  * Used to validate the <yearMonthDuration> type
  *
- * @xerces.internal
- *
+ * @xerces.internal  
+ * 
  * @author Ankit Pasricha, IBM
- *
+ *  
+ * @version $Id: YearMonthDurationDV.java,v 1.6 2010-11-01 04:39:47 joehw Exp $
  */
 class YearMonthDurationDV extends DurationDV {
 
@@ -52,7 +53,7 @@ class YearMonthDurationDV extends DurationDV {
         if ( date.year<0 || date.month<0) {
             sign = -1;
         }
-        return factory.newDuration(sign == 1,
+        return datatypeFactory.newDuration(sign == 1,
                 date.year != DatatypeConstants.FIELD_UNDEFINED?BigInteger.valueOf(sign*date.year):null,
                 date.month != DatatypeConstants.FIELD_UNDEFINED?BigInteger.valueOf(sign*date.month):null,
                 null,

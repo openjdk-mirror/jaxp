@@ -38,7 +38,7 @@ import javax.xml.stream.util.EventReaderDelegate;
  *
  */
 public class EventFilterSupport extends EventReaderDelegate {
-
+    
     //maintain a reference to EventFilter
     EventFilter fEventFilter ;
     /** Creates a new instance of EventFilterSupport */
@@ -46,7 +46,7 @@ public class EventFilterSupport extends EventReaderDelegate {
         setParent(eventReader);
         fEventFilter = eventFilter;
     }
-
+    
     public Object next(){
         try{
             return nextEvent();
@@ -54,7 +54,7 @@ public class EventFilterSupport extends EventReaderDelegate {
             throw new NoSuchElementException();
         }
     }
-
+    
     public boolean hasNext(){
         try{
             return peek() != null ? true : false ;
@@ -62,12 +62,12 @@ public class EventFilterSupport extends EventReaderDelegate {
             return false;
         }
     }
-
+    
     public XMLEvent nextEvent()throws XMLStreamException{
         if(super.hasNext()){
             //get the next event by calling XMLEventReader
             XMLEvent event = super.nextEvent();
-
+            
             //if this filter accepts this event then return this event
             if(fEventFilter.accept(event)){
                 return event;
@@ -79,7 +79,7 @@ public class EventFilterSupport extends EventReaderDelegate {
             throw new NoSuchElementException();
         }
     }//nextEvent()
-
+    
      public XMLEvent nextTag() throws XMLStreamException{
          if(super.hasNext()){
              XMLEvent event = super.nextTag();
@@ -89,26 +89,23 @@ public class EventFilterSupport extends EventReaderDelegate {
              }
              else{
                 return nextTag();
-             }
+             }    
          }else{
              throw new NoSuchElementException();
-         }
+         }         
      }
-
+     
      public XMLEvent peek() throws XMLStreamException{
-
-         XMLEvent event = super.peek();
-         if(event == null)return null;
-         //if the filter accepts this event return this event.
-         if(fEventFilter.accept(event)){
-            return event;
-         }
-         else{
+         while (true) {
+             XMLEvent event = super.peek();
+             if(event == null)return null;
+             //if the filter accepts this event return this event.
+             if(fEventFilter.accept(event)){
+                return event;
+             }
              //call super.next(), and then peek again.
              super.next();
-             return peek();
          }
-
      }
-
+     
 }//EventFilterSupport

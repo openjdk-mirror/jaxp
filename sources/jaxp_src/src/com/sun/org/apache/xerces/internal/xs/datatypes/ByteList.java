@@ -19,16 +19,19 @@
  */
 package com.sun.org.apache.xerces.internal.xs.datatypes;
 
+import java.util.List;
+
 import com.sun.org.apache.xerces.internal.xs.XSException;
 
 /**
- * <p>The <code>ByteList</code> is an immutable ordered collection of
+ * <p>The <code>ByteList</code> is an immutable ordered collection of 
  * <code>byte</code>.</p>
- *
+ * 
  * @author Ankit Pasricha, IBM
- *
+ * 
+ * @version $Id: ByteList.java,v 1.7 2010-11-01 04:40:31 joehw Exp $
  */
-public interface ByteList {
+public interface ByteList extends List {
 
     /**
      * The number of <code>byte</code>s in the list. The range of

@@ -27,11 +27,12 @@ import com.sun.org.apache.xerces.internal.xs.datatypes.XSFloat;
 /**
  * Represent the schema type "float"
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Neeraj Bajaj, Sun Microsystems, inc.
  * @author Sandy Gao, IBM
  *
+ * @version $Id: FloatDV.java,v 1.7 2010-11-01 04:39:47 joehw Exp $
  */
 public class FloatDV extends TypeValidator {
 
@@ -64,7 +65,7 @@ public class FloatDV extends TypeValidator {
 
     private static final class XFloat implements XSFloat {
 
-        private float value;
+        private final float value;
         public XFloat(String s) throws NumberFormatException {
             if (DoubleDV.isPossibleFP(s)) {
                 value = Float.parseFloat(s);
@@ -99,6 +100,11 @@ public class FloatDV extends TypeValidator {
                 return true;
 
             return false;
+        }
+
+        public int hashCode() {
+            // This check is necessary because floatToIntBits(+0) != floatToIntBits(-0)
+            return (value == 0f) ? 0 : Float.floatToIntBits(value);
         }
 
         // NOTE: 0.0 is equal but not identical to -0.0

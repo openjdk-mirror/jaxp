@@ -25,9 +25,11 @@ import java.io.InputStream;
 import java.io.Reader;
 
 import javax.xml.XMLConstants;
+import javax.xml.stream.XMLEventReader;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -40,6 +42,7 @@ import com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper;
 import com.sun.org.apache.xerces.internal.util.SAXInputSource;
 import com.sun.org.apache.xerces.internal.util.SAXMessageFormatter;
 import com.sun.org.apache.xerces.internal.util.SecurityManager;
+import com.sun.org.apache.xerces.internal.util.StAXInputSource;
 import com.sun.org.apache.xerces.internal.util.XMLGrammarPoolImpl;
 import com.sun.org.apache.xerces.internal.xni.XNIException;
 import com.sun.org.apache.xerces.internal.xni.grammars.Grammar;
@@ -60,7 +63,7 @@ import org.xml.sax.SAXParseException;
  * {@link SchemaFactory} for XML Schema.
  *
  * @author Kohsuke Kawaguchi (kohsuke.kawaguchi@sun.com)
- * @version $Id: XMLSchemaFactory.java,v 1.8 2010/07/23 02:23:47 joehw Exp $
+ * @version $Id: XMLSchemaFactory.java,v 1.11 2010-11-01 04:40:08 joehw Exp $
  */
 public final class XMLSchemaFactory extends SchemaFactory {
     
@@ -198,6 +201,16 @@ public final class XMLSchemaFactory extends SchemaFactory {
                 String systemID = domSource.getSystemId();          
                 xmlInputSources[i] = new DOMInputSource(node, systemID);
             }
+             else if (source instanceof StAXSource) {
+                StAXSource staxSource = (StAXSource) source;
+                XMLEventReader eventReader = staxSource.getXMLEventReader();
+                if (eventReader != null) {
+                    xmlInputSources[i] = new StAXInputSource(eventReader);
+                }
+                else {
+                    xmlInputSources[i] = new StAXInputSource(staxSource.getXMLStreamReader());
+                }
+            }
             else if (source == null) {
                 throw new NullPointerException(JAXPValidationMessageFormatter.formatMessage(fXMLSchemaLoader.getLocale(),
                         "SchemaSourceArrayMemberNull", null));
@@ -228,21 +241,26 @@ public final class XMLSchemaFactory extends SchemaFactory {
         
         // Select Schema implementation based on grammar count.
         final int grammarCount = pool.getGrammarCount();
+        AbstractXMLSchema schema = null;
         if (grammarCount > 1) {
-            return new XMLSchema(new ReadOnlyGrammarPool(pool));
+            schema = new XMLSchema(new ReadOnlyGrammarPool(pool));
         }
         else if (grammarCount == 1) {
             Grammar[] grammars = pool.retrieveInitialGrammarSet(XMLGrammarDescription.XML_SCHEMA);
-            return new SimpleXMLSchema(grammars[0]);
+            schema = new SimpleXMLSchema(grammars[0]);
         }
         else {
-            return EmptyXMLSchema.getInstance();
+            schema = new EmptyXMLSchema();
         }
+        propagateFeatures(schema);
+        return schema;
     }
     
     public Schema newSchema() throws SAXException {
         // Use a Schema that uses the system id as the equality source.
-        return new WeakReferenceXMLSchema();
+        AbstractXMLSchema schema = new WeakReferenceXMLSchema();
+        propagateFeatures(schema);
+        return schema;
     }
     
     public boolean getFeature(String name) 
@@ -369,6 +387,15 @@ public final class XMLSchemaFactory extends SchemaFactory {
                         SAXMessageFormatter.formatMessage(fXMLSchemaLoader.getLocale(),
                         "property-not-supported", new Object [] {identifier}));
             }
+        }
+    }
+
+    private void propagateFeatures(AbstractXMLSchema schema) {
+        schema.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, fSecurityManager != null);
+        String[] features = fXMLSchemaLoader.getRecognizedFeatures();
+        for (int i = 0; i < features.length; ++i) {
+            boolean state = fXMLSchemaLoader.getFeature(features[i]);
+            schema.setFeature(features[i], state);
         }
     }
     

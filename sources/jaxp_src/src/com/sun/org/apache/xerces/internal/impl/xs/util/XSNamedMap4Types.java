@@ -20,25 +20,27 @@
 
 package com.sun.org.apache.xerces.internal.impl.xs.util;
 
+import com.sun.org.apache.xerces.internal.util.SymbolHash;
 import com.sun.org.apache.xerces.internal.xs.XSObject;
 import com.sun.org.apache.xerces.internal.xs.XSTypeDefinition;
-import com.sun.org.apache.xerces.internal.util.SymbolHash;
+
 
 /**
  * Containts the map between qnames and XSObject's.
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Sandy Gao, IBM
  *
+ * @version $Id: XSNamedMap4Types.java,v 1.7 2010-11-01 04:40:06 joehw Exp $
  */
-public class XSNamedMap4Types extends XSNamedMapImpl {
+public final class XSNamedMap4Types extends XSNamedMapImpl {
 
     // the type of component stored here: complex or simple type
-    short fType;
+    private final short fType;
 
     /**
-     * Construct an XSNamedMap implmentation for one namespace
+     * Construct an XSNamedMap implementation for one namespace
      *
      * @param namespace the namespace to which the components belong
      * @param map       the map from local names to components
@@ -50,7 +52,7 @@ public class XSNamedMap4Types extends XSNamedMapImpl {
     }
 
     /**
-     * Construct an XSNamedMap implmentation for a list of namespaces
+     * Construct an XSNamedMap implementation for a list of namespaces
      *
      * @param namespaces the namespaces to which the components belong
      * @param maps       the maps from local names to components
@@ -71,8 +73,9 @@ public class XSNamedMap4Types extends XSNamedMapImpl {
         if (fLength == -1) {
             // first get the number of components for all types
             int length = 0;
-            for (int i = 0; i < fNSNum; i++)
+            for (int i = 0; i < fNSNum; i++) {
                 length += fMaps[i].getLength();
+            }
             // then copy all types to an temporary array
             int pos = 0;
             XSObject[] array = new XSObject[length];
@@ -105,14 +108,13 @@ public class XSNamedMap4Types extends XSNamedMapImpl {
      *   identify any <code>XSObject</code> in this map.
      */
     public XSObject itemByName(String namespace, String localName) {
-        if (namespace != null)
-            namespace = namespace.intern();
         for (int i = 0; i < fNSNum; i++) {
-            if (namespace == fNamespaces[i]) {
+            if (isEqual(namespace, fNamespaces[i])) {
                 XSTypeDefinition type = (XSTypeDefinition)fMaps[i].get(localName);
-                // only return it if it mataches the required type
-                if (type.getTypeCategory() == fType)
+                // only return it if it matches the required type
+                if (type != null && type.getTypeCategory() == fType) {
                     return type;
+                }
                 return null;
             }
         }
@@ -133,8 +135,9 @@ public class XSNamedMap4Types extends XSNamedMapImpl {
         if (fArray == null) {
             getLength();
         }
-        if (index < 0 || index >= fLength)
+        if (index < 0 || index >= fLength) {
             return null;
+        }
         return fArray[index];
     }
 

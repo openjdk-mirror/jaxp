@@ -32,16 +32,17 @@ import com.sun.org.apache.xerces.internal.impl.dv.ValidationContext;
 /**
  * Validator for &lt;duration&gt; datatype (W3C Schema Datatypes)
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Elena Litani
  * @author Gopal Sharma, SUN Microsystem Inc.
+ * @version $Id: DurationDV.java,v 1.7 2010-11-01 04:39:47 joehw Exp $
  */
 public class DurationDV extends AbstractDateTimeDV {
 
-        public static final int DURATION_TYPE = 0;
-        public static final int YEARMONTHDURATION_TYPE = 1;
-        public static final int DAYTIMEDURATION_TYPE = 2;
+	public static final int DURATION_TYPE = 0;
+	public static final int YEARMONTHDURATION_TYPE = 1;
+	public static final int DAYTIMEDURATION_TYPE = 2;
     // order-relation on duration is a partial order. The dates below are used to
     // for comparison of 2 durations, based on the fact that
     // duration x and y is x<=y iff s+x<=s+y
@@ -341,7 +342,11 @@ public class DurationDV extends AbstractDateTimeDV {
         if (dot+1 == end) {
             throw new NumberFormatException("'" + buffer + "' has wrong format");
         }
-        return Double.parseDouble(buffer.substring(start, end));
+        double value = Double.parseDouble(buffer.substring(start, end));
+        if (value == Double.POSITIVE_INFINITY) {
+            throw new NumberFormatException("'" + buffer + "' has wrong format");
+        }
+        return value;
     }
 
     protected String dateToString(DateTimeData date) {
@@ -362,7 +367,7 @@ public class DurationDV extends AbstractDateTimeDV {
         message.append('H');
         message.append((date.minute < 0?-1:1) * date.minute);
         message.append('M');
-        message.append((date.second < 0?-1:1) * date.second);
+        append2(message, (date.second < 0?-1:1) * date.second);
         message.append('S');
 
         return message.toString();
@@ -374,7 +379,7 @@ public class DurationDV extends AbstractDateTimeDV {
                 || date.hour<0 || date.minute<0 || date.second<0) {
             sign = -1;
         }
-        return factory.newDuration(sign == 1,
+        return datatypeFactory.newDuration(sign == 1,
                 date.year != DatatypeConstants.FIELD_UNDEFINED?BigInteger.valueOf(sign*date.year):null,
                 date.month != DatatypeConstants.FIELD_UNDEFINED?BigInteger.valueOf(sign*date.month):null,
                 date.day != DatatypeConstants.FIELD_UNDEFINED?BigInteger.valueOf(sign*date.day):null,

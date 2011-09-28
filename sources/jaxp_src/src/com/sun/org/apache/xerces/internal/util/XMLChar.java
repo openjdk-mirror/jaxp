@@ -44,6 +44,7 @@ import java.util.Arrays;
  * @author Michael Glavassevich, IBM
  * @author Rahul Srivastava, Sun Microsystems Inc.
  *
+ * @version $Id: XMLChar.java,v 1.7 2010-11-01 04:40:15 joehw Exp $
  */
 public class XMLChar {
 
@@ -897,20 +898,22 @@ public class XMLChar {
      * @return true if name is a valid Name
      */
     public static boolean isValidName(String name) {
-        if (name.length() == 0)
+        final int length = name.length();
+        if (length == 0) {
             return false;
+        }
         char ch = name.charAt(0);
-        if( isNameStart(ch) == false)
-           return false;
-        for (int i = 1; i < name.length(); i++ ) {
-           ch = name.charAt(i);
-           if( isName( ch ) == false ){
-              return false;
-           }
+        if (!isNameStart(ch)) {
+            return false;
+        }
+        for (int i = 1; i < length; ++i) {
+            ch = name.charAt(i);
+            if (!isName(ch)) {
+                return false;
+            }
         }
         return true;
     } // isValidName(String):boolean
-
 
     /*
      * from the namespace rec
@@ -924,16 +927,19 @@ public class XMLChar {
      * @return true if name is a valid NCName
      */
     public static boolean isValidNCName(String ncName) {
-        if (ncName.length() == 0)
+        final int length = ncName.length();
+        if (length == 0) {
             return false;
+        }
         char ch = ncName.charAt(0);
-        if( isNCNameStart(ch) == false)
-           return false;
-        for (int i = 1; i < ncName.length(); i++ ) {
-           ch = ncName.charAt(i);
-           if( isNCName( ch ) == false ){
-              return false;
-           }
+        if (!isNCNameStart(ch)) {
+            return false;
+        }
+        for (int i = 1; i < length; ++i) {
+            ch = ncName.charAt(i);
+            if (!isNCName(ch)) {
+                return false;
+            }
         }
         return true;
     } // isValidNCName(String):boolean
@@ -949,13 +955,15 @@ public class XMLChar {
      * @return true if nmtoken is a valid Nmtoken
      */
     public static boolean isValidNmtoken(String nmtoken) {
-        if (nmtoken.length() == 0)
+        final int length = nmtoken.length();
+        if (length == 0) {
             return false;
-        for (int i = 0; i < nmtoken.length(); i++ ) {
-           char ch = nmtoken.charAt(i);
-           if(  ! isName( ch ) ){
-              return false;
-           }
+        }
+        for (int i = 0; i < length; ++i) {
+            char ch = nmtoken.charAt(i);
+            if (!isName(ch)) {
+                return false;
+            }
         }
         return true;
     } // isValidName(String):boolean
@@ -1021,5 +1029,37 @@ public class XMLChar {
         return false;
     } // isValidIANAEncoding(String):boolean
 
+    // other methods
+
+    /**
+     * Trims space characters as defined by production [3] in
+     * the XML 1.0 specification from both ends of the given string.
+     *
+     * @param value the string to be trimmed
+     * @return the given string with the space characters trimmed
+     * from both ends
+     */
+    public static String trim(String value) {
+        int start;
+        int end;
+        final int lengthMinusOne = value.length() - 1;
+        for (start = 0; start <= lengthMinusOne; ++start) {
+            if (!isSpace(value.charAt(start))) {
+                break;
+            }
+        }
+        for (end = lengthMinusOne; end >= start; --end) {
+            if (!isSpace(value.charAt(end))) {
+                break;
+            }
+        }
+        if (start == 0 && end == lengthMinusOne) {
+            return value;
+        }
+        if (start > lengthMinusOne) {
+            return "";
+        }
+        return value.substring(start, end + 1);
+    } // trim(String):String
 
 } // class XMLChar

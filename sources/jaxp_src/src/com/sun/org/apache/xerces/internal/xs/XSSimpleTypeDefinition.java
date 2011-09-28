@@ -235,8 +235,7 @@ public interface XSSimpleTypeDefinition extends XSTypeDefinition {
     public XSObjectList getMultiValueFacets();
 
     /**
-     *  [annotations]: a set of annotations for this simple type component if
-     * it exists, otherwise an empty <code>XSObjectList</code>.
+     * A sequence of [annotations] or an empty <code>XSObjectList</code>.
      */
     public XSObjectList getAnnotations();
 

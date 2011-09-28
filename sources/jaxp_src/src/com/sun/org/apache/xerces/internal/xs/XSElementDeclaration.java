@@ -21,7 +21,7 @@
 package com.sun.org.apache.xerces.internal.xs;
 
 /**
- * The interface represents the Element Declaration schema component.
+ * The interface represents the Element Declaration schema component. 
  */
 public interface XSElementDeclaration extends XSTerm {
     /**
@@ -168,8 +168,13 @@ public interface XSElementDeclaration extends XSTerm {
     public boolean getAbstract();
 
     /**
-     * An annotation if it exists, otherwise <code>null</code>.
+     * An annotation if it exists, otherwise <code>null</code>. If not null
+     * then the first [annotation] from the sequence of annotations.
      */
     public XSAnnotation getAnnotation();
 
+    /**
+     * A sequence of [annotations] or an empty <code>XSObjectList</code>.
+     */
+    public XSObjectList getAnnotations();
 }

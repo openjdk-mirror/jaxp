@@ -73,7 +73,7 @@ import com.sun.org.apache.xerces.internal.xni.parser.XMLPullParserConfiguration;
  * @author Neil Graham, IBM
  * @author Michael Glavassevich, IBM
  *
- * @version $Id: XML11Configuration.java,v 1.7 2010/07/23 02:09:28 joehw Exp $
+ * @version $Id: XML11Configuration.java,v 1.9 2010-11-01 04:40:10 joehw Exp $
  */
 public class XML11Configuration extends ParserConfigurationSettings
     implements XMLPullParserConfiguration, XML11Configurable {
@@ -149,7 +149,15 @@ public class XML11Configuration extends ParserConfigurationSettings
     /** Feature identifier: honour all schemaLocations */
     protected static final String HONOUR_ALL_SCHEMALOCATIONS = 
         Constants.XERCES_FEATURE_PREFIX + Constants.HONOUR_ALL_SCHEMALOCATIONS_FEATURE;
-    
+
+    /** Feature identifier: namespace growth */
+    protected static final String NAMESPACE_GROWTH =
+        Constants.XERCES_FEATURE_PREFIX + Constants.NAMESPACE_GROWTH_FEATURE;
+
+    /** Feature identifier: tolerate duplicates */
+    protected static final String TOLERATE_DUPLICATES =
+        Constants.XERCES_FEATURE_PREFIX + Constants.TOLERATE_DUPLICATES_FEATURE;
+
     /** Feature identifier: use grammar pool only */
     protected static final String USE_GRAMMAR_POOL_ONLY =
         Constants.XERCES_FEATURE_PREFIX + Constants.USE_GRAMMAR_POOL_ONLY_FEATURE;
@@ -258,6 +266,10 @@ public class XML11Configuration extends ParserConfigurationSettings
     /** Property identifier: locale. */
     protected static final String LOCALE =
         Constants.XERCES_PROPERTY_PREFIX + Constants.LOCALE_PROPERTY;
+
+    /** Property identifier: Schema DV Factory */
+    protected static final String SCHEMA_DV_FACTORY =
+        Constants.XERCES_PROPERTY_PREFIX + Constants.SCHEMA_DV_FACTORY_PROPERTY;
 
     // debugging
 
@@ -454,7 +466,9 @@ public class XML11Configuration extends ParserConfigurationSettings
 				NAMESPACES,
                 NORMALIZE_DATA, SCHEMA_ELEMENT_DEFAULT, SCHEMA_AUGMENT_PSVI,
                 GENERATE_SYNTHETIC_ANNOTATIONS, VALIDATE_ANNOTATIONS,
-                HONOUR_ALL_SCHEMALOCATIONS, USE_GRAMMAR_POOL_ONLY,
+                HONOUR_ALL_SCHEMALOCATIONS, NAMESPACE_GROWTH,
+                TOLERATE_DUPLICATES,
+                USE_GRAMMAR_POOL_ONLY,
             	// NOTE: These shouldn't really be here but since the XML Schema
             	//       validator is constructed dynamically, its recognized
             	//       features might not have been set and it would cause a
@@ -478,6 +492,8 @@ public class XML11Configuration extends ParserConfigurationSettings
         fFeatures.put(GENERATE_SYNTHETIC_ANNOTATIONS, Boolean.FALSE);
         fFeatures.put(VALIDATE_ANNOTATIONS, Boolean.FALSE);
         fFeatures.put(HONOUR_ALL_SCHEMALOCATIONS, Boolean.FALSE);
+        fFeatures.put(NAMESPACE_GROWTH, Boolean.FALSE);
+        fFeatures.put(TOLERATE_DUPLICATES, Boolean.FALSE);
         fFeatures.put(USE_GRAMMAR_POOL_ONLY, Boolean.FALSE);
 		fFeatures.put(PARSER_SETTINGS, Boolean.TRUE);
 
@@ -507,6 +523,7 @@ public class XML11Configuration extends ParserConfigurationSettings
             	SCHEMA_LOCATION,
                 SCHEMA_NONS_LOCATION,
                 LOCALE,
+                SCHEMA_DV_FACTORY,
         };
         addRecognizedProperties(recognizedProperties);
 		

@@ -78,8 +78,13 @@ public interface XSWildcard extends XSTerm {
     public short getProcessContents();
 
     /**
-     * An [annotation] if it exists, otherwise <code>null</code>.
+     * An annotation if it exists, otherwise <code>null</code>. If not null
+     * then the first [annotation] from the sequence of annotations.
      */
     public XSAnnotation getAnnotation();
 
+    /**
+     * A sequence of [annotations] or an empty <code>XSObjectList</code>.
+     */
+    public XSObjectList getAnnotations();
 }

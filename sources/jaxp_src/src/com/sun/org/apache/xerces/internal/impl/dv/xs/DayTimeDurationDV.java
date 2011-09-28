@@ -31,10 +31,11 @@ import com.sun.org.apache.xerces.internal.impl.dv.ValidationContext;
 /**
  * Used to validate the <dayTimeDuration> type
  *
- * @xerces.internal
- *
+ * @xerces.internal 
+ * 
  * @author Ankit Pasricha, IBM
- *
+ * 
+ * @version $Id: DayTimeDurationDV.java,v 1.6 2010-11-01 04:39:46 joehw Exp $
  */
 class DayTimeDurationDV extends DurationDV {
 
@@ -53,7 +54,7 @@ class DayTimeDurationDV extends DurationDV {
         if (date.day<0 || date.hour<0 || date.minute<0 || date.second<0) {
             sign = -1;
         }
-        return factory.newDuration(sign == 1, null, null,
+        return datatypeFactory.newDuration(sign == 1, null, null,
                 date.day != DatatypeConstants.FIELD_UNDEFINED?BigInteger.valueOf(sign*date.day):null,
                 date.hour != DatatypeConstants.FIELD_UNDEFINED?BigInteger.valueOf(sign*date.hour):null,
                 date.minute != DatatypeConstants.FIELD_UNDEFINED?BigInteger.valueOf(sign*date.minute):null,

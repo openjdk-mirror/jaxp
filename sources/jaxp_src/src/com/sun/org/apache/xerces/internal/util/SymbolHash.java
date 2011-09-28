@@ -26,8 +26,9 @@ package com.sun.org.apache.xerces.internal.util;
  * to Object mapping.
  * <p>
  * The hash code uses the same algorithm as SymbolTable class.
- *
+ * 
  * @author Elena Litani
+ * @version $Id: SymbolHash.java,v 1.7 2010-11-01 04:40:14 joehw Exp $
  */
 public class SymbolHash {
 
@@ -137,6 +138,21 @@ public class SymbolHash {
     }
 
     /**
+     * Return key/value pairs of all entries in the map
+     */
+    public Object[] getEntries() {
+        Object[] entries = new Object[fNum << 1];
+        for (int i=0, j=0; i<fTableSize && j<fNum << 1; i++) {
+            for (Entry entry = fBuckets[i]; entry != null; entry = entry.next) {
+                entries[j] = entry.key;
+                entries[++j] = entry.value;
+                j++;
+            }
+        }
+        return entries;
+    }
+
+    /**
      * Make a clone of this object.
      */
     public SymbolHash makeClone() {
@@ -207,3 +223,4 @@ public class SymbolHash {
     } // entry
 
 } // class SymbolHash
+

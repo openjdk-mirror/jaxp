@@ -20,34 +20,68 @@
 
 package com.sun.org.apache.xerces.internal.jaxp.validation;
 
+import java.util.HashMap;
+
 import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 import javax.xml.validation.ValidatorHandler;
 
 /**
  * <p>Abstract implementation of Schema for W3C XML Schemas.</p>
- *
+ * 
  * @author Michael Glavassevich, IBM
+ * @version $Id: AbstractXMLSchema.java,v 1.6 2010-11-01 04:40:07 joehw Exp $
  */
 abstract class AbstractXMLSchema extends Schema implements
         XSGrammarPoolContainer {
+
+    /**
+     * Map containing the initial values of features for
+     * validators created using this grammar pool container.
+     */
+    private final HashMap fFeatures;
+
+    public AbstractXMLSchema() {
+        fFeatures = new HashMap();
+    }
 
     /*
      * Schema methods
      */
 
-    /*
+    /* 
      * @see javax.xml.validation.Schema#newValidator()
      */
     public final Validator newValidator() {
         return new ValidatorImpl(this);
     }
 
-    /*
+    /* 
      * @see javax.xml.validation.Schema#newValidatorHandler()
      */
     public final ValidatorHandler newValidatorHandler() {
         return new ValidatorHandlerImpl(this);
     }
+    
+    /*
+     * XSGrammarPoolContainer methods
+     */
 
+    /**
+     * Returns the initial value of a feature for validators created
+     * using this grammar pool container or null if the validators
+     * should use the default value.
+     */
+    public final Boolean getFeature(String featureId) {
+        return (Boolean) fFeatures.get(featureId);
+    }
+
+    /*
+     * Other methods
+     */
+
+    final void setFeature(String featureId, boolean state) {
+        fFeatures.put(featureId, state ? Boolean.TRUE : Boolean.FALSE);
+    }
+    
 } // AbstractXMLSchema

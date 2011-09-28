@@ -20,25 +20,27 @@
 
 package com.sun.org.apache.xerces.internal.impl.xs.opti;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
+
+import com.sun.org.apache.xerces.internal.util.XMLSymbols;
 import com.sun.org.apache.xerces.internal.xni.NamespaceContext;
 import com.sun.org.apache.xerces.internal.xni.QName;
 import com.sun.org.apache.xerces.internal.xni.XMLAttributes;
 import com.sun.org.apache.xerces.internal.xni.XMLString;
-import com.sun.org.apache.xerces.internal.util.XMLSymbols;
 import org.w3c.dom.Attr;
+import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import java.util.Vector;
-import java.util.Enumeration;
-
 /**
- * @xerces.internal
- *
+ * @xerces.internal  
+ * 
  * @author Rahul Srivastava, Sun Microsystems Inc.
  * @author Sandy Gao, IBM
  *
+ * @version $Id: SchemaDOM.java,v 1.7 2010-11-01 04:40:01 joehw Exp $
  */
 public class SchemaDOM extends DefaultDocument {
 
@@ -54,39 +56,38 @@ public class SchemaDOM extends DefaultDocument {
     boolean inCDATA;
 
     // for annotation support:
-    StringBuffer fAnnotationBuffer = null;
+    private StringBuffer fAnnotationBuffer = null;
 
     public SchemaDOM() {
         reset();
     }
 
 
-    public void startElement(QName element, XMLAttributes attributes,
+    public ElementImpl startElement(QName element, XMLAttributes attributes,
             int line, int column, int offset) {
         ElementImpl node = new ElementImpl(line, column, offset);
         processElement(element, attributes, node);
         // now the current node added, becomes the parent
         parent = node;
+        return node;
     }
 
-
-    public void emptyElement(QName element, XMLAttributes attributes,
+    public ElementImpl emptyElement(QName element, XMLAttributes attributes,
             int line, int column, int offset) {
         ElementImpl node = new ElementImpl(line, column, offset);
         processElement(element, attributes, node);
+        return node;
     }
 
-    public void startElement(QName element, XMLAttributes attributes,
+    public ElementImpl startElement(QName element, XMLAttributes attributes,
             int line, int column) {
-        startElement(element, attributes, line, column, -1);
+        return startElement(element, attributes, line, column, -1);
     }
 
-
-    public void emptyElement(QName element, XMLAttributes attributes,
+    public ElementImpl emptyElement(QName element, XMLAttributes attributes,
             int line, int column) {
-        emptyElement(element, attributes, line, column, -1);
+        return emptyElement(element, attributes, line, column, -1);
     }
-
 
     private void processElement(QName element, XMLAttributes attributes, ElementImpl node) {
 
@@ -100,7 +101,7 @@ public class SchemaDOM extends DefaultDocument {
         // set the attributes
         Attr[] attrs = new Attr[attributes.getLength()];
         for (int i=0; i<attributes.getLength(); i++) {
-            attrs[i] = new AttrImpl(null,
+            attrs[i] = new AttrImpl(node,
                     attributes.getPrefix(i),
                     attributes.getLocalName(i),
                     attributes.getQName(i),
@@ -151,41 +152,50 @@ public class SchemaDOM extends DefaultDocument {
 
     // note that this will only be called within appinfo/documentation
     void comment(XMLString text) {
-        fAnnotationBuffer.append("<!--").append(text.toString()).append("-->");
+        fAnnotationBuffer.append("<!--");
+        if (text.length > 0) {
+            fAnnotationBuffer.append(text.ch, text.offset, text.length);
+        }
+        fAnnotationBuffer.append("-->");
     }
 
     // note that this will only be called within appinfo/documentation
-    void processingInstruction(String target, String data) {
-        fAnnotationBuffer.append("<?").append(target).append(" ").append(data).append("?>");
+    void processingInstruction(String target, XMLString data) {
+        fAnnotationBuffer.append("<?").append(target);
+        if (data.length > 0) {
+            fAnnotationBuffer.append(' ').append(data.ch, data.offset, data.length);
+        }
+        fAnnotationBuffer.append("?>");
     }
 
     // note that this will only be called within appinfo/documentation
-    void characters(XMLString text ) {
+    void characters(XMLString text) {
 
         // escape characters if necessary
         if (!inCDATA) {
-            for (int i = text.offset; i < text.offset+text.length; ++i ) {
+            final StringBuffer annotationBuffer = fAnnotationBuffer;
+            for (int i = text.offset; i < text.offset+text.length; ++i) {
                 char ch = text.ch[i];
                 if (ch == '&') {
-                    fAnnotationBuffer.append("&amp;");
+                    annotationBuffer.append("&amp;");
                 }
                 else if (ch == '<') {
-                    fAnnotationBuffer.append("&lt;");
+                    annotationBuffer.append("&lt;");
                 }
                 // character sequence "]]>" cannot appear in content,
                 // therefore we should escape '>'.
                 else if (ch == '>') {
-                    fAnnotationBuffer.append("&gt;");
+                    annotationBuffer.append("&gt;");
                 }
                 // If CR is part of the document's content, it
                 // must not be printed as a literal otherwise
                 // it would be normalized to LF when the document
                 // is reparsed.
                 else if (ch == '\r') {
-                    fAnnotationBuffer.append("&#xD;");
+                    annotationBuffer.append("&#xD;");
                 }
                 else {
-                    fAnnotationBuffer.append(ch);
+                    annotationBuffer.append(ch);
                 }
             }
         }
@@ -194,45 +204,33 @@ public class SchemaDOM extends DefaultDocument {
         }
     }
 
-    void endAnnotationElement(QName elemName, boolean complete) {
-        if(complete) {
-            fAnnotationBuffer.append("\n</").append(elemName.rawname).append(">");
-            // note that this is always called after endElement on <annotation>'s
-            // child and before endElement on annotation.
-            // hence, we must make this the child of the current
-            // parent's only child.
-            ElementImpl child = (ElementImpl)relations[currLoc][1];
+    // note that this will only be called within appinfo/documentation
+    void charactersRaw(String text) {
+        fAnnotationBuffer.append(text);
+    }
 
-            // check if array needs to be resized
-            if (nextFreeLoc == relations.length) {
-                resizeRelations();
-            }
-            int newRow = child.parentRow = nextFreeLoc++;
+    void endAnnotation(QName elemName, ElementImpl annotation) {
+        fAnnotationBuffer.append("\n</").append(elemName.rawname).append(">");
+        annotation.fAnnotation = fAnnotationBuffer.toString();
+        // apparently, there is no sensible way of resetting these things
+        fAnnotationBuffer = null;
+    }
 
-            // now find the place to insert this node
-            boolean foundPlace = false;
-            int i = 1;
-            for (; i<relations[newRow].length; i++) {
-                if (relations[newRow][i] == null) {
-                    foundPlace = true;
-                    break;
-                }
-            }
+    void endAnnotationElement(QName elemName) {
+        endAnnotationElement(elemName.rawname);
+    }
 
-            if (!foundPlace) {
-                resizeRelations(newRow);
-            }
-            relations[newRow][i] = new TextImpl(fAnnotationBuffer, this, newRow, i);
-            // apparently, there is no sensible way of resetting
-            // these things
-            fAnnotationBuffer = null;
-        } else      //capturing character calls
-            fAnnotationBuffer.append("</").append(elemName.rawname).append(">");
+    void endAnnotationElement(String elemRawName) {
+        fAnnotationBuffer.append("</").append(elemRawName).append(">");
     }
 
     void endSyntheticAnnotationElement(QName elemName, boolean complete) {
+        endSyntheticAnnotationElement(elemName.rawname, complete);
+    }
+
+    void endSyntheticAnnotationElement(String elemRawName, boolean complete) {
         if(complete) {
-            fAnnotationBuffer.append("\n</").append(elemName.rawname).append(">");
+            fAnnotationBuffer.append("\n</").append(elemRawName).append(">");
             // note that this is always called after endElement on <annotation>'s
             // child and before endElement on annotation.
             // hence, we must make this the child of the current
@@ -243,7 +241,7 @@ public class SchemaDOM extends DefaultDocument {
             // these things
             fAnnotationBuffer = null;
         } else      //capturing character calls
-            fAnnotationBuffer.append("</").append(elemName.rawname).append(">");
+            fAnnotationBuffer.append("</").append(elemRawName).append(">");
     }
 
     void startAnnotationCDATA() {
@@ -349,25 +347,33 @@ public class SchemaDOM extends DefaultDocument {
         return (ElementImpl)relations[0][1];
     }
 
+    public DOMImplementation getImplementation() {
+        return SchemaDOMImplementation.getDOMImplementation();
+    }
+
     // commence the serialization of an annotation
     void startAnnotation(QName elemName, XMLAttributes attributes,
             NamespaceContext namespaceContext) {
+        startAnnotation(elemName.rawname, attributes, namespaceContext);
+    }
+    void startAnnotation(String elemRawName, XMLAttributes attributes,
+            NamespaceContext namespaceContext) {
         if(fAnnotationBuffer == null) fAnnotationBuffer = new StringBuffer(256);
-        fAnnotationBuffer.append("<").append(elemName.rawname).append(" ");
+        fAnnotationBuffer.append("<").append(elemRawName).append(" ");
 
         // attributes are a bit of a pain.  To get this right, we have to keep track
         // of the namespaces we've seen declared, then examine the namespace context
         // for other namespaces so that we can also include them.
         // optimized for simplicity and the case that not many
         // namespaces are declared on this annotation...
-        Vector namespaces = new Vector();
+        ArrayList namespaces = new ArrayList();
         for (int i = 0; i < attributes.getLength(); ++i) {
             String aValue = attributes.getValue(i);
             String aPrefix = attributes.getPrefix(i);
             String aQName = attributes.getQName(i);
             // if it's xmlns:* or xmlns, must be a namespace decl
             if (aPrefix == XMLSymbols.PREFIX_XMLNS || aQName == XMLSymbols.PREFIX_XMLNS) {
-                namespaces.addElement(aPrefix == XMLSymbols.PREFIX_XMLNS ?
+                namespaces.add(aPrefix == XMLSymbols.PREFIX_XMLNS ?
                         attributes.getLocalName(i) : XMLSymbols.EMPTY_STRING);
             }
             fAnnotationBuffer.append(aQName).append("=\"").append(processAttValue(aValue)).append("\" ");
@@ -394,7 +400,10 @@ public class SchemaDOM extends DefaultDocument {
         fAnnotationBuffer.append(">\n");
     }
     void startAnnotationElement(QName elemName, XMLAttributes attributes) {
-        fAnnotationBuffer.append("<").append(elemName.rawname);
+        startAnnotationElement(elemName.rawname, attributes);
+    }
+    void startAnnotationElement(String elemRawName, XMLAttributes attributes) {
+        fAnnotationBuffer.append("<").append(elemRawName);
         for(int i=0; i<attributes.getLength(); i++) {
             String aValue = attributes.getValue(i);
             fAnnotationBuffer.append(" ").append(attributes.getQName(i)).append("=\"").append(processAttValue(aValue)).append("\"");

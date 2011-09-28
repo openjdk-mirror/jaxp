@@ -20,12 +20,14 @@
 
 package com.sun.org.apache.xerces.internal.xs;
 
+import java.util.List;
+
 /**
  *  The <code>XSNamesaceItemList</code> interface provides the abstraction of
  * an immutable ordered collection of <code>XSNamespaceItem</code>s, without
  * defining or constraining how this collection is implemented.
  */
-public interface XSNamespaceItemList {
+public interface XSNamespaceItemList extends List {
     /**
      *  The number of <code>XSNamespaceItem</code>s in the list. The range of
      * valid child object indices is 0 to <code>length-1</code> inclusive.

@@ -32,9 +32,10 @@ import org.w3c.dom.Element;
  * This class contains code that is used to traverse both <key>s and
  * <unique>s.
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Neil Graham, IBM
+ * @version $Id: XSDUniqueOrKeyTraverser.java,v 1.7 2010-11-01 04:40:02 joehw Exp $
  */
 class XSDUniqueOrKeyTraverser extends XSDAbstractIDConstraintTraverser {
 
@@ -70,11 +71,30 @@ class XSDUniqueOrKeyTraverser extends XSDAbstractIDConstraintTraverser {
         // duplication (or if there is that restriction is involved
         // and there's identity).
 
-        // get selector and fields
-        traverseIdentityConstraint(uniqueOrKey, uElem, schemaDoc, attrValues);
+        // If errors occurred in traversing the identity constraint, then don't
+        // add it to the schema, to avoid errors when processing the instance.
+        if (traverseIdentityConstraint(uniqueOrKey, uElem, schemaDoc, attrValues)) {
+            // and stuff this in the grammar
+            if (grammar.getIDConstraintDecl(uniqueOrKey.getIdentityConstraintName()) == null) {
+                grammar.addIDConstraintDecl(element, uniqueOrKey);
+            }
 
-        // and stuff this in the grammar
-        grammar.addIDConstraintDecl(element, uniqueOrKey);
+            final String loc = fSchemaHandler.schemaDocument2SystemId(schemaDoc);
+            final IdentityConstraint idc = grammar.getIDConstraintDecl(uniqueOrKey.getIdentityConstraintName(), loc);
+            if (idc == null) {
+                grammar.addIDConstraintDecl(element, uniqueOrKey, loc);
+            }
+
+            // handle duplicates
+            if (fSchemaHandler.fTolerateDuplicates) {
+                if (idc != null) {
+                    if (idc instanceof UniqueOrKey) {
+                        uniqueOrKey = (UniqueOrKey) uniqueOrKey;
+                    }
+                }
+                fSchemaHandler.addIDConstraintDecl(uniqueOrKey);
+            }
+        }
 
         // and fix up attributeChecker
         fAttrChecker.returnAttrArray(attrValues, schemaDoc);

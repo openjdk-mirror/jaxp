@@ -64,6 +64,7 @@ package com.sun.org.apache.xerces.internal.impl;
 /**
  * This class defines the version number of the parser.
  *
+ * @version $Id: Version.java,v 1.4 2010-11-01 04:39:40 joehw Exp $
  */
 public class Version {
 
@@ -71,11 +72,11 @@ public class Version {
     // Data
     //
 
-    /** Version string.
+    /** Version string. 
      * @deprecated  getVersion() should be used instead.  */
-    public static String fVersion = "Xerces-J 2.6.2";
+    public static String fVersion = "Xerces-J 2.7.1";
 
-    private static final String fImmutableVersion = "Xerces-J 2.6.2";
+    private static final String fImmutableVersion = "Xerces-J 2.7.1";
 
     // public methods
 

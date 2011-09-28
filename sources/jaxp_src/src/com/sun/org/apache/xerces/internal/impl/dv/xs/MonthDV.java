@@ -29,11 +29,12 @@ import com.sun.org.apache.xerces.internal.impl.dv.ValidationContext;
 /**
  * Validator for &lt;gMonth&gt; datatype (W3C Schema Datatypes)
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Elena Litani
  * @author Gopal Sharma, SUN Microsystem Inc.
  *
+ * @version $Id: MonthDV.java,v 1.8 2010-11-01 04:39:47 joehw Exp $
  */
 
 public class MonthDV extends AbstractDateTimeDV {
@@ -73,7 +74,6 @@ public class MonthDV extends AbstractDateTimeDV {
         int stop = 4;
         date.month=parseInt(str,2,stop);
 
-        /*
         // REVISIT: allow both --MM and --MM-- now.
         // need to remove the following 4 lines to disallow --MM--
         // when the errata is offically in the rec.
@@ -81,7 +81,6 @@ public class MonthDV extends AbstractDateTimeDV {
             str.charAt(stop) == '-' && str.charAt(stop+1) == '-') {
             stop += 2;
         }
-        */
         if (stop < len) {
             if (!isNextCharUTCSign(str, stop, len)) {
                 throw new SchemaDateTimeException ("Error in month parsing: "+str);
@@ -161,7 +160,9 @@ public class MonthDV extends AbstractDateTimeDV {
     }
 
     protected XMLGregorianCalendar getXMLGregorianCalendar(DateTimeData date) {
-        return factory.newXMLGregorianCalendar(DatatypeConstants.FIELD_UNDEFINED, date.unNormMonth, DatatypeConstants.FIELD_UNDEFINED
-                , DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, date.timezoneHr * 60 + date.timezoneMin);
+        return datatypeFactory.newXMLGregorianCalendar(DatatypeConstants.FIELD_UNDEFINED, date.unNormMonth,
+                DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED,
+                DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED,
+                date.hasTimeZone() ? date.timezoneHr * 60 + date.timezoneMin : DatatypeConstants.FIELD_UNDEFINED);
     }
 }

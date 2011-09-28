@@ -30,7 +30,7 @@ import java.util.NoSuchElementException;
  *
  * @author Andy Clark, IBM
  *
- * @version $Id: Constants.java,v 1.12 2010/08/11 07:18:39 joehw Exp $
+ * @version $Id: Constants.java,v 1.14 2010-11-01 04:39:40 joehw Exp $
  */
 public final class Constants {
     
@@ -311,6 +311,12 @@ public final class Constants {
 
         /** Honour all schemaLocations feature ("honour-all-schemaLocations"). */
     public static final String HONOUR_ALL_SCHEMALOCATIONS_FEATURE = "honour-all-schemaLocations";
+
+    /** Namespace growth feature ("namespace-growth"). */
+    public static final String NAMESPACE_GROWTH_FEATURE = "namespace-growth";
+
+    /** Tolerate duplicates feature ("internal/tolerate-duplicates"). */
+    public static final String TOLERATE_DUPLICATES_FEATURE = "internal/tolerate-duplicates";
     
     /** XInclude processing feature ("xinclude"). */
     public static final String XINCLUDE_FEATURE = "xinclude";
@@ -436,6 +442,9 @@ public final class Constants {
     /** XPointer Schema property ("xpointer-schema"). */
     public static final String XPOINTER_SCHEMA_PROPERTY = "xpointer-schema";
 
+    /** Schema element declaration for the root element in a document ("internal/validation/schema/dv-factory"). */
+    public static final String SCHEMA_DV_FACTORY_PROPERTY = "internal/validation/schema/dv-factory";
+
 
     // general constants
     
@@ -519,7 +528,8 @@ public final class Constants {
     
     // Constant to enable Schema 1.1 support
     public final static boolean SCHEMA_1_1_SUPPORT = false;
-    
+    public final static short SCHEMA_VERSION_1_0          = 1;
+    public final static short SCHEMA_VERSION_1_0_EXTENDED = 2;
 
     // private
     
@@ -571,8 +581,9 @@ public final class Constants {
         HONOUR_ALL_SCHEMALOCATIONS_FEATURE,
         XINCLUDE_FEATURE,
         XINCLUDE_FIXUP_BASE_URIS_FEATURE,
-        XINCLUDE_FIXUP_LANGUAGE_FEATURE
-
+        XINCLUDE_FIXUP_LANGUAGE_FEATURE,
+        NAMESPACE_GROWTH_FEATURE,
+        TOLERATE_DUPLICATES_FEATURE,
     };
     
     /** Xerces properties. */
@@ -594,7 +605,8 @@ public final class Constants {
             VALIDATION_MANAGER_PROPERTY,
             BUFFER_SIZE_PROPERTY,
             SECURITY_MANAGER_PROPERTY,
-            LOCALE_PROPERTY
+            LOCALE_PROPERTY,
+            SCHEMA_DV_FACTORY_PROPERTY,
     };
     
     /** Empty enumeration. */

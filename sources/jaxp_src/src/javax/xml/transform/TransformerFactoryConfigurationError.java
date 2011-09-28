@@ -32,7 +32,8 @@ package javax.xml.transform;
  * or instantiated.
  */
 public class TransformerFactoryConfigurationError extends Error {
-
+    private static final long serialVersionUID = -6527718720676281516L;
+    
     /**
      * <code>Exception</code> for the
      *  <code>TransformerFactoryConfigurationError</code>.

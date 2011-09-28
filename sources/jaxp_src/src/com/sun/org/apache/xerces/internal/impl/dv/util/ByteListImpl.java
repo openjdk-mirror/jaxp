@@ -19,18 +19,21 @@
  */
 package com.sun.org.apache.xerces.internal.impl.dv.util;
 
-import com.sun.org.apache.xerces.internal.xs.datatypes.ByteList;
+import java.util.AbstractList;
+
 import com.sun.org.apache.xerces.internal.xs.XSException;
+import com.sun.org.apache.xerces.internal.xs.datatypes.ByteList;
 
 /**
  * Implementation of <code>com.sun.org.apache.xerces.internal.xs.datatypes.ByteList</code>.
  *
- * @xerces.internal
- *
+ * @xerces.internal 
+ * 
  * @author Ankit Pasricha, IBM
- *
+ * 
+ * @version $Id: ByteListImpl.java,v 1.7 2010-11-01 04:39:46 joehw Exp $
  */
-public class ByteListImpl implements ByteList {
+public class ByteListImpl extends AbstractList implements ByteList {
 
     // actually data stored in a byte array
     protected final byte[] data;
@@ -86,4 +89,19 @@ public class ByteListImpl implements ByteList {
         return data[index];
     }
 
+    /*
+     * List methods
+     */
+
+    public Object get(int index) {
+        if (index >= 0 && index < data.length) {
+            return new Byte(data[index]);
+        }
+        throw new IndexOutOfBoundsException("Index: " + index);
+    }
+
+    public int size() {
+        return getLength();
+    }
 }
+

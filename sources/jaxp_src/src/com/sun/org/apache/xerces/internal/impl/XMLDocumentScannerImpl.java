@@ -66,7 +66,7 @@ import com.sun.org.apache.xerces.internal.xni.parser.XMLDocumentScanner;
  * Refer to the table in unit-test javax.xml.stream.XMLStreamReaderTest.SupportDTD for changes
  * related to property SupportDTD.
  * @author Joe Wang, Sun Microsystems
- * @version $Id: XMLDocumentScannerImpl.java,v 1.15 2009/08/20 06:04:39 joehw Exp $
+ * @version $Id: XMLDocumentScannerImpl.java,v 1.17 2010-11-01 04:39:41 joehw Exp $
  */
 public class XMLDocumentScannerImpl
         extends XMLDocumentFragmentScannerImpl{
@@ -1467,7 +1467,7 @@ public class XMLDocumentScannerImpl
                     return -1;
                     //throw e;
                 }
-                System.out.println("EOFException thrown") ;
+                //System.out.println("EOFException thrown") ;
                 setScannerState(SCANNER_STATE_TERMINATED);
             }
             

@@ -20,18 +20,21 @@
 
 package com.sun.org.apache.xerces.internal.impl.xs;
 
+import com.sun.org.apache.xerces.internal.impl.xs.util.XSObjectListImpl;
 import com.sun.org.apache.xerces.internal.xs.XSConstants;
 import com.sun.org.apache.xerces.internal.xs.XSNamespaceItem;
+import com.sun.org.apache.xerces.internal.xs.XSObjectList;
 import com.sun.org.apache.xerces.internal.xs.XSParticle;
 import com.sun.org.apache.xerces.internal.xs.XSTerm;
 
 /**
  * Store schema particle declaration.
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Sandy Gao, IBM
  *
+ * @version $Id: XSParticleDecl.java,v 1.7 2010-11-01 04:39:55 joehw Exp $
  */
 public class XSParticleDecl implements XSParticle {
 
@@ -57,6 +60,8 @@ public class XSParticleDecl implements XSParticle {
     public int fMinOccurs = 1;
     // maximum occurrence of this particle
     public int fMaxOccurs = 1;
+    // optional annotation
+    public XSObjectList fAnnotations = null;
 
     // clone this decl
     public XSParticleDecl makeClone() {
@@ -66,6 +71,7 @@ public class XSParticleDecl implements XSParticle {
         particle.fMaxOccurs = fMaxOccurs;
         particle.fDescription = fDescription;
         particle.fValue = fValue;
+        particle.fAnnotations = fAnnotations;
         return particle;
     }
 
@@ -129,12 +135,12 @@ public class XSParticleDecl implements XSParticle {
             appendParticle(buffer);
             if (!(fMinOccurs == 0 && fMaxOccurs == 0 ||
                   fMinOccurs == 1 && fMaxOccurs == 1)) {
-                buffer.append("{" + fMinOccurs);
+                buffer.append('{').append(fMinOccurs);
                 if (fMaxOccurs == SchemaSymbols.OCCURRENCE_UNBOUNDED)
                     buffer.append("-UNBOUNDED");
                 else if (fMinOccurs != fMaxOccurs)
-                    buffer.append("-" + fMaxOccurs);
-                buffer.append("}");
+                    buffer.append('-').append(fMaxOccurs);
+                buffer.append('}');
             }
             fDescription = buffer.toString();
         }
@@ -170,6 +176,7 @@ public class XSParticleDecl implements XSParticle {
         fMinOccurs = 1;
         fMaxOccurs = 1;
         fDescription = null;
+        fAnnotations = null;
     }
 
     /**
@@ -224,11 +231,18 @@ public class XSParticleDecl implements XSParticle {
         return fValue;
     }
 
-        /**
-         * @see com.sun.org.apache.xerces.internal.xs.XSObject#getNamespaceItem()
-         */
-        public XSNamespaceItem getNamespaceItem() {
-                return null;
-        }
+	/**
+	 * @see org.apache.xerces.xs.XSObject#getNamespaceItem()
+	 */
+	public XSNamespaceItem getNamespaceItem() {
+		return null;
+	}
 
-} // class XSParticle
+    /**
+     * Optional. Annotations.
+     */
+    public XSObjectList getAnnotations() {
+        return (fAnnotations != null) ? fAnnotations : XSObjectListImpl.EMPTY_LIST;
+    }
+
+} // class XSParticleDecl

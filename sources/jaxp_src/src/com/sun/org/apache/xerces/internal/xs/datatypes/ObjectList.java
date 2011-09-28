@@ -19,14 +19,17 @@
  */
 package com.sun.org.apache.xerces.internal.xs.datatypes;
 
+import java.util.List;
+
 /**
- * <p>The <code>ObjectList</code> is an immutable ordered collection of
- * <code>Object</code>.</p>
- *
+ * <p>The <code>ObjectList</code> is an immutable ordered collection of 
+ * <code>Object</code>.</p> 
+ * 
  * @author Ankit Pasricha, IBM
- *
+ * 
+ * @version $Id: ObjectList.java,v 1.7 2010-11-01 04:40:31 joehw Exp $
  */
-public interface ObjectList {
+public interface ObjectList extends List {
 
     /**
      * The number of <code>Object</code>s in the list. The range of

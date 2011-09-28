@@ -37,8 +37,9 @@ import com.sun.org.apache.xerces.internal.xni.parser.XMLDTDSource;
  * <p>This filter records which unparsed entities have been
  * declared in the DTD and provides this information to a ValidationManager.
  * Events are forwarded to the registered XMLDTDHandler without modification.</p>
- *
+ * 
  * @author Michael Glavassevich, IBM
+ * @version $Id: UnparsedEntityHandler.java,v 1.6 2010-11-01 04:40:07 joehw Exp $
  */
 final class UnparsedEntityHandler implements XMLDTDFilter, EntityState {
 
@@ -63,10 +64,6 @@ final class UnparsedEntityHandler implements XMLDTDFilter, EntityState {
     public void startDTD(XMLLocator locator, Augmentations augmentations)
             throws XNIException {
         fValidationManager.setEntityState(this);
-        if (fUnparsedEntities != null && !fUnparsedEntities.isEmpty()) {
-            // should only clear this if the last document contained unparsed entities
-            fUnparsedEntities.clear();
-        }
         if (fDTDHandler != null) {
             fDTDHandler.startDTD(locator, augmentations);
         }
@@ -252,4 +249,14 @@ final class UnparsedEntityHandler implements XMLDTDFilter, EntityState {
         return false;
     }
 
+    /*
+     * Other methods
+     */
+
+    public void reset() {
+        if (fUnparsedEntities != null && !fUnparsedEntities.isEmpty()) {
+            // should only clear this if the last document contained unparsed entities
+            fUnparsedEntities.clear();
+        }
+    }
 }

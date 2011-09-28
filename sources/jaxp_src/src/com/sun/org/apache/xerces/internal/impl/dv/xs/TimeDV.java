@@ -20,8 +20,6 @@
 
 package com.sun.org.apache.xerces.internal.impl.dv.xs;
 
-import java.math.BigDecimal;
-
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -30,12 +28,13 @@ import com.sun.org.apache.xerces.internal.impl.dv.ValidationContext;
 
 /**
  * Validator for &lt;time&gt; datatype (W3C Schema Datatypes)
- *
- * @xerces.internal
+ * 
+ * @xerces.internal 
  *
  * @author Elena Litani
  * @author Gopal Sharma, SUN Microsystem Inc.
  *
+ * @version $Id: TimeDV.java,v 1.7 2010-11-01 04:39:47 joehw Exp $
  */
 public class TimeDV extends AbstractDateTimeDV {
 
@@ -82,6 +81,7 @@ public class TimeDV extends AbstractDateTimeDV {
 
         if ( date.utc!=0 && date.utc != 'Z') {
             normalize(date);
+            date.day = 15;
         }
         date.position = 2;
         return date;
@@ -106,7 +106,9 @@ public class TimeDV extends AbstractDateTimeDV {
     }
 
     protected XMLGregorianCalendar getXMLGregorianCalendar(DateTimeData date) {
-        return factory.newXMLGregorianCalendar(null
-                , DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, date.unNormHour, date.unNormMinute, (int)date.unNormSecond, date.unNormSecond != 0?new BigDecimal(date.unNormSecond - ((int)date.unNormSecond)):null, date.timezoneHr * 60 + date.timezoneMin);
+        return datatypeFactory.newXMLGregorianCalendar(null, DatatypeConstants.FIELD_UNDEFINED,
+                DatatypeConstants.FIELD_UNDEFINED, date.unNormHour, date.unNormMinute,
+                (int)date.unNormSecond, date.unNormSecond != 0 ? getFractionalSecondsAsBigDecimal(date) : null,
+                date.hasTimeZone() ? (date.timezoneHr * 60 + date.timezoneMin) : DatatypeConstants.FIELD_UNDEFINED);
     }
 }

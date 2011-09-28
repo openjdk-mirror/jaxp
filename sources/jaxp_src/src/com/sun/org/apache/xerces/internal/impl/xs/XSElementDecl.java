@@ -22,6 +22,9 @@ package com.sun.org.apache.xerces.internal.impl.xs;
 
 import com.sun.org.apache.xerces.internal.impl.dv.ValidatedInfo;
 import com.sun.org.apache.xerces.internal.impl.xs.identity.IdentityConstraint;
+import com.sun.org.apache.xerces.internal.impl.xs.util.XSNamedMapImpl;
+import com.sun.org.apache.xerces.internal.impl.xs.util.XSObjectListImpl;
+import com.sun.org.apache.xerces.internal.xni.QName;
 import com.sun.org.apache.xerces.internal.xs.ShortList;
 import com.sun.org.apache.xerces.internal.xs.XSAnnotation;
 import com.sun.org.apache.xerces.internal.xs.XSComplexTypeDefinition;
@@ -29,17 +32,18 @@ import com.sun.org.apache.xerces.internal.xs.XSConstants;
 import com.sun.org.apache.xerces.internal.xs.XSElementDeclaration;
 import com.sun.org.apache.xerces.internal.xs.XSNamedMap;
 import com.sun.org.apache.xerces.internal.xs.XSNamespaceItem;
+import com.sun.org.apache.xerces.internal.xs.XSObjectList;
 import com.sun.org.apache.xerces.internal.xs.XSTypeDefinition;
-import com.sun.org.apache.xerces.internal.impl.xs.util.XSNamedMapImpl;
 
 /**
  * The XML representation for an element declaration
  * schema component is an <element> element information item
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Elena Litani, IBM
  * @author Sandy Gao, IBM
+ * @version $Id: XSElementDecl.java,v 1.7 2010-11-01 04:39:55 joehw Exp $
  */
 public class XSElementDecl implements XSElementDeclaration {
 
@@ -54,6 +58,7 @@ public class XSElementDecl implements XSElementDeclaration {
     public String fTargetNamespace = null;
     // type of the element
     public XSTypeDefinition fType = null;
+    public QName fUnresolvedTypeName = null;
     // misc flag of the element: nillable/abstract/fixed
     short fMiscFlags = 0;
     public short fScope = XSConstants.SCOPE_ABSENT;
@@ -64,7 +69,7 @@ public class XSElementDecl implements XSElementDeclaration {
     // final set (substitution group exclusions) of the element
     public short fFinal = XSConstants.DERIVATION_NONE;
     // optional annotation
-    public XSAnnotationImpl fAnnotation = null;
+    public XSObjectList fAnnotations = null;
     // value constraint value
     public ValidatedInfo fDefault = null;
     // the substitution group affiliation of the element
@@ -73,6 +78,9 @@ public class XSElementDecl implements XSElementDeclaration {
     static final int INITIAL_SIZE = 2;
     int fIDCPos = 0;
     IdentityConstraint[] fIDConstraints = new IdentityConstraint[INITIAL_SIZE];
+    // The namespace schema information item corresponding to the target namespace
+    // of the element declaration, if it is globally declared; or null otherwise.
+    private XSNamespaceItem fNamespaceItem = null;
 
     private static final short CONSTRAINT_MASK = 3;
     private static final short NILLABLE        = 4;
@@ -167,15 +175,16 @@ public class XSElementDecl implements XSElementDeclaration {
       * Reset current element declaration
       */
     public void reset(){
-
+        fScope = XSConstants.SCOPE_ABSENT;
         fName = null;
         fTargetNamespace = null;
         fType = null;
+        fUnresolvedTypeName = null;
         fMiscFlags = 0;
         fBlock = XSConstants.DERIVATION_NONE;
         fFinal = XSConstants.DERIVATION_NONE;
         fDefault = null;
-        fAnnotation = null;
+        fAnnotations = null;
         fSubGroup = null;
         // reset identity constraints
         for (int i=0;i<fIDCPos;i++) {
@@ -336,16 +345,26 @@ public class XSElementDecl implements XSElementDeclaration {
      * Optional. Annotation.
      */
     public XSAnnotation getAnnotation() {
-        return fAnnotation;
+        return (fAnnotations != null) ? (XSAnnotation) fAnnotations.item(0) : null;
+    }
+
+    /**
+     * Optional. Annotations.
+     */
+    public XSObjectList getAnnotations() {
+        return (fAnnotations != null) ? fAnnotations : XSObjectListImpl.EMPTY_LIST;
     }
 
 
     /**
-     * @see com.sun.org.apache.xerces.internal.xs.XSObject#getNamespaceItem()
+     * @see org.apache.xerces.xs.XSObject#getNamespaceItem()
      */
     public XSNamespaceItem getNamespaceItem() {
-        // REVISIT: implement
-        return null;
+        return fNamespaceItem;
+    }
+
+    void setNamespaceItem(XSNamespaceItem namespaceItem) {
+        fNamespaceItem = namespaceItem;
     }
 
     public Object getActualVC() {

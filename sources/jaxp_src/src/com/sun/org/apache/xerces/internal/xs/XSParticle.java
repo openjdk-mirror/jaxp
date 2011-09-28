@@ -48,4 +48,8 @@ public interface XSParticle extends XSObject {
      */
     public XSTerm getTerm();
 
+    /**
+     * A sequence of [annotations] or an empty <code>XSObjectList</code>.
+     */
+    public XSObjectList getAnnotations();
 }

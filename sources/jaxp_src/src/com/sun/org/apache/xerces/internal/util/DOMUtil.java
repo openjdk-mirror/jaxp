@@ -25,13 +25,13 @@ import java.util.Hashtable;
 import com.sun.org.apache.xerces.internal.dom.AttrImpl;
 import com.sun.org.apache.xerces.internal.dom.DocumentImpl;
 import com.sun.org.apache.xerces.internal.impl.xs.opti.ElementImpl;
-
 import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
 import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.ls.LSException;
 
 /**
  * Some useful utility methods.
@@ -42,6 +42,7 @@ import org.w3c.dom.Node;
  * (such as a DTM), we should easily be able to convert our schema
  * parsing to utilize it.
  *
+ * @version $Id: DOMUtil.java,v 1.7 2010-11-01 04:40:14 joehw Exp $
  */
 public class DOMUtil {
 
@@ -121,7 +122,7 @@ public class DOMUtil {
             default: {
                 throw new IllegalArgumentException("can't copy node type, "+
                         type+" ("+
-                        node.getNodeName()+')');
+                        place.getNodeName()+')');
             }
             }
             dest.appendChild(node);
@@ -319,12 +320,12 @@ public class DOMUtil {
 
     // set this Node as being hidden, overloaded method
     public static void setHidden(Node node, Hashtable hiddenNodes) {
-        if (node instanceof com.sun.org.apache.xerces.internal.impl.xs.opti.NodeImpl)
+        if (node instanceof com.sun.org.apache.xerces.internal.impl.xs.opti.NodeImpl) {
             ((com.sun.org.apache.xerces.internal.impl.xs.opti.NodeImpl)node).setReadOnly(true, false);
-        else if (node instanceof com.sun.org.apache.xerces.internal.dom.NodeImpl)
-            ((com.sun.org.apache.xerces.internal.dom.NodeImpl)node).setReadOnly(true, false);
-        else
-                hiddenNodes.put(node, "");
+        }
+        else {
+        	hiddenNodes.put(node, "");
+        }
     } // setHidden(node):void
 
     // set this Node as being visible
@@ -337,12 +338,12 @@ public class DOMUtil {
 
     // set this Node as being visible, overloaded method
     public static void setVisible(Node node, Hashtable hiddenNodes) {
-        if (node instanceof com.sun.org.apache.xerces.internal.impl.xs.opti.NodeImpl)
+        if (node instanceof com.sun.org.apache.xerces.internal.impl.xs.opti.NodeImpl) {
             ((com.sun.org.apache.xerces.internal.impl.xs.opti.NodeImpl)node).setReadOnly(false, false);
-        else if (node instanceof com.sun.org.apache.xerces.internal.dom.NodeImpl)
-            ((com.sun.org.apache.xerces.internal.dom.NodeImpl)node).setReadOnly(false, false);
-        else
-                hiddenNodes.remove(node);
+        }
+        else {
+            hiddenNodes.remove(node);
+        }
     } // setVisible(node):void
 
     // is this node hidden?
@@ -356,12 +357,12 @@ public class DOMUtil {
 
     // is this node hidden? overloaded method
     public static boolean isHidden(Node node, Hashtable hiddenNodes) {
-        if (node instanceof com.sun.org.apache.xerces.internal.impl.xs.opti.NodeImpl)
+        if (node instanceof com.sun.org.apache.xerces.internal.impl.xs.opti.NodeImpl) {
             return ((com.sun.org.apache.xerces.internal.impl.xs.opti.NodeImpl)node).getReadOnly();
-        else if (node instanceof com.sun.org.apache.xerces.internal.dom.NodeImpl)
-            return ((com.sun.org.apache.xerces.internal.dom.NodeImpl)node).getReadOnly();
-        else
-                return hiddenNodes.containsKey(node);
+        }
+        else {
+            return hiddenNodes.containsKey(node);
+        }
     } // isHidden(Node):boolean
 
     /** Finds and returns the first child node with the given name. */
@@ -824,11 +825,78 @@ public class DOMUtil {
         return node.getNamespaceURI();
     }
 
-    //return synthetic annotation
+    // return annotation
+    public static String getAnnotation(Node node) {
+        if (node instanceof ElementImpl) {
+            return ((ElementImpl)node).getAnnotation();
+        }
+        return null;
+    }
+
+    // return synthetic annotation
     public static String getSyntheticAnnotation(Node node) {
-        if(node instanceof ElementImpl) {
+        if (node instanceof ElementImpl) {
             return ((ElementImpl)node).getSyntheticAnnotation();
         }
         return null;
     }
-} // class XUtil
+
+    /**
+     * Creates a DOMException. On J2SE 1.4 and above the cause for the exception will be set.
+     */
+    public static DOMException createDOMException(short code, Throwable cause) {
+        DOMException de = new DOMException(code, cause != null ? cause.getMessage() : null);
+        if (cause != null && ThrowableMethods.fgThrowableMethodsAvailable) {
+            try {
+                ThrowableMethods.fgThrowableInitCauseMethod.invoke(de, new Object [] {cause});
+            }
+            // Something went wrong. There's not much we can do about it.
+            catch (Exception e) {}
+        }
+        return de;
+    }
+
+    /**
+     * Creates an LSException. On J2SE 1.4 and above the cause for the exception will be set.
+     */
+    public static LSException createLSException(short code, Throwable cause) {
+        LSException lse = new LSException(code, cause != null ? cause.getMessage() : null);
+        if (cause != null && ThrowableMethods.fgThrowableMethodsAvailable) {
+            try {
+                ThrowableMethods.fgThrowableInitCauseMethod.invoke(lse, new Object [] {cause});
+            }
+            // Something went wrong. There's not much we can do about it.
+            catch (Exception e) {}
+        }
+        return lse;
+    }
+
+    /**
+     * Holder of methods from java.lang.Throwable.
+     */
+    static class ThrowableMethods {
+
+        // Method: java.lang.Throwable.initCause(java.lang.Throwable)
+        private static java.lang.reflect.Method fgThrowableInitCauseMethod = null;
+
+        // Flag indicating whether or not Throwable methods available.
+        private static boolean fgThrowableMethodsAvailable = false;
+
+        private ThrowableMethods() {}
+
+        // Attempt to get methods for java.lang.Throwable on class initialization.
+        static {
+            try {
+                fgThrowableInitCauseMethod = Throwable.class.getMethod("initCause", new Class [] {Throwable.class});
+                fgThrowableMethodsAvailable = true;
+            }
+            // ClassNotFoundException, NoSuchMethodException or SecurityException
+            // Whatever the case, we cannot use java.lang.Throwable.initCause(java.lang.Throwable).
+            catch (Exception exc) {
+                fgThrowableInitCauseMethod = null;
+                fgThrowableMethodsAvailable = false;
+            }
+        }
+    }
+
+} // class DOMUtil

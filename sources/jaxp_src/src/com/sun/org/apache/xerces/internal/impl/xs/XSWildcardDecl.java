@@ -20,22 +20,25 @@
 
 package com.sun.org.apache.xerces.internal.impl.xs;
 
+import com.sun.org.apache.xerces.internal.impl.xs.util.StringListImpl;
+import com.sun.org.apache.xerces.internal.impl.xs.util.XSObjectListImpl;
 import com.sun.org.apache.xerces.internal.xs.StringList;
 import com.sun.org.apache.xerces.internal.xs.XSAnnotation;
 import com.sun.org.apache.xerces.internal.xs.XSConstants;
 import com.sun.org.apache.xerces.internal.xs.XSNamespaceItem;
 import com.sun.org.apache.xerces.internal.xs.XSWildcard;
-import com.sun.org.apache.xerces.internal.impl.xs.util.StringListImpl;
+import com.sun.org.apache.xerces.internal.xs.XSObjectList;
 
 /**
  * The XML representation for a wildcard declaration
  * schema component is an <any> or <anyAttribute> element information item
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Sandy Gao, IBM
  * @author Rahul Srivastava, Sun Microsystems Inc.
  *
+ * @version $Id: XSWildcardDecl.java,v 1.7 2010-11-01 04:39:55 joehw Exp $
  */
 public class XSWildcardDecl implements XSWildcard {
 
@@ -51,7 +54,7 @@ public class XSWildcardDecl implements XSWildcard {
     public String[] fNamespaceList;
 
     // optional annotation
-    public XSAnnotationImpl fAnnotation = null;
+    public XSObjectList fAnnotations = null;
 
     // I'm trying to implement the following constraint exactly as what the
     // spec describes. Sometimes it seems redundant, and sometimes there seems
@@ -504,7 +507,7 @@ public class XSWildcardDecl implements XSWildcard {
                 }
                 break;
             }
-            buffer.append("]");
+            buffer.append(']');
             fDescription = buffer.toString();
         }
 
@@ -576,16 +579,21 @@ public class XSWildcardDecl implements XSWildcard {
      * Optional. Annotation.
      */
     public XSAnnotation getAnnotation() {
-        return fAnnotation;
+        return (fAnnotations != null) ? (XSAnnotation) fAnnotations.item(0) : null;
     }
 
+    /**
+     * Optional. Annotations.
+     */
+    public XSObjectList getAnnotations() {
+        return (fAnnotations != null) ? fAnnotations : XSObjectListImpl.EMPTY_LIST;
+    }
 
-        /**
-         * @see com.sun.org.apache.xerces.internal.xs.XSObject#getNamespaceItem()
-         */
-        public XSNamespaceItem getNamespaceItem() {
-        // REVISIT: implement
-                return null;
-        }
+    /**
+     * @see org.apache.xerces.xs.XSObject#getNamespaceItem()
+     */
+    public XSNamespaceItem getNamespaceItem() {
+        return null;
+    }
 
 } // class XSWildcardDecl

@@ -20,6 +20,8 @@
 
 package com.sun.org.apache.xerces.internal.impl.dv.xs;
 
+import java.util.AbstractList;
+
 import com.sun.org.apache.xerces.internal.impl.dv.InvalidDatatypeValueException;
 import com.sun.org.apache.xerces.internal.impl.dv.ValidationContext;
 import com.sun.org.apache.xerces.internal.xs.datatypes.ObjectList;
@@ -27,11 +29,12 @@ import com.sun.org.apache.xerces.internal.xs.datatypes.ObjectList;
 /**
  * Represent the schema list types
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Neeraj Bajaj, Sun Microsystems, inc.
  * @author Sandy Gao, IBM
  *
+ * @version $Id: ListDV.java,v 1.7 2010-11-01 04:39:47 joehw Exp $
  */
 public class ListDV extends TypeValidator{
 
@@ -50,7 +53,7 @@ public class ListDV extends TypeValidator{
         return ((ListData)value).getLength();
     }
 
-    final static class ListData implements ObjectList {
+    final static class ListData extends AbstractList implements ObjectList {
         final Object[] data;
         private String canonical;
         public ListData(Object[] data) {
@@ -92,6 +95,14 @@ public class ListDV extends TypeValidator{
             return true;
         }
 
+        public int hashCode() {
+            int hash = 0;
+            for (int i = 0; i < data.length; ++i) {
+                hash ^= data[i].hashCode();
+            }
+            return hash;
+        }
+
         public boolean contains(Object item) {
             for (int i = 0;i < data.length; i++) {
                 if (item == data[i]) {
@@ -107,5 +118,21 @@ public class ListDV extends TypeValidator{
             }
             return data[index];
         }
+
+        /*
+         * List methods
+         */
+
+        public Object get(int index) {
+            if (index >= 0 && index < data.length) {
+                return data[index];
+            }
+            throw new IndexOutOfBoundsException("Index: " + index);
+        }
+
+        public int size() {
+            return getLength();
+        }
     }
 } // class ListDV
+

@@ -26,15 +26,18 @@ import com.sun.org.apache.xerces.internal.impl.xs.XSAnnotationImpl;
 import com.sun.org.apache.xerces.internal.impl.xs.XSModelGroupImpl;
 import com.sun.org.apache.xerces.internal.impl.xs.XSParticleDecl;
 import com.sun.org.apache.xerces.internal.impl.xs.util.XInt;
+import com.sun.org.apache.xerces.internal.impl.xs.util.XSObjectListImpl;
 import com.sun.org.apache.xerces.internal.util.DOMUtil;
 import com.sun.org.apache.xerces.internal.xs.XSObject;
+import com.sun.org.apache.xerces.internal.xs.XSObjectList;
 import org.w3c.dom.Element;
 
 /**
- * @xerces.internal
- *
+ * @xerces.internal  
+ * 
  * @author Elena Litani, IBM
  * @author Sandy Gao, IBM
+ * @version $Id: XSDAbstractParticleTraverser.java,v 1.7 2010-11-01 04:40:02 joehw Exp $
  */
 abstract class XSDAbstractParticleTraverser extends XSDAbstractTraverser {
 
@@ -47,12 +50,12 @@ abstract class XSDAbstractParticleTraverser extends XSDAbstractTraverser {
      *
      * Traverse the "All" declaration
      *
-     * <all
+     * &lt;all
      *   id = ID
      *   maxOccurs = 1 : 1
-     *   minOccurs = (0 | 1) : 1>
+     *   minOccurs = (0 | 1) : 1&gt;
      *   Content: (annotation? , element*)
-     * </all>
+     * &lt;/all&gt;
      **/
     XSParticleDecl traverseAll(Element allDecl,
             XSDocumentInfo schemaDoc,
@@ -108,12 +111,20 @@ abstract class XSDAbstractParticleTraverser extends XSDAbstractTraverser {
         group.fCompositor = XSModelGroupImpl.MODELGROUP_ALL;
         group.fParticleCount = fPArray.getParticleCount();
         group.fParticles = fPArray.popContext();
-        group.fAnnotation = annotation;
+        XSObjectList annotations;
+        if (annotation != null) {
+            annotations = new XSObjectListImpl();
+            ((XSObjectListImpl)annotations).addXSObject (annotation);
+        } else {
+            annotations = XSObjectListImpl.EMPTY_LIST;
+        }
+        group.fAnnotations = annotations;
         particle = new XSParticleDecl();
         particle.fType = XSParticleDecl.PARTICLE_MODELGROUP;
         particle.fMinOccurs = minAtt.intValue();
         particle.fMaxOccurs = maxAtt.intValue();
         particle.fValue = group;
+        particle.fAnnotations = annotations;
 
         particle = checkOccurrences(particle,
                 SchemaSymbols.ELT_ALL,
@@ -205,7 +216,6 @@ abstract class XSDAbstractParticleTraverser extends XSDAbstractTraverser {
             }
         }
 
-        boolean hadContent = false;
         String childName = null;
         XSParticleDecl particle;
         fPArray.pushContext();
@@ -265,12 +275,20 @@ abstract class XSDAbstractParticleTraverser extends XSDAbstractTraverser {
         group.fCompositor = choice ? XSModelGroupImpl.MODELGROUP_CHOICE : XSModelGroupImpl.MODELGROUP_SEQUENCE;
         group.fParticleCount = fPArray.getParticleCount();
         group.fParticles = fPArray.popContext();
-        group.fAnnotation = annotation;
+        XSObjectList annotations;
+        if (annotation != null) {
+            annotations = new XSObjectListImpl();
+            ((XSObjectListImpl)annotations).addXSObject (annotation);
+        } else {
+            annotations = XSObjectListImpl.EMPTY_LIST;
+        }
+        group.fAnnotations = annotations;
         particle = new XSParticleDecl();
         particle.fType = XSParticleDecl.PARTICLE_MODELGROUP;
         particle.fMinOccurs = minAtt.intValue();
         particle.fMaxOccurs = maxAtt.intValue();
         particle.fValue = group;
+        particle.fAnnotations = annotations;
 
         particle = checkOccurrences(particle,
                 choice ? SchemaSymbols.ELT_CHOICE : SchemaSymbols.ELT_SEQUENCE,

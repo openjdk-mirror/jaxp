@@ -24,7 +24,7 @@ import org.w3c.dom.DOMConfiguration;
 import org.w3c.dom.ls.LSInput;
 
 /**
- * An interface that provides a method to load XML Schema documents. This
+ * An interface that provides a method to load XML Schema documents. This 
  * interface uses the DOM Level 3 Core and Load and Save interfaces.
  */
 public interface XSLoader {
@@ -58,7 +58,7 @@ public interface XSLoader {
      * Parses the content of XML Schema documents specified as the list of URI
      * references. If the URI contains a fragment identifier, the behavior
      * is not defined by this specification.
-     * @param uri The list of URI locations.
+     * @param uriList The list of URI locations.
      * @return An XSModel representing the schema documents.
      */
     public XSModel loadURIList(StringList uriList);
@@ -84,7 +84,7 @@ public interface XSLoader {
     /**
      *  Parse an XML Schema document from a resource identified by a
      * <code>LSInput</code> .
-     * @param is  The <code>DOMInputSource</code> from which the source
+     * @param is  The <code>LSInput</code> from which the source
      *   document is to be read.
      * @return An XSModel representing this schema.
      */

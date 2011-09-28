@@ -45,6 +45,7 @@ import org.w3c.dom.DOMErrorHandler;
 import org.w3c.dom.DOMStringList;
 import com.sun.org.apache.xerces.internal.impl.Constants;
 import com.sun.org.apache.xerces.internal.impl.XMLEntityManager;
+import com.sun.org.apache.xerces.internal.util.DOMUtil;
 import com.sun.org.apache.xerces.internal.util.NamespaceSupport;
 import com.sun.org.apache.xerces.internal.util.SymbolTable;
 import com.sun.org.apache.xerces.internal.util.XML11Char;
@@ -76,7 +77,7 @@ import org.w3c.dom.ls.LSSerializerFilter;
  * @author Gopal Sharma, Sun Microsystems
  * @author Arun Yadav, Sun Microsystems
  * @author Sunitha Reddy, Sun Microsystems
- * @version $Id: DOMSerializerImpl.java,v 1.8 2009/09/03 18:56:50 joehw Exp $
+ * @version $Id: DOMSerializerImpl.java,v 1.11 2010-11-01 04:40:36 joehw Exp $
  */
 public class DOMSerializerImpl implements LSSerializer, DOMConfiguration {
 
@@ -840,7 +841,7 @@ public class DOMSerializerImpl implements LSSerializer, DOMConfiguration {
                 // stopped at user request
                 return false;
             }
-            throw new LSException(LSException.SERIALIZE_ERR, e.toString());            
+            throw (LSException) DOMUtil.createLSException(LSException.SERIALIZE_ERR, e).fillInStackTrace();
         } catch (Exception e) {
             if (ser.fDOMErrorHandler != null) {
                 DOMErrorImpl error = new DOMErrorImpl();
@@ -851,7 +852,7 @@ public class DOMSerializerImpl implements LSSerializer, DOMConfiguration {
 
             }   
             e.printStackTrace();       
-            throw new LSException(LSException.SERIALIZE_ERR, e.toString());
+            throw (LSException) DOMUtil.createLSException(LSException.SERIALIZE_ERR, e).fillInStackTrace();
         }
         return true;
 
@@ -997,7 +998,7 @@ public class DOMSerializerImpl implements LSSerializer, DOMConfiguration {
                 // stopped at user request
                 return false;
             }
-            throw new LSException(LSException.SERIALIZE_ERR, e.toString());            
+            throw (LSException) DOMUtil.createLSException(LSException.SERIALIZE_ERR, e).fillInStackTrace();
         } catch (Exception e) {
             if (ser.fDOMErrorHandler != null) {
                 DOMErrorImpl error = new DOMErrorImpl();
@@ -1006,7 +1007,7 @@ public class DOMSerializerImpl implements LSSerializer, DOMConfiguration {
                 error.fSeverity = DOMError.SEVERITY_ERROR;
                 ser.fDOMErrorHandler.handleError(error);
             }
-            throw new LSException(LSException.SERIALIZE_ERR, e.toString());
+            throw (LSException) DOMUtil.createLSException(LSException.SERIALIZE_ERR, e).fillInStackTrace();
         }
         return true;
     } //writeURI

@@ -119,8 +119,12 @@ import com.sun.org.apache.xerces.internal.util.DatatypeMessageFormatter;
  *       <td> hour </td>
  *       <td> {@link #getHour()} </td>
  *       <td>
- *         0 to 24 or {@link DatatypeConstants#FIELD_UNDEFINED}
- *         <a href="http://www.w3.org/2001/05/xmlschema-errata#e2-45">For a value of 24, the minute and second field must be zero.</a>
+ *         0 to 23 or {@link DatatypeConstants#FIELD_UNDEFINED}.
+ *         An hour value of 24 is allowed to be set in the lexical space provided the minute and second
+ *         field values are zero. However, an hour value of 24 is not allowed in value space and will be
+ *         transformed to represent the value of the first instance of the following day as per
+ *         <a href="http://www.w3.org/TR/xmlschema-2/#built-in-primitive-datatypes">
+ *         XML Schema Part 2: Datatypes Second Edition, 3.2 Primitive datatypes</a>.
  *       </td>
  *     </tr>
  *     <a name="datetimefield-minute"/>
@@ -182,7 +186,7 @@ import com.sun.org.apache.xerces.internal.util.DatatypeMessageFormatter;
  * @author <a href="mailto:Kohsuke.Kawaguchi@Sun.com">Kohsuke Kawaguchi</a>
  * @author <a href="mailto:Joseph.Fialli@Sun.com">Joseph Fialli</a>
  * @author <a href="mailto:Sunitha.Reddy@Sun.com">Sunitha Reddy</a>
- * @version $Revision: 1.12 $, $Date: 2010/07/07 04:24:52 $
+ * @version $Revision: 1.14 $, $Date: 2010-11-10 07:41:41 $
  * @see javax.xml.datatype.Duration
  * @since 1.5
  */

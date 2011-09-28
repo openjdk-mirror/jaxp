@@ -109,8 +109,7 @@ public interface XSComplexTypeDefinition extends XSTypeDefinition {
     public short getProhibitedSubstitutions();
 
     /**
-     * A set of [annotations] if it exists, otherwise an empty
-     * <code>XSObjectList</code>.
+     * A sequence of [annotations] or an empty <code>XSObjectList</code>.
      */
     public XSObjectList getAnnotations();
 

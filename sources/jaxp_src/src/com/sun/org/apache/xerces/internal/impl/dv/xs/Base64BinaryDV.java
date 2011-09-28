@@ -28,11 +28,12 @@ import com.sun.org.apache.xerces.internal.impl.dv.util.ByteListImpl;
 /**
  * Represent the schema type "base64Binary"
  *
- * @xerces.internal
+ * @xerces.internal 
  *
  * @author Neeraj Bajaj, Sun Microsystems, inc.
  * @author Sandy Gao, IBM
  *
+ * @version $Id: Base64BinaryDV.java,v 1.7 2010-11-01 04:39:46 joehw Exp $
  */
 public class Base64BinaryDV extends TypeValidator {
 
@@ -80,6 +81,14 @@ public class Base64BinaryDV extends TypeValidator {
                     return false;
             }
             return true;
+        }
+
+        public int hashCode() {
+            int hash = 0;
+            for (int i = 0; i < data.length; ++i) {
+                hash = hash * 37 + (((int) data[i]) & 0xff);
+            }
+            return hash;
         }
     }
 } // class Base64BinaryDV

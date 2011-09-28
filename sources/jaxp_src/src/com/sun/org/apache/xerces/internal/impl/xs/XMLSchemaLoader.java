@@ -39,7 +39,10 @@ import com.sun.org.apache.xerces.internal.dom.DOMStringListImpl;
 import com.sun.org.apache.xerces.internal.impl.Constants;
 import com.sun.org.apache.xerces.internal.impl.XMLEntityManager;
 import com.sun.org.apache.xerces.internal.impl.XMLErrorReporter;
+import com.sun.org.apache.xerces.internal.impl.dv.DVFactoryException;
 import com.sun.org.apache.xerces.internal.impl.dv.InvalidDatatypeValueException;
+import com.sun.org.apache.xerces.internal.impl.dv.SchemaDVFactory;
+import com.sun.org.apache.xerces.internal.impl.dv.xs.SchemaDVFactoryImpl;
 import com.sun.org.apache.xerces.internal.impl.xs.models.CMBuilder;
 import com.sun.org.apache.xerces.internal.impl.xs.models.CMNodeFactory;
 import com.sun.org.apache.xerces.internal.impl.xs.traversers.XSDHandler;
@@ -89,7 +92,7 @@ import org.xml.sax.InputSource;
  * @xerces.internal 
  *
  * @author Neil Graham, IBM
- * @version $Id: XMLSchemaLoader.java,v 1.8 2010/07/23 02:09:29 joehw Exp $
+ * @version $Id: XMLSchemaLoader.java,v 1.10 2010-11-01 04:39:55 joehw Exp $
  */
 
 public class XMLSchemaLoader implements XMLGrammarLoader, XMLComponent,
@@ -134,8 +137,20 @@ XSLoader, DOMConfiguration {
         Constants.XERCES_FEATURE_PREFIX + Constants.SCHEMA_AUGMENT_PSVI;
     
     protected static final String PARSER_SETTINGS = 
-        Constants.XERCES_FEATURE_PREFIX + Constants.PARSER_SETTINGS;   
-    
+        Constants.XERCES_FEATURE_PREFIX + Constants.PARSER_SETTINGS;
+
+    /** Feature identifier: namespace growth */
+    protected static final String NAMESPACE_GROWTH =
+        Constants.XERCES_FEATURE_PREFIX + Constants.NAMESPACE_GROWTH_FEATURE;
+
+    /** Feature identifier: tolerate duplicates */
+    protected static final String TOLERATE_DUPLICATES =
+        Constants.XERCES_FEATURE_PREFIX + Constants.TOLERATE_DUPLICATES_FEATURE;
+
+    /** Property identifier: Schema DV Factory */
+    protected static final String SCHEMA_DV_FACTORY =
+        Constants.XERCES_PROPERTY_PREFIX + Constants.SCHEMA_DV_FACTORY_PROPERTY;
+
     // recognized features:
     private static final String[] RECOGNIZED_FEATURES = {
         SCHEMA_FULL_CHECKING,
@@ -146,7 +161,9 @@ XSLoader, DOMConfiguration {
         DISALLOW_DOCTYPE,
         GENERATE_SYNTHETIC_ANNOTATIONS,
         VALIDATE_ANNOTATIONS,
-        HONOUR_ALL_SCHEMALOCATIONS
+        HONOUR_ALL_SCHEMALOCATIONS,
+        NAMESPACE_GROWTH,
+        TOLERATE_DUPLICATES
     };
     
     // property identifiers
@@ -205,7 +222,8 @@ XSLoader, DOMConfiguration {
         SCHEMA_NONS_LOCATION,
         JAXP_SCHEMA_SOURCE,
         SECURITY_MANAGER,
-        LOCALE
+        LOCALE,
+        SCHEMA_DV_FACTORY
     };
     
     // Data
@@ -957,6 +975,18 @@ XSLoader, DOMConfiguration {
         
         // get the error reporter
         fErrorReporter = (XMLErrorReporter)componentManager.getProperty(ERROR_REPORTER);
+
+        // Determine schema dv factory to use
+        SchemaDVFactory dvFactory = null;
+        try {
+            dvFactory = (SchemaDVFactory)componentManager.getProperty(SCHEMA_DV_FACTORY);
+        } catch (XMLConfigurationException e) {
+        }
+        if (dvFactory == null) {
+            dvFactory = SchemaDVFactory.getInstance();
+        }
+        fSchemaHandler.setDVFactory(dvFactory);
+
         
         boolean psvi = true;
         try {
@@ -969,6 +999,10 @@ XSLoader, DOMConfiguration {
             fDeclPool.reset();
             fCMBuilder.setDeclPool(fDeclPool);
             fSchemaHandler.setDeclPool(fDeclPool);
+            if (dvFactory instanceof SchemaDVFactoryImpl) {
+                fDeclPool.setDVFactory((SchemaDVFactoryImpl)dvFactory);
+                ((SchemaDVFactoryImpl)dvFactory).setDeclPool(fDeclPool);
+            }
         } else {
             fCMBuilder.setDeclPool(null);
             fSchemaHandler.setDeclPool(null);
@@ -1066,9 +1100,6 @@ XSLoader, DOMConfiguration {
      */
     public XSModel loadInputList(LSInputList is) {
         int length = is.getLength();
-        if (length == 0) {
-            return null;
-        }
         SchemaGrammar[] gs = new SchemaGrammar[length];
         for (int i = 0; i < length; i++) {
             try {
@@ -1100,9 +1131,6 @@ XSLoader, DOMConfiguration {
      */
     public XSModel loadURIList(StringList uriList) {
         int length = uriList.getLength();
-        if (length == 0) {
-            return null;
-        }
         SchemaGrammar[] gs = new SchemaGrammar[length];
         for (int i = 0; i < length; i++) {
             try {
@@ -1138,7 +1166,9 @@ XSLoader, DOMConfiguration {
                 name.equals(ALLOW_JAVA_ENCODINGS) ||
                 name.equals(STANDARD_URI_CONFORMANT_FEATURE) ||
                 name.equals(GENERATE_SYNTHETIC_ANNOTATIONS) ||
-                name.equals(HONOUR_ALL_SCHEMALOCATIONS)) {
+                name.equals(HONOUR_ALL_SCHEMALOCATIONS) ||
+                name.equals(NAMESPACE_GROWTH) ||
+                name.equals(TOLERATE_DUPLICATES)) {
                 return true;
                 
             }
@@ -1153,7 +1183,8 @@ XSLoader, DOMConfiguration {
             name.equals(XMLGRAMMAR_POOL) ||
             name.equals(SCHEMA_LOCATION) ||
             name.equals(SCHEMA_NONS_LOCATION) ||
-            name.equals(JAXP_SCHEMA_SOURCE)) {
+            name.equals(JAXP_SCHEMA_SOURCE) ||
+            name.equals(SCHEMA_DV_FACTORY)) {
             return true;
         }
         return false;
@@ -1214,6 +1245,8 @@ XSLoader, DOMConfiguration {
             v.add(VALIDATE_ANNOTATIONS);
             v.add(GENERATE_SYNTHETIC_ANNOTATIONS);
             v.add(HONOUR_ALL_SCHEMALOCATIONS);
+            v.add(NAMESPACE_GROWTH);
+            v.add(TOLERATE_DUPLICATES);
             fRecognizedParameters = new DOMStringListImpl(v);      	
         }
         return fRecognizedParameters;

@@ -19,25 +19,26 @@
  */
 package com.sun.org.apache.xerces.internal.impl.xs;
 
+import java.io.IOException;
+import java.io.StringReader;
+
+import com.sun.org.apache.xerces.internal.dom.CoreDocumentImpl;
+import com.sun.org.apache.xerces.internal.parsers.DOMParser;
+import com.sun.org.apache.xerces.internal.parsers.SAXParser;
 import com.sun.org.apache.xerces.internal.xs.XSAnnotation;
 import com.sun.org.apache.xerces.internal.xs.XSConstants;
 import com.sun.org.apache.xerces.internal.xs.XSNamespaceItem;
-import com.sun.org.apache.xerces.internal.parsers.SAXParser;
-import com.sun.org.apache.xerces.internal.parsers.DOMParser;
 
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.InputSource;
-import org.w3c.dom.Node;
-import org.w3c.dom.Element;
 import org.w3c.dom.Document;
-import java.io.StringReader;
-import java.io.IOException;
-
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 /**
  * This is an implementation of the XSAnnotation schema component.
- *
- * @xerces.internal
+ * 
+ * @xerces.internal 
  */
 public class XSAnnotationImpl implements XSAnnotation {
 
@@ -134,34 +135,52 @@ public class XSAnnotationImpl implements XSAnnotation {
         parser.setContentHandler(handler);
         try {
             parser.parse(aSource);
-        } catch (SAXException e) {
+        }
+        catch (SAXException e) {
             // this should never happen!
             // REVISIT:  what to do with this?; should really not
             // eat it...
-        } catch (IOException i) {
+        }
+        catch (IOException i) {
             // ditto with above
         }
+        // Release the reference to the user's ContentHandler.
+        parser.setContentHandler(null);
     }
 
     // this creates the new Annotation element as the first child
     // of the Node
-    private synchronized void writeToDOM(Node target, short type){
-        Document futureOwner = (type == XSAnnotation.W3C_DOM_ELEMENT)?target.getOwnerDocument():(Document)target;
+    private synchronized void writeToDOM(Node target, short type) {
+        Document futureOwner = (type == XSAnnotation.W3C_DOM_ELEMENT) ?
+                target.getOwnerDocument() : (Document)target;
         DOMParser parser = fGrammar.getDOMParser();
         StringReader aReader = new StringReader(fData);
         InputSource aSource = new InputSource(aReader);
         try {
             parser.parse(aSource);
-        } catch (SAXException e) {
+        }
+        catch (SAXException e) {
             // this should never happen!
             // REVISIT:  what to do with this?; should really not
             // eat it...
-        } catch (IOException i) {
+        }
+        catch (IOException i) {
             // ditto with above
         }
         Document aDocument = parser.getDocument();
+        parser.dropDocumentReferences();
         Element annotation = aDocument.getDocumentElement();
-        Node newElem = futureOwner.importNode(annotation, true);
+        Node newElem = null;
+        if (futureOwner instanceof CoreDocumentImpl) {
+            newElem = futureOwner.adoptNode(annotation);
+            // adoptNode will return null when the DOM implementations are not compatible.
+            if (newElem == null) {
+                newElem = futureOwner.importNode(annotation, true);
+            }
+        }
+        else {
+            newElem = futureOwner.importNode(annotation, true);
+        }
         target.insertBefore(newElem, target.getFirstChild());
     }
 

@@ -20,6 +20,7 @@
 
 package com.sun.org.apache.xerces.internal.impl.xs;
 
+import com.sun.org.apache.xerces.internal.impl.dv.xs.SchemaDVFactoryImpl;
 import com.sun.org.apache.xerces.internal.impl.dv.xs.XSSimpleTypeDecl;
 
 /**
@@ -29,9 +30,10 @@ import com.sun.org.apache.xerces.internal.impl.dv.xs.XSSimpleTypeDecl;
  * declarations to the pool.
  * Note: The cashing mechanism is not implemented yet.
  *
- * @xerces.internal
- *
+ * @xerces.internal 
+ * 
  * @author Elena Litani, IBM
+ * @version $Id: XSDeclarationPool.java,v 1.7 2010-11-01 04:39:55 joehw Exp $
  */
 public final class XSDeclarationPool {
     /** Chunk shift (8). */
@@ -73,6 +75,11 @@ public final class XSDeclarationPool {
     /** AttributeUse declaration pool */
     private XSAttributeUseImpl fAttributeUse[][] = new XSAttributeUseImpl[INITIAL_CHUNK_COUNT][];
     private int fAttributeUseIndex = 0;
+
+    private SchemaDVFactoryImpl dvFactory;
+    public void setDVFactory(SchemaDVFactoryImpl dvFactory) {
+        this.dvFactory = dvFactory;
+    }
 
     public final  XSElementDecl getElementDecl(){
         int     chunk       = fElementDeclIndex >> CHUNK_SHIFT;
@@ -134,7 +141,7 @@ public final class XSDeclarationPool {
         int     index       = fSTDeclIndex &  CHUNK_MASK;
         ensureSTDeclCapacity(chunk);
         if (fSTDecl[chunk][index] == null) {
-            fSTDecl[chunk][index] = new XSSimpleTypeDecl();
+            fSTDecl[chunk][index] = dvFactory.newXSSimpleTypeDecl();
         } else {
             fSTDecl[chunk][index].reset();
         }

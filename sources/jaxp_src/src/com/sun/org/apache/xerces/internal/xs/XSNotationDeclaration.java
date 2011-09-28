@@ -21,7 +21,7 @@
 package com.sun.org.apache.xerces.internal.xs;
 
 /**
- *  This interface represents the Notation Declaration schema component.
+ *  This interface represents the Notation Declaration schema component. 
  */
 public interface XSNotationDeclaration extends XSObject {
     /**
@@ -37,8 +37,13 @@ public interface XSNotationDeclaration extends XSObject {
     public String getPublicId();
 
     /**
-     * An [annotation] if it exists, otherwise <code>null</code>.
+     * An annotation if it exists, otherwise <code>null</code>. If not null
+     * then the first [annotation] from the sequence of annotations.
      */
     public XSAnnotation getAnnotation();
 
+    /**
+     * A sequence of [annotations] or an empty <code>XSObjectList</code>.
+     */
+    public XSObjectList getAnnotations();
 }

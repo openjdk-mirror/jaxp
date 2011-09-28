@@ -20,7 +20,6 @@
 
 package com.sun.org.apache.xerces.internal.impl.xs;
 
-import com.sun.org.apache.xerces.internal.impl.xs.XMLSchemaLoader;
 import com.sun.org.apache.xerces.internal.impl.xs.util.XSGrammarPool;
 import com.sun.org.apache.xerces.internal.xni.grammars.Grammar;
 import com.sun.org.apache.xerces.internal.xni.grammars.XMLGrammarDescription;
@@ -41,11 +40,12 @@ import org.w3c.dom.ls.LSInput;
 
 /**
  * <p>An implementation of XSLoader which wraps XMLSchemaLoader.</p>
- *
+ * 
  * @xerces.internal
- *
+ * 
  * @author Michael Glavassevich, IBM
- *
+ * 
+ * @version $Id: XSLoaderImpl.java,v 1.7 2010-11-01 04:39:55 joehw Exp $
  */
 public final class XSLoaderImpl implements XSLoader, DOMConfiguration {
 
@@ -97,14 +97,11 @@ public final class XSLoaderImpl implements XSLoader, DOMConfiguration {
      * Parses the content of XML Schema documents specified as the list of URI
      * references. If the URI contains a fragment identifier, the behavior
      * is not defined by this specification.
-     * @param uri The list of URI locations.
+     * @param uriList The list of URI locations.
      * @return An XSModel representing the schema documents.
      */
     public XSModel loadURIList(StringList uriList) {
         int length = uriList.getLength();
-        if (length == 0) {
-            return null;
-        }
         try {
             fGrammarPool.clear();
             for (int i = 0; i < length; ++i) {
@@ -127,9 +124,6 @@ public final class XSLoaderImpl implements XSLoader, DOMConfiguration {
      */
     public XSModel loadInputList(LSInputList is) {
         final int length = is.getLength();
-        if (length == 0) {
-            return null;
-        }
         try {
             fGrammarPool.clear();
             for (int i = 0; i < length; ++i) {
@@ -164,7 +158,7 @@ public final class XSLoaderImpl implements XSLoader, DOMConfiguration {
     /**
      *  Parse an XML Schema document from a resource identified by a
      * <code>LSInput</code> .
-     * @param is  The <code>DOMInputSource</code> from which the source
+     * @param is  The <code>LSInput</code> from which the source
      *   document is to be read.
      * @return An XSModel representing this schema.
      */
@@ -180,28 +174,28 @@ public final class XSLoaderImpl implements XSLoader, DOMConfiguration {
     }
 
     /* (non-Javadoc)
-     * @see DOMConfiguration#setParameter(String, Object)
+     * @see com.sun.org.apache.xerces.internal.dom3.DOMConfiguration#setParameter(java.lang.String, java.lang.Object)
      */
     public void setParameter(String name, Object value) throws DOMException {
         fSchemaLoader.setParameter(name, value);
     }
 
     /* (non-Javadoc)
-     * @see DOMConfiguration#getParameter(String)
+     * @see com.sun.org.apache.xerces.internal.dom3.DOMConfiguration#getParameter(java.lang.String)
      */
     public Object getParameter(String name) throws DOMException {
         return fSchemaLoader.getParameter(name);
     }
 
     /* (non-Javadoc)
-     * @see DOMConfiguration#canSetParameter(String, Object)
+     * @see com.sun.org.apache.xerces.internal.dom3.DOMConfiguration#canSetParameter(java.lang.String, java.lang.Object)
      */
     public boolean canSetParameter(String name, Object value) {
         return fSchemaLoader.canSetParameter(name, value);
     }
 
     /* (non-Javadoc)
-     * @see DOMConfiguration#getParameterNames()
+     * @see com.sun.org.apache.xerces.internal.dom3.DOMConfiguration#getParameterNames()
      */
     public DOMStringList getParameterNames() {
         return fSchemaLoader.getParameterNames();

@@ -20,26 +20,27 @@
 
 package com.sun.org.apache.xerces.internal.dom;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
-
 
 /**
  * AttributeMap inherits from NamedNodeMapImpl and extends it to deal with the
  * specifics of storing attributes. These are:
  * <ul>
  *  <li>managing ownership of attribute nodes
- *  <li>managing default attributes
+ *  <li>managing default attributes       
  *  <li>firing mutation events
  * </ul>
  * <p>
  * This class doesn't directly support mutation events, however, it notifies
  * the document when mutations are performed so that the document class do so.
- *
+ * 
  * @xerces.internal
  *
+ * @version $Id: AttributeMap.java,v 1.7 2010-11-01 04:39:37 joehw Exp $
  */
 public class AttributeMap extends NamedNodeMapImpl {
 
@@ -105,11 +106,11 @@ public class AttributeMap extends NamedNodeMapImpl {
         argn.ownerNode = ownerNode;
         argn.isOwned(true);
 
-        int i = findNamePoint(arg.getNodeName(),0);
+        int i = findNamePoint(argn.getNodeName(),0);
         AttrImpl previous = null;
         if (i >= 0) {
-            previous = (AttrImpl) nodes.elementAt(i);
-            nodes.setElementAt(arg,i);
+            previous = (AttrImpl) nodes.get(i);
+            nodes.set(i, arg);
             previous.ownerNode = ownerNode.ownerDocument();
             previous.isOwned(false);
             // make sure it won't be mistaken with defaults in case it's reused
@@ -117,9 +118,9 @@ public class AttributeMap extends NamedNodeMapImpl {
         } else {
             i = -1 - i; // Insert point (may be end of list)
             if (null == nodes) {
-                nodes = new Vector(5, 10);
+                nodes = new ArrayList(5);
             }
-            nodes.insertElementAt(arg, i);
+            nodes.add(i, arg);
         }
 
         // notify document
@@ -177,8 +178,8 @@ public class AttributeMap extends NamedNodeMapImpl {
         int i = findNamePoint(argn.getNamespaceURI(), argn.getLocalName());
         AttrImpl previous = null;
         if (i >= 0) {
-            previous = (AttrImpl) nodes.elementAt(i);
-            nodes.setElementAt(arg,i);
+            previous = (AttrImpl) nodes.get(i);
+            nodes.set(i, arg);
             previous.ownerNode = ownerNode.ownerDocument();
             previous.isOwned(false);
             // make sure it won't be mistaken with defaults in case it's reused
@@ -188,17 +189,17 @@ public class AttributeMap extends NamedNodeMapImpl {
             // nodeName so we know where to insert.
             i = findNamePoint(arg.getNodeName(),0);
             if (i >=0) {
-                previous = (AttrImpl) nodes.elementAt(i);
-                nodes.insertElementAt(arg,i);
+                previous = (AttrImpl) nodes.get(i);
+                nodes.add(i, arg);
             } else {
                 i = -1 - i; // Insert point (may be end of list)
                 if (null == nodes) {
-                    nodes = new Vector(5, 10);
+                    nodes = new ArrayList(5);
                 }
-                nodes.insertElementAt(arg, i);
+                nodes.add(i, arg);
             }
         }
-        //      changed(true);
+        //    	changed(true);
 
         // notify document
         ownerNode.ownerDocument().setAttrNode(argn, previous);
@@ -256,8 +257,9 @@ public class AttributeMap extends NamedNodeMapImpl {
 
         int index = -1;
         if (nodes != null) {
-            for (int i = 0; i < nodes.size(); i++) {
-                if (nodes.elementAt(i) == item) {
+            final int size = nodes.size();
+            for (int i = 0; i < size; ++i) {
+                if (nodes.get(i) == item) {
                     index = i;
                     break;
                 }
@@ -290,7 +292,7 @@ public class AttributeMap extends NamedNodeMapImpl {
             }
         }
 
-        return remove((AttrImpl)nodes.elementAt(i), i, true);
+        return remove((AttrImpl)nodes.get(i), i, true);
 
     } // internalRemoveNamedItem(String,boolean):Node
 
@@ -324,16 +326,16 @@ public class AttributeMap extends NamedNodeMapImpl {
                     clone.isOwned(true);
                     clone.isSpecified(false);
 
-                    nodes.setElementAt(clone, index);
+                    nodes.set(index, clone);
                     if (attr.isIdAttribute()) {
                         ownerDocument.putIdentifier(clone.getNodeValue(),
                                                 (ElementImpl)ownerNode);
                     }
             } else {
-                nodes.removeElementAt(index);
+                nodes.remove(index);
             }
         } else {
-            nodes.removeElementAt(index);
+            nodes.remove(index);
         }
 
         //        changed(true);
@@ -360,7 +362,7 @@ public class AttributeMap extends NamedNodeMapImpl {
      *                      The namespace URI of the node to remove.
      *                      When it is null or an empty string, this
      *                      method behaves like removeNamedItem.
-     * @param               The local name of the node to remove. If the
+     * @param name          The local name of the node to remove. If the
      *                      removed attribute is known to have a default
      *                      value, an attribute immediately appears
      *                      containing the default value.
@@ -406,7 +408,7 @@ public class AttributeMap extends NamedNodeMapImpl {
             }
         }
 
-        AttrImpl n = (AttrImpl)nodes.elementAt(i);
+        AttrImpl n = (AttrImpl)nodes.get(i);
 
         if (n.isIdAttribute()) {
             ownerDocument.removeIdentifier(n.getValue());
@@ -432,19 +434,19 @@ public class AttributeMap extends NamedNodeMapImpl {
                     }
                     clone.isOwned(true);
                     clone.isSpecified(false);
-                    nodes.setElementAt(clone, i);
+                    nodes.set(i, clone);
                     if (clone.isIdAttribute()) {
                         ownerDocument.putIdentifier(clone.getNodeValue(),
                                 (ElementImpl)ownerNode);
                     }
                 } else {
-                    nodes.removeElementAt(i);
+                    nodes.remove(i);
                 }
             } else {
-                nodes.removeElementAt(i);
+                nodes.remove(i);
             }
         } else {
-            nodes.removeElementAt(i);
+            nodes.remove(i);
         }
 
         //        changed(true);
@@ -486,19 +488,21 @@ public class AttributeMap extends NamedNodeMapImpl {
      * Override parent's method to set the ownerNode correctly
      */
     protected void cloneContent(NamedNodeMapImpl srcmap) {
-        Vector srcnodes = srcmap.nodes;
+        List srcnodes = srcmap.nodes;
         if (srcnodes != null) {
             int size = srcnodes.size();
             if (size != 0) {
                 if (nodes == null) {
-                    nodes = new Vector(size);
+                    nodes = new ArrayList(size);
                 }
-                nodes.setSize(size);
+                else {
+                    nodes.clear();
+                }
                 for (int i = 0; i < size; ++i) {
-                    NodeImpl n = (NodeImpl) srcnodes.elementAt(i);
+                    NodeImpl n = (NodeImpl) srcnodes.get(i);
                     NodeImpl clone = (NodeImpl) n.cloneNode(true);
                     clone.isSpecified(n.isSpecified());
-                    nodes.setElementAt(clone, i);
+                    nodes.add(clone);
                     clone.ownerNode = ownerNode;
                     clone.isOwned(true);
                 }
@@ -513,7 +517,7 @@ public class AttributeMap extends NamedNodeMapImpl {
     void moveSpecifiedAttributes(AttributeMap srcmap) {
         int nsize = (srcmap.nodes != null) ? srcmap.nodes.size() : 0;
         for (int i = nsize - 1; i >= 0; i--) {
-            AttrImpl attr = (AttrImpl) srcmap.nodes.elementAt(i);
+            AttrImpl attr = (AttrImpl) srcmap.nodes.get(i);
             if (attr.isSpecified()) {
                 srcmap.remove(attr, i, false);
                 if (attr.getLocalName() != null) {
@@ -535,8 +539,8 @@ public class AttributeMap extends NamedNodeMapImpl {
 
         // remove any existing default
         int nsize = (nodes != null) ? nodes.size() : 0;
-        for (int i = nsize - 1; i >= 0; i--) {
-            AttrImpl attr = (AttrImpl) nodes.elementAt(i);
+        for (int i = nsize - 1; i >= 0; --i) {
+            AttrImpl attr = (AttrImpl) nodes.get(i);
             if (!attr.isSpecified()) {
                 remove(attr, i, false);
             }
@@ -550,20 +554,53 @@ public class AttributeMap extends NamedNodeMapImpl {
         }
         else {
             int dsize = defaults.nodes.size();
-            for (int n = 0; n < dsize; n++) {
-                AttrImpl d = (AttrImpl) defaults.nodes.elementAt(n);
+            for (int n = 0; n < dsize; ++n) {
+                AttrImpl d = (AttrImpl) defaults.nodes.get(n);
                 int i = findNamePoint(d.getNodeName(), 0);
                 if (i < 0) {
-                        i = -1 - i;
+            		i = -1 - i;
                     NodeImpl clone = (NodeImpl) d.cloneNode(true);
                     clone.ownerNode = ownerNode;
                     clone.isOwned(true);
                     clone.isSpecified(false);
-                        nodes.insertElementAt(clone, i);
+            		nodes.add(i, clone);
                 }
             }
         }
 
     } // reconcileDefaults()
+
+    protected final int addItem (Node arg) {
+
+        final AttrImpl argn = (AttrImpl) arg;
+
+        // set owner
+        argn.ownerNode = ownerNode;
+        argn.isOwned(true);
+
+        int i = findNamePoint(argn.getNamespaceURI(), argn.getLocalName());
+        if (i >= 0) {
+            nodes.set(i, arg);
+        }
+        else {
+            // If we can't find by namespaceURI, localName, then we find by
+            // nodeName so we know where to insert.
+            i = findNamePoint(argn.getNodeName(),0);
+            if (i >= 0) {
+                nodes.add(i, arg);
+            }
+            else {
+                i = -1 - i; // Insert point (may be end of list)
+                if (null == nodes) {
+                    nodes = new ArrayList(5);
+                }
+                nodes.add(i, arg);
+            }
+        }
+
+        // notify document
+        ownerNode.ownerDocument().setAttrNode(argn, null);
+        return i;
+    }
 
 } // class AttributeMap
