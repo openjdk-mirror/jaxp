@@ -139,6 +139,8 @@ public abstract class XMLInputFactory {
   public static final String ALLOCATOR=
     "javax.xml.stream.allocator";
 
+  static final String DEFAULIMPL = "com.sun.xml.internal.stream.XMLInputFactoryImpl";
+
   protected XMLInputFactory(){}
 
   /**
@@ -150,7 +152,7 @@ public abstract class XMLInputFactory {
   {
     return (XMLInputFactory) FactoryFinder.find(
       "javax.xml.stream.XMLInputFactory",
-      "com.sun.xml.internal.stream.XMLInputFactoryImpl");
+      DEFAULIMPL);
   }
 
   /**
@@ -183,7 +185,7 @@ public abstract class XMLInputFactory {
   {
     return (XMLInputFactory) FactoryFinder.find(
       "javax.xml.stream.XMLInputFactory",
-      "com.sun.xml.internal.stream.XMLInputFactoryImpl");
+      DEFAULIMPL);
   }
 
   /**
@@ -206,7 +208,7 @@ public abstract class XMLInputFactory {
           throws FactoryConfigurationError {
       try {
           //do not fallback if given classloader can't find the class, throw exception
-          return (XMLInputFactory) FactoryFinder.newInstance(factoryId, classLoader, false);
+          return (XMLInputFactory) FactoryFinder.find(factoryId, classLoader, null);
       } catch (FactoryFinder.ConfigurationError e) {
           throw new FactoryConfigurationError(e.getException(),
                   e.getMessage());
@@ -233,7 +235,7 @@ public abstract class XMLInputFactory {
           throws FactoryConfigurationError {
       try {
           //do not fallback if given classloader can't find the class, throw exception
-          return (XMLInputFactory) FactoryFinder.newInstance(factoryId, classLoader, false);
+          return (XMLInputFactory) FactoryFinder.find(factoryId, classLoader, null);
       } catch (FactoryFinder.ConfigurationError e) {
           throw new FactoryConfigurationError(e.getException(),
                   e.getMessage());

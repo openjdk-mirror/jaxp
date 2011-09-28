@@ -30,7 +30,7 @@ import java.util.NoSuchElementException;
  *
  * @author Andy Clark, IBM
  *
- * @version $Id: Constants.java,v 1.10 2009/08/04 05:07:19 joehw Exp $
+ * @version $Id: Constants.java,v 1.12 2010/08/11 07:18:39 joehw Exp $
  */
 public final class Constants {
     
@@ -289,7 +289,10 @@ public final class Constants {
     
     /** Validate datatypes feature ("validation/validate-datatypes"). */
     public static final String VALIDATE_DATATYPES_FEATURE = "validation/validate-datatypes";
-    
+
+    /** Balance syntax trees feature ("validation/balance-syntax-trees"). */
+    public static final String BALANCE_SYNTAX_TREES = "validation/balance-syntax-trees";
+
     /** Notify character references feature (scanner/notify-char-refs"). */
     public static final String NOTIFY_CHAR_REFS_FEATURE = "scanner/notify-char-refs";
     
@@ -380,6 +383,8 @@ public final class Constants {
     /** Security manager property ("security-manager"). */
     public static final String SECURITY_MANAGER_PROPERTY = "security-manager";
 
+    /** Locale property ("locale"). */
+    public static final String LOCALE_PROPERTY = "locale";
 
     /** property identifier: security manager. */
     protected static final String SECURITY_MANAGER =
@@ -437,7 +442,7 @@ public final class Constants {
     /** Element PSVI is stored in augmentations using string "ELEMENT_PSVI" */
     public final static String ELEMENT_PSVI = "ELEMENT_PSVI";
     
-    /* Attribute PSVI is stored in augmentations using string "ATTRIBUTE_PSVI" */
+    /** Attribute PSVI is stored in augmentations using string "ATTRIBUTE_PSVI" */
     public final static String ATTRIBUTE_PSVI = "ATTRIBUTE_PSVI";
         
     /** 
@@ -499,7 +504,8 @@ public final class Constants {
      */
     public final static String LAST_ENTITY = "LAST_ENTITY";
     
-    // XML version constants 
+    // XML version constants
+    public final static short XML_VERSION_ERROR = -1;
     public final static short XML_VERSION_1_0 = 1;
     public final static short XML_VERSION_1_1 = 2;
 
@@ -555,6 +561,7 @@ public final class Constants {
         DEFAULT_ATTRIBUTE_VALUES_FEATURE,
         VALIDATE_CONTENT_MODELS_FEATURE,
         VALIDATE_DATATYPES_FEATURE,
+        BALANCE_SYNTAX_TREES,
         NOTIFY_CHAR_REFS_FEATURE,
         NOTIFY_BUILTIN_REFS_FEATURE,
         DISALLOW_DOCTYPE_DECL_FEATURE,
@@ -586,7 +593,8 @@ public final class Constants {
             SCHEMA_NONS_LOCATION,
             VALIDATION_MANAGER_PROPERTY,
             BUFFER_SIZE_PROPERTY,
-            SECURITY_MANAGER_PROPERTY
+            SECURITY_MANAGER_PROPERTY,
+            LOCALE_PROPERTY
     };
     
     /** Empty enumeration. */

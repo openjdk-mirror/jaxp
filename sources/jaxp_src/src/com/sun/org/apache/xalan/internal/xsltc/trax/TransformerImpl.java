@@ -1377,6 +1377,8 @@ public final class TransformerImpl extends Transformer
         _parameters = null;
         _indentNumber = 0;
         setOutputProperties (null);
+        _tohFactory = null;
+        _ostream = null;
 
     }
 }

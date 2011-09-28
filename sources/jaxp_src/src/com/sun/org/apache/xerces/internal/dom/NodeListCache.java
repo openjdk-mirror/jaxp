@@ -25,16 +25,17 @@ import java.io.Serializable;
 /**
  * This class is used, via a pool managed on CoreDocumentImpl, in ParentNode to
  * improve performance of the NodeList accessors, getLength() and item(i).
- *
+ * 
  * @xerces.internal
- *
+ * 
  * @author Arnaud  Le Hors, IBM
  *
+ * @version $Id: NodeListCache.java,v 1.6 2010/07/20 20:25:25 joehw Exp $
  */
 class NodeListCache implements Serializable {
 
     /** Serialization version. */
-    private static final long serialVersionUID = 3258135743263224377L;
+    private static final long serialVersionUID = -7927529254918631002L;
 
     /** Cached node list length. */
     int fLength = -1;
@@ -56,3 +57,4 @@ class NodeListCache implements Serializable {
         fOwner = owner;
     }
 }
+

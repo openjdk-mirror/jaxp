@@ -94,7 +94,13 @@ public class FactoryConfigurationError extends Error {
   public Exception getException() {
     return nested;
   }
-
+    /**
+     * use the exception chaining mechanism of JDK1.4
+    */
+    @Override
+    public Throwable getCause() {
+        return nested;
+    }
 
   /**
    * Report the message associated with this error

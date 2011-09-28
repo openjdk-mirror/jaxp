@@ -29,6 +29,7 @@ package javax.xml;
  * <p>Utility class to contain basic XML values as constants.</p>
  *
  * @author <a href="mailto:Jeff.Suttor@Sun.com">Jeff Suttor</a>
+ * @version $Revision: 1.8 $, $Date: 2010/05/25 16:19:45 $
  * @see <a href="http://www.w3.org/TR/xml11/">Extensible Markup Language (XML) 1.1</a>
  * @see <a href="http://www.w3.org/TR/REC-xml">Extensible Markup Language (XML) 1.0 (Second Edition)</a>
  * @see <a href="http://www.w3.org/XML/xml-V10-2e-errata">XML 1.0 Second Edition Specification Errata</a>
@@ -44,8 +45,8 @@ public final class XMLConstants {
     /**
      * <p>Private constructor to prevent instantiation.</p>
      */
-        private XMLConstants() {
-        }
+	private XMLConstants() {
+	}
 
     /**
      * <p>Namespace URI to use to represent that there is no Namespace.</p>
@@ -104,7 +105,7 @@ public final class XMLConstants {
      * href="http://www.w3.org/TR/REC-xml-names/#ns-qualnames">
      * Namespaces in XML, 3. Qualified Names</a>
      * @see <a
-     * href="http://www.w3.org/XML/xml-names-19990114-errata/">
+     * href="http://www.w3.org/XML/xml-names-19990114-errata">
      * Namespaces in XML Errata</a>
      */
     public static final String XMLNS_ATTRIBUTE_NS_URI =
@@ -123,12 +124,12 @@ public final class XMLConstants {
      * Namespaces in XML, 3. Qualified Names</a>
      */
     public static final String XMLNS_ATTRIBUTE = "xmlns";
-
+    
     /**
      * <p>W3C XML Schema Namespace URI.</p>
-     *
+     * 
      * <p>Defined to be "<code>http://www.w3.org/2001/XMLSchema</code>".
-     *
+     * 
      * @see <a href=
      *  "http://www.w3.org/TR/xmlschema-1/#Instance_Document_Constructions">
      *  XML Schema Part 1:
@@ -139,9 +140,9 @@ public final class XMLConstants {
 
     /**
      * <p>W3C XML Schema Instance Namespace URI.</p>
-     *
+     * 
      * <p>Defined to be "<code>http://www.w3.org/2001/XMLSchema-instance</code>".</p>
-     *
+     * 
      * @see <a href=
      *  "http://www.w3.org/TR/xmlschema-1/#Instance_Document_Constructions">
      *  XML Schema Part 1:
@@ -150,44 +151,44 @@ public final class XMLConstants {
     public static final String W3C_XML_SCHEMA_INSTANCE_NS_URI =
         "http://www.w3.org/2001/XMLSchema-instance";
 
-        /**
-         * <p>W3C XPath Datatype Namespace URI.</p>
-         *
-         * <p>Defined to be "<code>http://www.w3.org/2003/11/xpath-datatypes</code>".</p>
-         *
-         * @see <a href="http://www.w3.org/TR/xpath-datamodel">XQuery 1.0 and XPath 2.0 Data Model</a>
-         */
-        public static final String W3C_XPATH_DATATYPE_NS_URI = "http://www.w3.org/2003/11/xpath-datatypes";
+	/**
+	 * <p>W3C XPath Datatype Namespace URI.</p>
+	 * 
+	 * <p>Defined to be "<code>http://www.w3.org/2003/11/xpath-datatypes</code>".</p>
+	 * 
+	 * @see <a href="http://www.w3.org/TR/xpath-datamodel">XQuery 1.0 and XPath 2.0 Data Model</a>
+	 */
+	public static final String W3C_XPATH_DATATYPE_NS_URI = "http://www.w3.org/2003/11/xpath-datatypes";
 
     /**
      * <p>XML Document Type Declaration Namespace URI as an arbitrary value.</p>
-     *
+     * 
      * <p>Since not formally defined by any existing standard, arbitrarily define to be "<code>http://www.w3.org/TR/REC-xml</code>".
      */
     public static final String XML_DTD_NS_URI = "http://www.w3.org/TR/REC-xml";
 
-        /**
-         * <p>RELAX NG Namespace URI.</p>
-         *
-         * <p>Defined to be "<code>http://relaxng.org/ns/structure/1.0</code>".</p>
-         *
-         * @see <a href="http://relaxng.org/spec-20011203.html">RELAX NG Specification</a>
-         */
-        public static final String RELAXNG_NS_URI = "http://relaxng.org/ns/structure/1.0";
-
-        /**
-         * <p>Feature for secure processing.</p>
-         *
-         * <ul>
-         *   <li>
-         *     <code>true</code> instructs the implementation to process XML securely.
-         *     This may set limits on XML constructs to avoid conditions such as denial of service attacks.
-         *   </li>
-         *   <li>
-         *     <code>false</code> instructs the implementation to process XML acording the letter of the XML specifications
-         *     ingoring security issues such as limits on XML constructs to avoid conditions such as denial of service attacks.
-         *   </li>
-         * </ul>
-         */
-        public static final String FEATURE_SECURE_PROCESSING = "http://javax.xml.XMLConstants/feature/secure-processing";
+	/**
+	 * <p>RELAX NG Namespace URI.</p>
+	 * 
+	 * <p>Defined to be "<code>http://relaxng.org/ns/structure/1.0</code>".</p>
+	 * 
+	 * @see <a href="http://relaxng.org/spec-20011203.html">RELAX NG Specification</a>
+	 */
+	public static final String RELAXNG_NS_URI = "http://relaxng.org/ns/structure/1.0";
+	
+	/**
+	 * <p>Feature for secure processing.</p>
+	 * 
+	 * <ul>
+	 *   <li>
+	 *     <code>true</code> instructs the implementation to process XML securely.
+	 *     This may set limits on XML constructs to avoid conditions such as denial of service attacks.
+	 *   </li>
+	 *   <li>
+	 *     <code>false</code> instructs the implementation to process XML acording the letter of the XML specifications
+	 *     ingoring security issues such as limits on XML constructs to avoid conditions such as denial of service attacks.
+	 *   </li>
+	 * </ul>
+	 */    
+	public static final String FEATURE_SECURE_PROCESSING = "http://javax.xml.XMLConstants/feature/secure-processing";
 }

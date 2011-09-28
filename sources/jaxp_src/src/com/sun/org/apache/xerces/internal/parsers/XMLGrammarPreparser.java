@@ -48,6 +48,7 @@ import com.sun.org.apache.xerces.internal.xni.parser.XMLInputSource;
  *
  * @author Neil Graham, IBM
  *
+ * @version $Id: XMLGrammarPreparser.java,v 1.6 2010/07/23 02:09:28 joehw Exp $
  */
 public class XMLGrammarPreparser {
 
@@ -127,9 +128,8 @@ public class XMLGrammarPreparser {
         fSymbolTable = symbolTable;
 
         fLoaders = new Hashtable();
-        setLocale(Locale.getDefault());
         fErrorReporter = new XMLErrorReporter();
-        fErrorReporter.setLocale(fLocale);
+        setLocale(Locale.getDefault());
         fEntityResolver = new XMLEntityManager();
         // those are all the basic properties...
     } // <init>(SymbolTable)
@@ -217,6 +217,7 @@ public class XMLGrammarPreparser {
      */
     public void setLocale(Locale locale) {
         fLocale = locale;
+        fErrorReporter.setLocale(locale);
     } // setLocale(Locale)
 
     /** Return the Locale the XMLGrammarLoader is using. */

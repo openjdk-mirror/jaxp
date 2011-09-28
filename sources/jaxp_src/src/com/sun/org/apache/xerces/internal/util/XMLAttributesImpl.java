@@ -83,7 +83,7 @@ import com.sun.org.apache.xerces.internal.xni.XMLString;
  * @author Elena Litani, IBM
  * @author Michael Glavassevich, IBM
  *
- * @version $Id: XMLAttributesImpl.java,v 1.6 2009/05/13 18:13:21 spericas Exp $
+ * @version $Id: XMLAttributesImpl.java,v 1.7 2010/05/07 20:13:09 joehw Exp $
  */
 public class XMLAttributesImpl
 implements XMLAttributes, XMLBufferListener {
@@ -1020,8 +1020,8 @@ implements XMLAttributes, XMLBufferListener {
     /**
      * Look up an attribute's value by Namespace name and
      * Local name. If Namespace is null, ignore namespace
-     * comparison. If Namespace is "", map it to null as
-     * required internally by this class.
+     * comparison. If Namespace is "", treat the name as
+     * having no Namespace URI.
      *
      * <p>See {@link #getValue(int) getValue(int)} for a description
      * of the possible values.</p>
@@ -1032,8 +1032,7 @@ implements XMLAttributes, XMLBufferListener {
      *         attribute is not in the list.
      */
     public String getValue(String uri, String localName) {
-        int index = (uri == null) ? getIndexByLocalName(localName)
-                : getIndex(uri.length() == 0 ? null : uri, localName);
+        int index = getIndex(uri, localName);
         return index != -1 ? getValue(index) : null;
     } // getValue(String,String):String
 

@@ -20,13 +20,16 @@
 
 package com.sun.org.apache.xerces.internal.impl.dv;
 
+import java.util.Locale;
+
 /**
  * ValidationContext has all the information required for the
  * validation of: id, idref, entity, notation, qname
- *
- * @xerces.internal
+ * 
+ * @xerces.internal 
  *
  * @author Sandy Gao, IBM
+ * @version $Id: ValidationContext.java,v 1.6 2010/07/23 02:09:29 joehw Exp $
  */
 public interface ValidationContext {
     // whether to validate against facets
@@ -57,4 +60,8 @@ public interface ValidationContext {
 
     // qname
     public String getURI(String prefix);
+
+    // Locale
+    public Locale getLocale();
+
 }

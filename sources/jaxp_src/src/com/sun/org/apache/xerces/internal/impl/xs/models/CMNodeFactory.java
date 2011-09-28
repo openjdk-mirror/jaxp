@@ -35,6 +35,7 @@ import com.sun.org.apache.xerces.internal.impl.Constants;
  *
  * @author  Neeraj Bajaj
  *
+ * @version $Id: CMNodeFactory.java,v 1.6 2010/08/06 23:49:43 joehw Exp $
  */
 public class CMNodeFactory {
 
@@ -89,14 +90,23 @@ public class CMNodeFactory {
     }//reset()
 
     public CMNode getCMLeafNode(int type, Object leaf, int id, int position) {
+        nodeCountCheck();
         return new XSCMLeaf(type, leaf, id, position) ;
     }
 
+    public CMNode getCMRepeatingLeafNode(int type, Object leaf,
+            int minOccurs, int maxOccurs, int id, int position) {
+        nodeCountCheck();
+        return new XSCMRepeatingLeaf(type, leaf, minOccurs, maxOccurs, id, position);
+    }
+
     public CMNode getCMUniOpNode(int type, CMNode childNode) {
+        nodeCountCheck();
         return new XSCMUniOp(type, childNode) ;
     }
 
     public CMNode getCMBinOpNode(int type, CMNode leftNode, CMNode rightNode) {
+        nodeCountCheck() ;
         return new XSCMBinOp(type, leftNode, rightNode) ;
     }
 
@@ -138,7 +148,7 @@ public class CMNodeFactory {
 
         // Xerces properties
         if (propertyId.startsWith(Constants.XERCES_PROPERTY_PREFIX)) {
-                final int suffixLength = propertyId.length() - Constants.XERCES_PROPERTY_PREFIX.length();
+        	final int suffixLength = propertyId.length() - Constants.XERCES_PROPERTY_PREFIX.length();
 
             if (suffixLength == Constants.SECURITY_MANAGER_PROPERTY.length() &&
                 propertyId.endsWith(Constants.SECURITY_MANAGER_PROPERTY)) {

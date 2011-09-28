@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.HashMap;
-import java.util.Locale;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.FactoryConfigurationError;
@@ -48,6 +47,7 @@ import com.sun.org.apache.xerces.internal.util.AttributesProxy;
 import com.sun.org.apache.xerces.internal.util.SAXLocatorWrapper;
 import com.sun.org.apache.xerces.internal.util.SAXMessageFormatter;
 import com.sun.org.apache.xerces.internal.util.SymbolTable;
+import com.sun.org.apache.xerces.internal.util.SecurityManager;
 import com.sun.org.apache.xerces.internal.util.URI;
 import com.sun.org.apache.xerces.internal.util.XMLAttributesImpl;
 import com.sun.org.apache.xerces.internal.util.XMLSymbols;
@@ -91,7 +91,7 @@ import org.xml.sax.ext.EntityResolver2;
  * @author Kohsuke Kawaguchi (kohsuke.kawaguchi@sun.com)
  * @author Michael Glavassevich, IBM
  * 
- * @version $Id: ValidatorHandlerImpl.java,v 1.6 2009/07/28 23:48:30 joehw Exp $
+ * @version $Id: ValidatorHandlerImpl.java,v 1.9 2010/07/23 02:09:26 joehw Exp $
  */
 final class ValidatorHandlerImpl extends ValidatorHandler implements
     DTDHandler, EntityState, PSVIProvider, ValidatorHelper, XMLDocumentHandler {
@@ -245,7 +245,7 @@ final class ValidatorHandlerImpl extends ValidatorHandler implements
             final String key = e.getType() == XMLConfigurationException.NOT_RECOGNIZED ?
                     "feature-not-recognized" : "feature-not-supported";
             throw new SAXNotRecognizedException(
-                    SAXMessageFormatter.formatMessage(Locale.getDefault(), 
+                    SAXMessageFormatter.formatMessage(fComponentManager.getLocale(),
                     key, new Object [] {identifier}));
         }
     }
@@ -265,7 +265,7 @@ final class ValidatorHandlerImpl extends ValidatorHandler implements
             if (type == XMLConfigurationException.NOT_ALLOWED) {
                 //for now, the identifier can only be (XMLConstants.FEATURE_SECURE_PROCESSING)
                 throw new SAXNotSupportedException(
-                    SAXMessageFormatter.formatMessage(Locale.getDefault(), 
+                    SAXMessageFormatter.formatMessage(fComponentManager.getLocale(),
                     "jaxp-secureprocessing-feature", null));                    
             } else if (type == XMLConfigurationException.NOT_RECOGNIZED) {
                 key = "feature-not-recognized";
@@ -273,7 +273,7 @@ final class ValidatorHandlerImpl extends ValidatorHandler implements
                 key = "feature-not-supported";
             }
             throw new SAXNotRecognizedException(
-                    SAXMessageFormatter.formatMessage(Locale.getDefault(), 
+                    SAXMessageFormatter.formatMessage(fComponentManager.getLocale(),
                     key, new Object [] {identifier}));    
         }
     }
@@ -291,7 +291,7 @@ final class ValidatorHandlerImpl extends ValidatorHandler implements
             final String key = e.getType() == XMLConfigurationException.NOT_RECOGNIZED ?
                     "property-not-recognized" : "property-not-supported";
             throw new SAXNotRecognizedException(
-                    SAXMessageFormatter.formatMessage(Locale.getDefault(), 
+                    SAXMessageFormatter.formatMessage(fComponentManager.getLocale(),
                     key, new Object [] {identifier}));
         }
     }
@@ -309,7 +309,7 @@ final class ValidatorHandlerImpl extends ValidatorHandler implements
             final String key = e.getType() == XMLConfigurationException.NOT_RECOGNIZED ?
                     "property-not-recognized" : "property-not-supported";
             throw new SAXNotRecognizedException(
-                    SAXMessageFormatter.formatMessage(Locale.getDefault(), 
+                    SAXMessageFormatter.formatMessage(fComponentManager.getLocale(),
                     key, new Object [] {identifier}));
         }
     }
@@ -717,7 +717,7 @@ final class ValidatorHandlerImpl extends ValidatorHandler implements
             }
             return;
         }
-        throw new IllegalArgumentException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(), 
+        throw new IllegalArgumentException(JAXPValidationMessageFormatter.formatMessage(fComponentManager.getLocale(),
                 "SourceResultMismatch", 
                 new Object [] {source.getClass().getName(), result.getClass().getName()}));
     }
@@ -806,7 +806,7 @@ final class ValidatorHandlerImpl extends ValidatorHandler implements
      * REVISIT: I'm not sure if this code should belong here.
      */
     private final XMLSchemaTypeInfoProvider fTypeInfoProvider = new XMLSchemaTypeInfoProvider();
-    private static class XMLSchemaTypeInfoProvider extends TypeInfoProvider {
+    private class XMLSchemaTypeInfoProvider extends TypeInfoProvider {
         
         /** Element augmentations: contains ElementPSVI. **/
         private Augmentations fElementAugs;
@@ -853,7 +853,7 @@ final class ValidatorHandlerImpl extends ValidatorHandler implements
          */
         private void checkState(boolean forElementInfo) {
             if (! (fInStartElement || (fInEndElement && forElementInfo))) {
-                throw new IllegalStateException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(), 
+                throw new IllegalStateException(JAXPValidationMessageFormatter.formatMessage(fComponentManager.getLocale(),
                         "TypeInfoProviderIllegalState", null));
             }
         }

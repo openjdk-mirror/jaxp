@@ -58,8 +58,8 @@ import org.xml.sax.helpers.NamespaceSupport;
  */
 
 public class XMLDOMWriterImpl implements XMLStreamWriter  {
-
-
+    
+    
     private Document ownerDoc = null;
     private Node currentNode = null;
     private Node node = null;
@@ -74,7 +74,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
      * @param result DOMResult object @javax.xml.transform.dom.DOMResult
      */
     public XMLDOMWriterImpl(DOMResult result) {
-
+        
         node = result.getNode();
         if( node.getNodeType() == Node.DOCUMENT_NODE){
             ownerDoc = (Document)node;
@@ -88,7 +88,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
         needContextPop = new boolean[resizeValue];
         namespaceContext = new NamespaceSupport();
     }
-
+    
     private void getDLThreeMethods(){
         try{
             mXmlVersion =  ownerDoc.getClass().getMethod("setXmlVersion",new Class[] {String.class});
@@ -100,8 +100,8 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
             mXmlVersion = null;
         }
     }
-
-
+    
+    
     /**
      * This method has no effect when called.
      * @throws javax.xml.stream.XMLStreamException {@inheritDoc}
@@ -109,7 +109,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
     public void close() throws XMLStreamException {
         //no-op
     }
-
+    
     /**
      * This method has no effect when called.
      * @throws javax.xml.stream.XMLStreamException {@inheritDoc}
@@ -117,7 +117,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
     public void flush() throws XMLStreamException {
         //no-op
     }
-
+    
     /**
      * {@inheritDoc}
      * @return {@inheritDoc}
@@ -125,7 +125,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
     public javax.xml.namespace.NamespaceContext getNamespaceContext() {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}
      * @param namespaceURI {@inheritDoc}
@@ -139,7 +139,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
         }
         return prefix;
     }
-
+    
     /**
      * Is not supported in this implementation.
      * @param str {@inheritDoc}
@@ -149,7 +149,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
     public Object getProperty(String str) throws IllegalArgumentException {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * Is not supported in this version of the implementation.
      * @param uri {@inheritDoc}
@@ -161,7 +161,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
             needContextPop[depth] = true;
         }
     }
-
+    
     /**
      * {@inheritDoc}
      * @param namespaceContext {@inheritDoc}
@@ -170,7 +170,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
     public void setNamespaceContext(javax.xml.namespace.NamespaceContext namespaceContext) throws XMLStreamException {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * Is not supported in this version of the implementation.
      * @param prefix {@inheritDoc}
@@ -186,7 +186,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
             needContextPop[depth] = true;
         }
     }
-
+    
     /**
      * Creates a DOM Atrribute @see org.w3c.dom.Node and associates it with the current DOM element @see org.w3c.dom.Node.
      * @param localName {@inheritDoc}
@@ -194,7 +194,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
      * @throws javax.xml.stream.XMLStreamException {@inheritDoc}
      */
     public void writeAttribute(String localName, String value) throws XMLStreamException {
-
+        
         if(currentNode.getNodeType() == Node.ELEMENT_NODE){
             Attr attr = ownerDoc.createAttribute(localName);
             attr.setValue(value);
@@ -205,7 +205,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
                     "and does not allow attributes to be set ");
         }
     }
-
+    
     /**
      * Creates a DOM Atrribute @see org.w3c.dom.Node and associates it with the current DOM element @see org.w3c.dom.Node.
      * @param namespaceURI {@inheritDoc}
@@ -225,12 +225,12 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
             if(namespaceContext != null){
                 prefix = namespaceContext.getPrefix(namespaceURI);
             }
-
+            
             if(prefix == null){
                 throw new XMLStreamException("Namespace URI "+namespaceURI +
                         "is not bound to any prefix" );
             }
-
+            
             String qualifiedName = null;
             if(prefix.equals("")){
                 qualifiedName = localName;
@@ -246,7 +246,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
                     "and does not allow attributes to be set ");
         }
     }
-
+    
     /**
      * Creates a DOM Atrribute @see org.w3c.dom.Node and associates it with the current DOM element @see org.w3c.dom.Node.
      * @param prefix {@inheritDoc}
@@ -270,7 +270,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
             if(prefix.equals("")){
                 qualifiedName = localName;
             }else{
-
+                
                 qualifiedName = getQName(prefix,localName);
             }
             Attr attr = ownerDoc.createAttributeNS(namespaceURI, qualifiedName);
@@ -281,9 +281,9 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
             throw new IllegalStateException("Current DOM Node type  is "+ currentNode.getNodeType() +
                     "and does not allow attributes to be set ");
         }
-
+        
     }
-
+    
     /**
      * Creates a CDATA object @see org.w3c.dom.CDATASection.
      * @param data {@inheritDoc}
@@ -293,11 +293,11 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
         if(data == null){
             throw new XMLStreamException("CDATA cannot be null");
         }
-
+        
         CDATASection cdata = ownerDoc.createCDATASection(data);
         getNode().appendChild(cdata);
     }
-
+    
     /**
      * Creates a character object @see org.w3c.dom.Text and appends it to the current
      * element in the DOM tree.
@@ -308,7 +308,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
         Text text = ownerDoc.createTextNode(charData);
         currentNode.appendChild(text);
     }
-
+    
     /**
      * Creates a character object @see org.w3c.dom.Text and appends it to the current
      * element in the DOM tree.
@@ -318,11 +318,11 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
      * @throws javax.xml.stream.XMLStreamException {@inheritDoc}
      */
     public void writeCharacters(char[] values, int param, int param2) throws XMLStreamException {
-
+        
         Text text = ownerDoc.createTextNode(new String(values,param,param2));
         currentNode.appendChild(text);
     }
-
+    
     /**
      * Creates a Comment object @see org.w3c.dom.Comment and appends it to the current
      * element in the DOM tree.
@@ -333,7 +333,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
         Comment comment = ownerDoc.createComment(str);
         getNode().appendChild(comment);
     }
-
+    
     /**
      * This method is not supported in this implementation.
      * @param str {@inheritDoc}
@@ -342,7 +342,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
     public void writeDTD(String str) throws XMLStreamException {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * Creates a DOM attribute and adds it to the current element in the DOM tree.
      * @param namespaceURI {@inheritDoc}
@@ -358,7 +358,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
                     "and does not allow attributes to be set ");
         }
     }
-
+    
     /**
      * creates a DOM Element and appends it to the current element in the tree.
      * @param localName {@inheritDoc}
@@ -373,9 +373,9 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
                 ownerDoc.appendChild(element);
             }
         }
-
+        
     }
-
+    
     /**
      * creates a DOM Element and appends it to the current element in the tree.
      * @param namespaceURI {@inheritDoc}
@@ -392,7 +392,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
             if(localName == null){
                 throw new XMLStreamException("Local name cannot be null");
             }
-
+            
             if(namespaceContext != null){
                 prefix = namespaceContext.getPrefix(namespaceURI);
             }
@@ -403,9 +403,9 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
             if("".equals(prefix)){
                 qualifiedName = localName;
             }else{
-
+                
                 qualifiedName = getQName(prefix,localName);
-
+                
             }
             Element element = ownerDoc.createElementNS(namespaceURI, qualifiedName);
             if(currentNode!=null){
@@ -416,7 +416,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
             //currentNode = element;
         }
     }
-
+    
     /**
      * creates a DOM Element and appends it to the current element in the tree.
      * @param prefix {@inheritDoc}
@@ -447,10 +447,10 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
             }else{
                 ownerDoc.appendChild(el);
             }
-
+            
         }
     }
-
+    
     /**
      * Will reset current Node pointer maintained by the implementation.
      * @throws javax.xml.stream.XMLStreamException {@inheritDoc}
@@ -467,7 +467,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
         }
         depth =0;
     }
-
+    
     /**
      * Internal current Node pointer will point to the parent of the current Node.
      * @throws javax.xml.stream.XMLStreamException {@inheritDoc}
@@ -485,7 +485,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
         }
         depth--;
     }
-
+    
     /**
      * Is not supported in this implementation.
      * @param name {@inheritDoc}
@@ -495,7 +495,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
         EntityReference er = ownerDoc.createEntityReference(name);
         currentNode.appendChild(er);
     }
-
+    
     /**
      * creates a namespace attribute and will associate it with the current element in
      * the DOM tree.
@@ -514,7 +514,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
         }
 
         String qname = null;
-
+        
         if (prefix.equals("")) {
             qname = XMLConstants.XMLNS_ATTRIBUTE;
         } else {
@@ -523,7 +523,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
 
         ((Element)currentNode).setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI,qname, namespaceURI);
     }
-
+    
     /**
      * is not supported in this release.
      * @param target {@inheritDoc}
@@ -536,7 +536,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
         ProcessingInstruction pi = ownerDoc.createProcessingInstruction(target, "");
         currentNode.appendChild(pi);
     }
-
+    
     /**
      * is not supported in this release.
      * @param target {@inheritDoc}
@@ -550,7 +550,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
         ProcessingInstruction pi  = ownerDoc.createProcessingInstruction(target, data);
         currentNode.appendChild(pi);
     }
-
+    
     /**
      * will set version on the Document object when the DOM Node passed to this implementation
      * supports DOM Level3 API's.
@@ -567,7 +567,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
             throw new XMLStreamException(ite);
         }
     }
-
+    
     /**
      * will set version on the Document object when the DOM Node passed to this implementation
      * supports DOM Level3 API's.
@@ -585,7 +585,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
             throw new XMLStreamException(ite);
         }
     }
-
+    
     /**
      * will set version on the Document object when the DOM Node passed to this implementation
      * supports DOM Level3 API's.
@@ -605,7 +605,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
         }
         //TODO: What to do with encoding.-Venu
     }
-
+    
     /**
      * creates a DOM Element and appends it to the current element in the tree.
      * @param localName {@inheritDoc}
@@ -624,9 +624,9 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
         if(needContextPop[depth]){
             namespaceContext.pushContext();
         }
-        depth++;
+        incDepth();
     }
-
+    
     /**
      * creates a DOM Element and appends it to the current element in the tree.
      * @param namespaceURI {@inheritDoc}
@@ -637,14 +637,14 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
         if(ownerDoc != null){
             String qualifiedName = null;
             String prefix = null;
-
+            
             if(namespaceURI == null ){
                 throw new XMLStreamException("NamespaceURI cannot be null");
             }
             if(localName == null){
                 throw new XMLStreamException("Local name cannot be null");
             }
-
+            
             if(namespaceContext != null){
                 prefix = namespaceContext.getPrefix(namespaceURI);
             }
@@ -657,9 +657,9 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
             }else{
                 qualifiedName =  getQName(prefix,localName);
             }
-
+            
             Element element = ownerDoc.createElementNS(namespaceURI, qualifiedName);
-
+            
             if(currentNode!=null){
                 currentNode.appendChild(element);
             }else{
@@ -670,9 +670,9 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
         if(needContextPop[depth]){
             namespaceContext.pushContext();
         }
-        depth++;
+        incDepth();
     }
-
+    
     /**
      * creates a DOM Element and appends it to the current element in the tree.
      * @param prefix {@inheritDoc}
@@ -681,7 +681,7 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
      * @throws javax.xml.stream.XMLStreamException {@inheritDoc}
      */
     public void writeStartElement(String prefix, String localName, String namespaceURI) throws XMLStreamException {
-
+        
         if(ownerDoc != null){
             String qname = null;
             if(namespaceURI == null ){
@@ -693,15 +693,15 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
             if(prefix == null){
                 throw new XMLStreamException("Prefix cannot be null");
             }
-
+            
             if(prefix.equals("")){
                 qname = localName;
             }else{
                 qname = getQName(prefix,localName);
             }
-
+            
             Element el = ownerDoc.createElementNS(namespaceURI,qname);
-
+            
             if(currentNode!=null){
                 currentNode.appendChild(el);
             }else{
@@ -711,11 +711,11 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
             if(needContextPop[depth]){
                 namespaceContext.pushContext();
             }
-            depth++;
-
+            incDepth();
+            
         }
     }
-
+    
     private String getQName(String prefix , String localName){
         stringBuffer.setLength(0);
         stringBuffer.append(prefix);
@@ -723,12 +723,20 @@ public class XMLDOMWriterImpl implements XMLStreamWriter  {
         stringBuffer.append(localName);
         return stringBuffer.toString();
     }
-
+    
     private Node getNode(){
         if(currentNode == null){
             return ownerDoc;
         } else{
             return currentNode;
         }
+    }
+    private void incDepth() {
+	depth++;
+        if (depth == needContextPop.length) {
+	    boolean[] array = new boolean[depth + resizeValue];
+	    System.arraycopy(needContextPop, 0, array, 0, depth);
+	    needContextPop = array;
+	}
     }
 }

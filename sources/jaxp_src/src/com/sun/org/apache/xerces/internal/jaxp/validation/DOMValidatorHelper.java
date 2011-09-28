@@ -22,7 +22,6 @@ package com.sun.org.apache.xerces.internal.jaxp.validation;
 
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.Locale;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -63,7 +62,7 @@ import org.xml.sax.SAXException;
  * <p>A validator helper for <code>DOMSource</code>s.</p>
  * 
  * @author Michael Glavassevich, IBM
- * @version $Id: DOMValidatorHelper.java,v 1.6 2008/03/22 02:53:49 joehw Exp $
+ * @version $Id: DOMValidatorHelper.java,v 1.8 2010/07/23 02:09:26 joehw Exp $
  */
 final class DOMValidatorHelper implements ValidatorHelper, EntityState {
     
@@ -208,7 +207,7 @@ final class DOMValidatorHelper implements ValidatorHelper, EntityState {
             }
             return;
         }
-        throw new IllegalArgumentException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(), 
+        throw new IllegalArgumentException(JAXPValidationMessageFormatter.formatMessage(fComponentManager.getLocale(),
                 "SourceResultMismatch", 
                 new Object [] {source.getClass().getName(), result.getClass().getName()}));
     }

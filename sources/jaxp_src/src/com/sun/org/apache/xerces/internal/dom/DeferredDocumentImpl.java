@@ -40,7 +40,7 @@ import java.util.Vector;
  * 
  * @xerces.internal
  *
- * @version $Id: DeferredDocumentImpl.java,v 1.7 2009/12/01 06:12:02 joehw Exp $
+ * @version $Id: DeferredDocumentImpl.java,v 1.9 2010/08/11 07:18:39 joehw Exp $
  * @since  PR-DOM-Level-1-19980818.
  */
 public class DeferredDocumentImpl
@@ -1875,7 +1875,7 @@ public class DeferredDocumentImpl
         while (start <= end) {
 
             // is this the one we're looking for?
-            int middle = (start + end) / 2;
+            int middle = (start + end) >>> 1;
             int value  = values[middle];
             if (DEBUG_IDS) {
                 System.out.print("  value: "+value+", target: "+target+" // ");

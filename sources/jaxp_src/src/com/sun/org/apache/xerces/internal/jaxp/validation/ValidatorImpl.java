@@ -21,7 +21,6 @@
 package com.sun.org.apache.xerces.internal.jaxp.validation;
 
 import java.io.IOException;
-import java.util.Locale;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.Result;
@@ -51,7 +50,7 @@ import org.xml.sax.SAXNotSupportedException;
  * @author <a href="mailto:Kohsuke.Kawaguchi@Sun.com">Kohsuke Kawaguchi</a>
  * @author Michael Glavassevich, IBM
  * @author <a href="mailto:Sunitha.Reddy@Sun.com">Sunitha Reddy</a>
- * @version $Id: ValidatorImpl.java,v 1.7 2009/07/28 23:48:30 joehw Exp $
+ * @version $Id: ValidatorImpl.java,v 1.9 2010/07/23 02:09:26 joehw Exp $
  */
 final class ValidatorImpl extends Validator implements PSVIProvider {
     
@@ -124,12 +123,12 @@ final class ValidatorImpl extends Validator implements PSVIProvider {
         }
         // Source parameter cannot be null.
         else if (source == null) {
-            throw new NullPointerException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(), 
+            throw new NullPointerException(JAXPValidationMessageFormatter.formatMessage(fComponentManager.getLocale(),
                     "SourceParameterNull", null));
         }
         // Source parameter must be a SAXSource, DOMSource or StreamSource
         else {
-            throw new IllegalArgumentException(JAXPValidationMessageFormatter.formatMessage(Locale.getDefault(), 
+            throw new IllegalArgumentException(JAXPValidationMessageFormatter.formatMessage(fComponentManager.getLocale(),
                     "SourceNotAccepted", new Object [] {source.getClass().getName()}));
         }
     }
@@ -165,7 +164,7 @@ final class ValidatorImpl extends Validator implements PSVIProvider {
             final String key = e.getType() == XMLConfigurationException.NOT_RECOGNIZED ?
                     "feature-not-recognized" : "feature-not-supported";
             throw new SAXNotRecognizedException(
-                    SAXMessageFormatter.formatMessage(Locale.getDefault(), 
+                    SAXMessageFormatter.formatMessage(fComponentManager.getLocale(),
                     key, new Object [] {identifier}));
         }
     }
@@ -185,7 +184,7 @@ final class ValidatorImpl extends Validator implements PSVIProvider {
             if (type == XMLConfigurationException.NOT_ALLOWED) {
                 //for now, the identifier can only be (XMLConstants.FEATURE_SECURE_PROCESSING)
                 throw new SAXNotSupportedException(
-                    SAXMessageFormatter.formatMessage(Locale.getDefault(), 
+                    SAXMessageFormatter.formatMessage(fComponentManager.getLocale(),
                     "jaxp-secureprocessing-feature", null));                    
             } else if (type == XMLConfigurationException.NOT_RECOGNIZED) {
                 key = "feature-not-recognized";
@@ -193,7 +192,7 @@ final class ValidatorImpl extends Validator implements PSVIProvider {
                 key = "feature-not-supported";
             }
             throw new SAXNotRecognizedException(
-                    SAXMessageFormatter.formatMessage(Locale.getDefault(), 
+                    SAXMessageFormatter.formatMessage(fComponentManager.getLocale(),
                     key, new Object [] {identifier}));            
         }
         fConfigurationChanged = true;
@@ -216,7 +215,7 @@ final class ValidatorImpl extends Validator implements PSVIProvider {
             final String key = e.getType() == XMLConfigurationException.NOT_RECOGNIZED ?
                     "property-not-recognized" : "property-not-supported";
             throw new SAXNotRecognizedException(
-                    SAXMessageFormatter.formatMessage(Locale.getDefault(), 
+                    SAXMessageFormatter.formatMessage(fComponentManager.getLocale(),
                     key, new Object [] {identifier}));
         }
     }
@@ -234,7 +233,7 @@ final class ValidatorImpl extends Validator implements PSVIProvider {
             final String key = e.getType() == XMLConfigurationException.NOT_RECOGNIZED ?
                     "property-not-recognized" : "property-not-supported";
             throw new SAXNotRecognizedException(
-                    SAXMessageFormatter.formatMessage(Locale.getDefault(), 
+                    SAXMessageFormatter.formatMessage(fComponentManager.getLocale(),
                     key, new Object [] {identifier}));
         }
         fConfigurationChanged = true;

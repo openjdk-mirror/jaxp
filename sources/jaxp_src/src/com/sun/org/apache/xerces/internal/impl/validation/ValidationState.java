@@ -26,14 +26,16 @@ import com.sun.org.apache.xerces.internal.impl.dv.ValidationContext;
 import com.sun.org.apache.xerces.internal.xni.NamespaceContext;
 import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Locale;
 
 /**
  * Implementation of ValidationContext inteface. Used to establish an
  * environment for simple type validation.
- *
+ * 
  * @xerces.internal
  *
  * @author Elena Litani, IBM
+ * @version $Id: ValidationState.java,v 1.6 2010/07/23 02:09:27 joehw Exp $
  */
 public class ValidationState implements ValidationContext {
 
@@ -48,6 +50,7 @@ public class ValidationState implements ValidationContext {
     private EntityState fEntityState            = null;
     private NamespaceContext fNamespaceContext  = null;
     private SymbolTable fSymbolTable            = null;
+    private Locale fLocale                      = null;
 
     //REVISIT: Should replace with a lighter structure.
     private final Hashtable fIdTable    = new Hashtable();
@@ -191,4 +194,13 @@ public class ValidationState implements ValidationContext {
         return null;
     }
 
+    // Locale
+
+    public void setLocale(Locale locale) {
+        fLocale = locale;
+    }
+
+    public Locale getLocale() {
+        return fLocale;
+    }
 }

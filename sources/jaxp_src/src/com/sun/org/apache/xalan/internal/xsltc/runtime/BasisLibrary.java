@@ -261,17 +261,19 @@ public final class BasisLibrary {
      * conversions resulting into NaNs and rounding.
      */
     public static String substringF(String value, double start) {
-	try {
+        if (Double.isNaN(start))
+            return(EMPTYSTRING);
+
 	    final int strlen = value.length();
 	    int istart = (int)Math.round(start) - 1;
 
-	    if (Double.isNaN(start)) return(EMPTYSTRING);
-	    if (istart > strlen) return(EMPTYSTRING);
- 	    if (istart < 1) istart = 0;
-
+        if (istart > strlen)
+            return(EMPTYSTRING);
+        if (istart < 1)
+            istart = 0;
+        try {
 	    return value.substring(istart);
-	}
-	catch (IndexOutOfBoundsException e) {
+	} catch (IndexOutOfBoundsException e) {
 	    runTimeError(RUN_TIME_INTERNAL_ERR, "substring()");
 	    return null;
 	}
@@ -282,26 +284,31 @@ public final class BasisLibrary {
      * conversions resulting into NaNs and rounding.
      */
     public static String substringF(String value, double start, double length) {
-	try {
-	    final int strlen  = value.length();
+        if (Double.isInfinite(start) ||
+            Double.isNaN(start) ||
+            Double.isNaN(length))
+            return(EMPTYSTRING);
+
 	    int istart = (int)Math.round(start) - 1;
-	    int isum   = istart + (int)Math.round(length);
+        final int isum;
+        if (Double.isInfinite(length))
+            isum = Integer.MAX_VALUE;
+        else
+            isum = istart + (int)Math.round(length);
 
-	    if (Double.isInfinite(length)) isum = Integer.MAX_VALUE;
-
-	    if (Double.isNaN(start) || Double.isNaN(length))
+        final int strlen = value.length();
+        if (isum < 0 || istart > strlen)
 		return(EMPTYSTRING);
-	    if (Double.isInfinite(start)) return(EMPTYSTRING);
-	    if (istart > strlen) return(EMPTYSTRING);
-	    if (isum < 0) return(EMPTYSTRING);
- 	    if (istart < 0) istart = 0;
 
+        if (istart < 0)
+            istart = 0;
+
+        try {
 	    if (isum > strlen)
 		return value.substring(istart);
 	    else
 		return value.substring(istart, isum);
-	}
-	catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
 	    runTimeError(RUN_TIME_INTERNAL_ERR, "substring()");
 	    return null;
 	}

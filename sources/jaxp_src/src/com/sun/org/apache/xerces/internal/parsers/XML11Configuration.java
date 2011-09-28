@@ -73,7 +73,7 @@ import com.sun.org.apache.xerces.internal.xni.parser.XMLPullParserConfiguration;
  * @author Neil Graham, IBM
  * @author Michael Glavassevich, IBM
  *
- * @version $Id: XML11Configuration.java,v 1.5 2008/08/29 06:17:02 joehw Exp $
+ * @version $Id: XML11Configuration.java,v 1.7 2010/07/23 02:09:28 joehw Exp $
  */
 public class XML11Configuration extends ParserConfigurationSettings
     implements XMLPullParserConfiguration, XML11Configurable {
@@ -254,6 +254,10 @@ public class XML11Configuration extends ParserConfigurationSettings
     /** Property identifier: JAXP schema source/ DOM schema-location. */
     protected static final String JAXP_SCHEMA_SOURCE =
         Constants.JAXP_PROPERTY_PREFIX + Constants.SCHEMA_SOURCE;
+
+    /** Property identifier: locale. */
+    protected static final String LOCALE =
+        Constants.XERCES_PROPERTY_PREFIX + Constants.LOCALE_PROPERTY;
 
     // debugging
 
@@ -500,7 +504,10 @@ public class XML11Configuration extends ParserConfigurationSettings
             	//       validator is constructed dynamically, its recognized
             	//       properties might not have been set and it would cause a
             	//       not-recognized exception to be thrown. -Ac
-            	SCHEMA_LOCATION, SCHEMA_NONS_LOCATION, };
+            	SCHEMA_LOCATION,
+                SCHEMA_NONS_LOCATION,
+                LOCALE,
+        };
         addRecognizedProperties(recognizedProperties);
 		
 		if (symbolTable == null) {
@@ -834,7 +841,7 @@ public class XML11Configuration extends ParserConfigurationSettings
 	 * Returns the state of a feature.
 	 * 
 	 * @param featureId The feature identifier.
-		 * @return true if the feature is supported
+	 * @return true if the feature is supported
 	 * 
 	 * @throws XMLConfigurationException Thrown for configuration error.
 	 *                                   In general, components should
@@ -896,7 +903,27 @@ public class XML11Configuration extends ParserConfigurationSettings
 		super.setFeature(featureId, state);
 
 	} // setFeature(String,boolean)
-	
+
+    /**
+     * Returns the value of a property.
+     *
+     * @param propertyId The property identifier.
+     * @return the value of the property
+     *
+     * @throws XMLConfigurationException Thrown for configuration error.
+     *                                   In general, components should
+     *                                   only throw this exception if
+     *                                   it is <strong>really</strong>
+     *                                   a critical error.
+     */
+    public Object getProperty(String propertyId)
+        throws XMLConfigurationException {
+        if (LOCALE.equals(propertyId)) {
+            return getLocale();
+        }
+        return super.getProperty(propertyId);
+    }
+
 	/**
 	 * setProperty
 	 * 
@@ -906,6 +933,9 @@ public class XML11Configuration extends ParserConfigurationSettings
 	public void setProperty(String propertyId, Object value)
 		throws XMLConfigurationException {
 		fConfigUpdated = true;
+		if (LOCALE.equals(propertyId)) {
+		    setLocale((Locale) value);
+		}
 		// forward to every XML 1.0 component
 		int count = fComponents.size();
 		for (int i = 0; i < count; i++) {

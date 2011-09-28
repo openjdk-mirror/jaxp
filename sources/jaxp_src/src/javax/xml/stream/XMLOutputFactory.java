@@ -115,6 +115,8 @@ public abstract class XMLOutputFactory {
   public static final String IS_REPAIRING_NAMESPACES=
     "javax.xml.stream.isRepairingNamespaces";
 
+  static final String DEFAULIMPL = "com.sun.xml.internal.stream.XMLOutputFactoryImpl";
+
   protected XMLOutputFactory(){}
 
   /**
@@ -125,7 +127,7 @@ public abstract class XMLOutputFactory {
     throws FactoryConfigurationError
   {
     return (XMLOutputFactory) FactoryFinder.find("javax.xml.stream.XMLOutputFactory",
-                                                 "com.sun.xml.internal.stream.XMLOutputFactoryImpl");
+                                                 DEFAULIMPL);
   }
 
   /**
@@ -157,7 +159,7 @@ public abstract class XMLOutputFactory {
     throws FactoryConfigurationError
   {
     return (XMLOutputFactory) FactoryFinder.find("javax.xml.stream.XMLOutputFactory",
-                                                 "com.sun.xml.internal.stream.XMLOutputFactoryImpl");
+                                                 DEFAULIMPL);
   }
 
   /**
@@ -179,7 +181,7 @@ public abstract class XMLOutputFactory {
           throws FactoryConfigurationError {
       try {
           //do not fallback if given classloader can't find the class, throw exception
-          return (XMLInputFactory) FactoryFinder.newInstance(factoryId, classLoader, false);
+          return (XMLInputFactory) FactoryFinder.find(factoryId, classLoader, null);
       } catch (FactoryFinder.ConfigurationError e) {
           throw new FactoryConfigurationError(e.getException(),
                   e.getMessage());
@@ -208,7 +210,7 @@ public abstract class XMLOutputFactory {
           throws FactoryConfigurationError {
       try {
           //do not fallback if given classloader can't find the class, throw exception
-          return (XMLOutputFactory) FactoryFinder.newInstance(factoryId, classLoader, false);
+          return (XMLOutputFactory) FactoryFinder.find(factoryId, classLoader, null);
       } catch (FactoryFinder.ConfigurationError e) {
           throw new FactoryConfigurationError(e.getException(),
                   e.getMessage());

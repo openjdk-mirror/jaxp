@@ -31,7 +31,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.traversal.NodeIterator;
 
 /**
- * This class overrides the XNodeSet#object() method to provide the original
+ * This class overrides the XNodeSet#object() method to provide the original 
  * Node object, NodeList object, or NodeIterator.
  */
 public class XNodeSetForDOM extends XNodeSet
@@ -44,10 +44,10 @@ public class XNodeSetForDOM extends XNodeSet
     m_dtmMgr = dtmMgr;
     m_origObj = node;
     int dtmHandle = dtmMgr.getDTMHandleFromNode(node);
-    m_obj = new NodeSetDTM(dtmMgr);
+    setObject(new NodeSetDTM(dtmMgr));
     ((NodeSetDTM) m_obj).addNode(dtmHandle);
   }
-
+  
   /**
    * Construct a XNodeSet object.
    *
@@ -55,11 +55,11 @@ public class XNodeSetForDOM extends XNodeSet
    */
   public XNodeSetForDOM(XNodeSet val)
   {
-        super(val);
-        if(val instanceof XNodeSetForDOM)
-        m_origObj = ((XNodeSetForDOM)val).m_origObj;
+  	super(val);
+  	if(val instanceof XNodeSetForDOM)
+    	m_origObj = ((XNodeSetForDOM)val).m_origObj;
   }
-
+  
   public XNodeSetForDOM(NodeList nodeList, XPathContext xctxt)
   {
     m_dtmMgr = xctxt.getDTMManager();
@@ -71,7 +71,7 @@ public class XNodeSetForDOM extends XNodeSet
     // m_obj=new com.sun.org.apache.xpath.internal.NodeSetDTM(nodeList, xctxt);
     com.sun.org.apache.xpath.internal.NodeSetDTM nsdtm=new com.sun.org.apache.xpath.internal.NodeSetDTM(nodeList, xctxt);
     m_last=nsdtm.getLength();
-    m_obj = nsdtm;
+    setObject(nsdtm);
   }
 
   public XNodeSetForDOM(NodeIterator nodeIter, XPathContext xctxt)
@@ -85,9 +85,9 @@ public class XNodeSetForDOM extends XNodeSet
     // m_obj = new com.sun.org.apache.xpath.internal.NodeSetDTM(nodeIter, xctxt);
     com.sun.org.apache.xpath.internal.NodeSetDTM nsdtm=new com.sun.org.apache.xpath.internal.NodeSetDTM(nodeIter, xctxt);
     m_last=nsdtm.getLength();
-    m_obj = nsdtm;
+    setObject(nsdtm);
   }
-
+  
   /**
    * Return the original DOM object that the user passed in.  For use primarily
    * by the extension mechanism.
@@ -98,7 +98,7 @@ public class XNodeSetForDOM extends XNodeSet
   {
     return m_origObj;
   }
-
+  
   /**
    * Cast result object to a nodelist. Always issues an error.
    *
@@ -108,10 +108,10 @@ public class XNodeSetForDOM extends XNodeSet
    */
   public NodeIterator nodeset() throws javax.xml.transform.TransformerException
   {
-    return (m_origObj instanceof NodeIterator)
-                   ? (NodeIterator)m_origObj : super.nodeset();
+    return (m_origObj instanceof NodeIterator) 
+                   ? (NodeIterator)m_origObj : super.nodeset();      
   }
-
+  
   /**
    * Cast result object to a nodelist. Always issues an error.
    *
@@ -121,8 +121,8 @@ public class XNodeSetForDOM extends XNodeSet
    */
   public NodeList nodelist() throws javax.xml.transform.TransformerException
   {
-    return (m_origObj instanceof NodeList)
-                   ? (NodeList)m_origObj : super.nodelist();
+    return (m_origObj instanceof NodeList) 
+                   ? (NodeList)m_origObj : super.nodelist();      
   }
 
 
