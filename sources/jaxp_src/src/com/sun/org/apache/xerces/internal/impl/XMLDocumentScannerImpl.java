@@ -323,34 +323,16 @@ public class XMLDocumentScannerImpl
         fExternalSubsetSource = null;
         
         // xerces features
-        try {
-            fLoadExternalDTD = componentManager.getFeature(LOAD_EXTERNAL_DTD);
-        } catch (XMLConfigurationException e) {
-            fLoadExternalDTD = true;
-        }
-        
-        try {
-            fDisallowDoctype = componentManager.getFeature(DISALLOW_DOCTYPE_DECL_FEATURE);
-        } catch (XMLConfigurationException e) {
-            fDisallowDoctype = false;
-        }
-        
-        try {
-            fNamespaces = componentManager.getFeature(NAMESPACES);
-        } catch (XMLConfigurationException e) {
-            fNamespaces = true;
-        }
-        
+        fLoadExternalDTD = componentManager.getFeature(LOAD_EXTERNAL_DTD, true);
+        fDisallowDoctype = componentManager.getFeature(DISALLOW_DOCTYPE_DECL_FEATURE, false);
+
+        fNamespaces = componentManager.getFeature(NAMESPACES, true);
+
         fSeenInternalSubset = false;
         // xerces properties
         fDTDScanner = (XMLDTDScanner)componentManager.getProperty(DTD_SCANNER);        
         
-        try {
-            fValidationManager = (ValidationManager)componentManager.getProperty(VALIDATION_MANAGER);
-        }
-        catch (XMLConfigurationException e) {
-            fValidationManager = null;
-        }
+        fValidationManager = (ValidationManager)componentManager.getProperty(VALIDATION_MANAGER, null);
 
         try {
             fNamespaceContext = (NamespaceContext)componentManager.getProperty(NAMESPACE_CONTEXT);

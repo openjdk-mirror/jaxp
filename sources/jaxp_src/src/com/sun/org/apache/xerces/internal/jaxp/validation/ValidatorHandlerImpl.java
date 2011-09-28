@@ -46,6 +46,7 @@ import com.sun.org.apache.xerces.internal.impl.xs.XMLSchemaValidator;
 import com.sun.org.apache.xerces.internal.util.AttributesProxy;
 import com.sun.org.apache.xerces.internal.util.SAXLocatorWrapper;
 import com.sun.org.apache.xerces.internal.util.SAXMessageFormatter;
+import com.sun.org.apache.xerces.internal.util.Status;
 import com.sun.org.apache.xerces.internal.util.SymbolTable;
 import com.sun.org.apache.xerces.internal.util.SecurityManager;
 import com.sun.org.apache.xerces.internal.util.URI;
@@ -91,7 +92,7 @@ import org.xml.sax.ext.EntityResolver2;
  * @author Kohsuke Kawaguchi (kohsuke.kawaguchi@sun.com)
  * @author Michael Glavassevich, IBM
  * 
- * @version $Id: ValidatorHandlerImpl.java,v 1.9 2010/07/23 02:09:26 joehw Exp $
+ * @version $Id: ValidatorHandlerImpl.java,v 1.10 2010-11-01 04:40:08 joehw Exp $
  */
 final class ValidatorHandlerImpl extends ValidatorHandler implements
     DTDHandler, EntityState, PSVIProvider, ValidatorHelper, XMLDocumentHandler {
@@ -242,7 +243,7 @@ final class ValidatorHandlerImpl extends ValidatorHandler implements
         }
         catch (XMLConfigurationException e) {
             final String identifier = e.getIdentifier();
-            final String key = e.getType() == XMLConfigurationException.NOT_RECOGNIZED ?
+            final String key = e.getType() == Status.NOT_RECOGNIZED ?
                     "feature-not-recognized" : "feature-not-supported";
             throw new SAXNotRecognizedException(
                     SAXMessageFormatter.formatMessage(fComponentManager.getLocale(),
@@ -260,14 +261,13 @@ final class ValidatorHandlerImpl extends ValidatorHandler implements
         }
         catch (XMLConfigurationException e) {
             final String identifier = e.getIdentifier();
-            final short type = e.getType();
             final String key;
-            if (type == XMLConfigurationException.NOT_ALLOWED) {
+            if (e.getType() == Status.NOT_ALLOWED) {
                 //for now, the identifier can only be (XMLConstants.FEATURE_SECURE_PROCESSING)
                 throw new SAXNotSupportedException(
                     SAXMessageFormatter.formatMessage(fComponentManager.getLocale(),
                     "jaxp-secureprocessing-feature", null));                    
-            } else if (type == XMLConfigurationException.NOT_RECOGNIZED) {
+            } else if (e.getType() == Status.NOT_RECOGNIZED) {
                 key = "feature-not-recognized";
             } else {
                 key = "feature-not-supported";
@@ -288,7 +288,7 @@ final class ValidatorHandlerImpl extends ValidatorHandler implements
         }
         catch (XMLConfigurationException e) {
             final String identifier = e.getIdentifier();
-            final String key = e.getType() == XMLConfigurationException.NOT_RECOGNIZED ?
+            final String key = e.getType() == Status.NOT_RECOGNIZED ?
                     "property-not-recognized" : "property-not-supported";
             throw new SAXNotRecognizedException(
                     SAXMessageFormatter.formatMessage(fComponentManager.getLocale(),
@@ -306,7 +306,7 @@ final class ValidatorHandlerImpl extends ValidatorHandler implements
         }
         catch (XMLConfigurationException e) {
             final String identifier = e.getIdentifier();
-            final String key = e.getType() == XMLConfigurationException.NOT_RECOGNIZED ?
+            final String key = e.getType() == Status.NOT_RECOGNIZED ?
                     "property-not-recognized" : "property-not-supported";
             throw new SAXNotRecognizedException(
                     SAXMessageFormatter.formatMessage(fComponentManager.getLocale(),

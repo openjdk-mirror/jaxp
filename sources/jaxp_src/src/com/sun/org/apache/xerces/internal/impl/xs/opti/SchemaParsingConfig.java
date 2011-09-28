@@ -37,6 +37,9 @@ import com.sun.org.apache.xerces.internal.impl.msg.XMLMessageFormatter;
 import com.sun.org.apache.xerces.internal.impl.validation.ValidationManager;
 import com.sun.org.apache.xerces.internal.impl.xs.XSMessageFormatter;
 import com.sun.org.apache.xerces.internal.parsers.BasicParserConfiguration;
+import com.sun.org.apache.xerces.internal.util.FeatureState;
+import com.sun.org.apache.xerces.internal.util.PropertyState;
+import com.sun.org.apache.xerces.internal.util.Status;
 import com.sun.org.apache.xerces.internal.util.SymbolTable;
 import com.sun.org.apache.xerces.internal.xni.XMLLocator;
 import com.sun.org.apache.xerces.internal.xni.XNIException;
@@ -400,13 +403,13 @@ public class SchemaParsingConfig extends BasicParserConfiguration
      *                                   it is <strong>really</strong>
      *                                   a critical error.
      */
-    public boolean getFeature(String featureId)
+    public FeatureState getFeatureState(String featureId)
         throws XMLConfigurationException {
         // make this feature special
         if (featureId.equals(PARSER_SETTINGS)) {
-            return fConfigUpdated;
+            return FeatureState.is(fConfigUpdated);
         }
-        return super.getFeature(featureId);
+        return super.getFeatureState(featureId);
 
     } // getFeature(String):boolean
 
@@ -463,12 +466,12 @@ public class SchemaParsingConfig extends BasicParserConfiguration
      *                                   it is <strong>really</strong>
      *                                   a critical error.
      */
-    public Object getProperty(String propertyId)
+    public PropertyState getPropertyState(String propertyId)
         throws XMLConfigurationException {
         if (LOCALE.equals(propertyId)) {
-            return getLocale();
+            return PropertyState.is(getLocale());
         }
-        return super.getProperty(propertyId);
+        return super.getPropertyState(propertyId);
     }
 
     /**
@@ -811,7 +814,7 @@ public class SchemaParsingConfig extends BasicParserConfiguration
      *                                   it is <strong>really</strong>
      *                                   a critical error.
      */
-    protected void checkFeature(String featureId)
+    protected FeatureState checkFeature(String featureId)
         throws XMLConfigurationException {
 
         //
@@ -829,7 +832,7 @@ public class SchemaParsingConfig extends BasicParserConfiguration
             //
             if (suffixLength == Constants.DYNAMIC_VALIDATION_FEATURE.length() &&
                     featureId.endsWith(Constants.DYNAMIC_VALIDATION_FEATURE)) {
-                return;
+                return FeatureState.RECOGNIZED;
             }
             //
             // http://apache.org/xml/features/validation/default-attribute-values
@@ -837,8 +840,7 @@ public class SchemaParsingConfig extends BasicParserConfiguration
             if (suffixLength == Constants.DEFAULT_ATTRIBUTE_VALUES_FEATURE.length() &&
                     featureId.endsWith(Constants.DEFAULT_ATTRIBUTE_VALUES_FEATURE)) {
                 // REVISIT
-                short type = XMLConfigurationException.NOT_SUPPORTED;
-                throw new XMLConfigurationException(type, featureId);
+                return FeatureState.NOT_SUPPORTED;
             }
             //
             // http://apache.org/xml/features/validation/default-attribute-values
@@ -846,22 +848,21 @@ public class SchemaParsingConfig extends BasicParserConfiguration
             if (suffixLength == Constants.VALIDATE_CONTENT_MODELS_FEATURE.length() &&
                     featureId.endsWith(Constants.VALIDATE_CONTENT_MODELS_FEATURE)) {
                 // REVISIT
-                short type = XMLConfigurationException.NOT_SUPPORTED;
-                throw new XMLConfigurationException(type, featureId);
+                return FeatureState.NOT_SUPPORTED;
             }
             //
             // http://apache.org/xml/features/validation/nonvalidating/load-dtd-grammar
             //
             if (suffixLength == Constants.LOAD_DTD_GRAMMAR_FEATURE.length() &&
                     featureId.endsWith(Constants.LOAD_DTD_GRAMMAR_FEATURE)) {
-                return;
+                return FeatureState.RECOGNIZED;
             }
             //
             // http://apache.org/xml/features/validation/nonvalidating/load-external-dtd
             //
             if (suffixLength == Constants.LOAD_EXTERNAL_DTD_FEATURE.length() &&
                     featureId.endsWith(Constants.LOAD_EXTERNAL_DTD_FEATURE)) {
-                return;
+                return FeatureState.RECOGNIZED;
             }
 
             //
@@ -869,8 +870,7 @@ public class SchemaParsingConfig extends BasicParserConfiguration
             //
             if (suffixLength == Constants.VALIDATE_DATATYPES_FEATURE.length() &&
                     featureId.endsWith(Constants.VALIDATE_DATATYPES_FEATURE)) {
-                short type = XMLConfigurationException.NOT_SUPPORTED;
-                throw new XMLConfigurationException(type, featureId);
+                return FeatureState.NOT_SUPPORTED;
             }
         }
 
@@ -878,7 +878,7 @@ public class SchemaParsingConfig extends BasicParserConfiguration
         // Not recognized
         //
 
-        super.checkFeature(featureId);
+        return super.checkFeature(featureId);
 
     } // checkFeature(String)
 
@@ -895,7 +895,7 @@ public class SchemaParsingConfig extends BasicParserConfiguration
      *                                   it is <strong>really</strong>
      *                                   a critical error.
      */
-    protected void checkProperty(String propertyId)
+    protected PropertyState checkProperty(String propertyId)
         throws XMLConfigurationException {
 
         //
@@ -907,7 +907,7 @@ public class SchemaParsingConfig extends BasicParserConfiguration
 
             if (suffixLength == Constants.DTD_SCANNER_PROPERTY.length() &&
                     propertyId.endsWith(Constants.DTD_SCANNER_PROPERTY)) {
-                return;
+                return PropertyState.RECOGNIZED;
             }
         }
 
@@ -916,7 +916,7 @@ public class SchemaParsingConfig extends BasicParserConfiguration
 
             if (suffixLength == Constants.SCHEMA_SOURCE.length() &&
                     propertyId.endsWith(Constants.SCHEMA_SOURCE)) {
-                return;
+                return PropertyState.RECOGNIZED;
             }
         }
 
@@ -924,7 +924,7 @@ public class SchemaParsingConfig extends BasicParserConfiguration
         // Not recognized
         //
 
-        super.checkProperty(propertyId);
+        return super.checkProperty(propertyId);
 
     } // checkProperty(String)
 

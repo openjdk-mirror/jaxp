@@ -360,15 +360,7 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
 
   // Error messages...
 
-
-  /**
-   * Get the association list.
-   *
-   * @return The association list.
-   */
-  public Object[][] getContents()
-  {
-    return new Object[][]{
+  private static final Object[][] _contents = new Object[][]{
 
   { "ERROR0000" , "{0}" },
 
@@ -905,6 +897,15 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
   { "three", "3" }
 
   };
+
+  /**
+   * Get the association list.
+   *
+   * @return The association list.
+   */
+  public Object[][] getContents()
+  {
+      return _contents;
   }
 
 

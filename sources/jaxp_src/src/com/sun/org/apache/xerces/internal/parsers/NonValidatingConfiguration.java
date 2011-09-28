@@ -32,6 +32,9 @@ import com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl;
 import com.sun.org.apache.xerces.internal.impl.dv.DTDDVFactory;
 import com.sun.org.apache.xerces.internal.impl.msg.XMLMessageFormatter;
 import com.sun.org.apache.xerces.internal.impl.validation.ValidationManager;
+import com.sun.org.apache.xerces.internal.util.FeatureState;
+import com.sun.org.apache.xerces.internal.util.PropertyState;
+import com.sun.org.apache.xerces.internal.util.Status;
 import com.sun.org.apache.xerces.internal.util.SymbolTable;
 import com.sun.org.apache.xerces.internal.xni.XMLLocator;
 import com.sun.org.apache.xerces.internal.xni.XNIException;
@@ -55,7 +58,7 @@ import com.sun.org.apache.xerces.internal.xni.parser.XMLPullParserConfiguration;
  * include the replacement text of internal entities, and supply default attribute values".
  * 
  * @author Elena Litani, IBM
- * @version $Id: NonValidatingConfiguration.java,v 1.6 2010/07/23 02:09:28 joehw Exp $
+ * @version $Id: NonValidatingConfiguration.java,v 1.7 2010-11-01 04:40:09 joehw Exp $
  */
 public class NonValidatingConfiguration
     extends BasicParserConfiguration 
@@ -375,12 +378,12 @@ public class NonValidatingConfiguration
 		super.setFeature(featureId, state);
 	}
 
-        public Object getProperty(String propertyId)
+        public PropertyState getPropertyState(String propertyId)
              throws XMLConfigurationException {
              if (LOCALE.equals(propertyId)) {
-                 return getLocale();
+                 return PropertyState.is(getLocale());
              }
-             return super.getProperty(propertyId);
+             return super.getPropertyState(propertyId);
          }
 
         public void setProperty(String propertyId, Object value)
@@ -405,13 +408,13 @@ public class NonValidatingConfiguration
         fErrorReporter.setLocale(locale);
     } // setLocale(Locale)
     
-	public boolean getFeature(String featureId)
+	public FeatureState getFeatureState(String featureId)
 		throws XMLConfigurationException {
 			// make this feature special
 		if (featureId.equals(PARSER_SETTINGS)){
-			return fConfigUpdated;
+			return FeatureState.is(fConfigUpdated);
 		}
-		return super.getFeature(featureId);
+		return super.getFeatureState(featureId);
 
 	} // getFeature(String):boolean
     //
@@ -645,7 +648,7 @@ public class NonValidatingConfiguration
      *                                   it is <strong>really</strong>
      *                                   a critical error.
      */
-    protected void checkFeature(String featureId)
+    protected FeatureState checkFeature(String featureId)
         throws XMLConfigurationException {
 
         //
@@ -663,7 +666,7 @@ public class NonValidatingConfiguration
             //
             if (suffixLength == Constants.DYNAMIC_VALIDATION_FEATURE.length() && 
                 featureId.endsWith(Constants.DYNAMIC_VALIDATION_FEATURE)) {
-                return;
+                return FeatureState.RECOGNIZED;
             }
             //
             // http://apache.org/xml/features/validation/default-attribute-values
@@ -671,8 +674,7 @@ public class NonValidatingConfiguration
             if (suffixLength == Constants.DEFAULT_ATTRIBUTE_VALUES_FEATURE.length() && 
                 featureId.endsWith(Constants.DEFAULT_ATTRIBUTE_VALUES_FEATURE)) {
                 // REVISIT
-                short type = XMLConfigurationException.NOT_SUPPORTED;
-                throw new XMLConfigurationException(type, featureId);
+                return FeatureState.NOT_SUPPORTED;
             }
             //
             // http://apache.org/xml/features/validation/default-attribute-values
@@ -680,22 +682,21 @@ public class NonValidatingConfiguration
             if (suffixLength == Constants.VALIDATE_CONTENT_MODELS_FEATURE.length() && 
                 featureId.endsWith(Constants.VALIDATE_CONTENT_MODELS_FEATURE)) {
                 // REVISIT
-                short type = XMLConfigurationException.NOT_SUPPORTED;
-                throw new XMLConfigurationException(type, featureId);
+                return FeatureState.NOT_SUPPORTED;
             }
             //
             // http://apache.org/xml/features/validation/nonvalidating/load-dtd-grammar
             //
             if (suffixLength == Constants.LOAD_DTD_GRAMMAR_FEATURE.length() && 
                 featureId.endsWith(Constants.LOAD_DTD_GRAMMAR_FEATURE)) {
-                return;
+                return FeatureState.RECOGNIZED;
             }
             //
             // http://apache.org/xml/features/validation/nonvalidating/load-external-dtd
             //
             if (suffixLength == Constants.LOAD_EXTERNAL_DTD_FEATURE.length() && 
                 featureId.endsWith(Constants.LOAD_EXTERNAL_DTD_FEATURE)) {
-                return;
+                return FeatureState.RECOGNIZED;
             }
 
             //
@@ -703,8 +704,7 @@ public class NonValidatingConfiguration
             //
             if (suffixLength == Constants.VALIDATE_DATATYPES_FEATURE.length() && 
                 featureId.endsWith(Constants.VALIDATE_DATATYPES_FEATURE)) {
-                short type = XMLConfigurationException.NOT_SUPPORTED;
-                throw new XMLConfigurationException(type, featureId);
+                return FeatureState.NOT_SUPPORTED;
             }
         }
 
@@ -712,7 +712,7 @@ public class NonValidatingConfiguration
         // Not recognized
         //
 
-        super.checkFeature(featureId);
+        return super.checkFeature(featureId);
 
     } // checkFeature(String)
 
@@ -729,7 +729,7 @@ public class NonValidatingConfiguration
      *                                   it is <strong>really</strong>
      *                                   a critical error.
      */
-    protected void checkProperty(String propertyId)
+    protected PropertyState checkProperty(String propertyId)
         throws XMLConfigurationException {
 
         //
@@ -741,7 +741,7 @@ public class NonValidatingConfiguration
             
             if (suffixLength == Constants.DTD_SCANNER_PROPERTY.length() && 
                 propertyId.endsWith(Constants.DTD_SCANNER_PROPERTY)) {
-                return;
+                return PropertyState.RECOGNIZED;
             }
         }
 
@@ -750,7 +750,7 @@ public class NonValidatingConfiguration
 
             if (suffixLength == Constants.SCHEMA_SOURCE.length() && 
                 propertyId.endsWith(Constants.SCHEMA_SOURCE)) {
-                return;
+                return PropertyState.RECOGNIZED;
             }
         }
 
@@ -758,7 +758,7 @@ public class NonValidatingConfiguration
         // Not recognized
         //
 
-        super.checkProperty(propertyId);
+        return super.checkProperty(propertyId);
 
     } // checkProperty(String)
 

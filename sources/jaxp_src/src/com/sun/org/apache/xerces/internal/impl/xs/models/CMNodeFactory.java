@@ -35,7 +35,7 @@ import com.sun.org.apache.xerces.internal.impl.Constants;
  *
  * @author  Neeraj Bajaj
  *
- * @version $Id: CMNodeFactory.java,v 1.6 2010/08/06 23:49:43 joehw Exp $
+ * @version $Id: CMNodeFactory.java,v 1.7 2010-11-01 04:39:58 joehw Exp $
  */
 public class CMNodeFactory {
 
@@ -90,7 +90,6 @@ public class CMNodeFactory {
     }//reset()
 
     public CMNode getCMLeafNode(int type, Object leaf, int id, int position) {
-        nodeCountCheck();
         return new XSCMLeaf(type, leaf, id, position) ;
     }
 
@@ -106,7 +105,6 @@ public class CMNodeFactory {
     }
 
     public CMNode getCMBinOpNode(int type, CMNode leftNode, CMNode rightNode) {
-        nodeCountCheck() ;
         return new XSCMBinOp(type, leftNode, rightNode) ;
     }
 

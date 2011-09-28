@@ -35,9 +35,12 @@ import com.sun.org.apache.xerces.internal.impl.xs.XMLSchemaValidator;
 import com.sun.org.apache.xerces.internal.impl.xs.XSMessageFormatter;
 import com.sun.org.apache.xerces.internal.util.DOMEntityResolverWrapper;
 import com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper;
+import com.sun.org.apache.xerces.internal.util.FeatureState;
 import com.sun.org.apache.xerces.internal.util.NamespaceSupport;
 import com.sun.org.apache.xerces.internal.util.ParserConfigurationSettings;
+import com.sun.org.apache.xerces.internal.util.PropertyState;
 import com.sun.org.apache.xerces.internal.util.SecurityManager;
+import com.sun.org.apache.xerces.internal.util.Status;
 import com.sun.org.apache.xerces.internal.util.SymbolTable;
 import com.sun.org.apache.xerces.internal.xni.NamespaceContext;
 import com.sun.org.apache.xerces.internal.xni.XNIException;
@@ -254,24 +257,24 @@ final class XMLSchemaValidatorComponentManager extends ParserConfigurationSettin
      *                                   it is <strong>really</strong>
      *                                   a critical error.
      */
-    public boolean getFeature(String featureId)
+    public FeatureState getFeatureState(String featureId)
             throws XMLConfigurationException {
         if (PARSER_SETTINGS.equals(featureId)) {
-            return fConfigUpdated;
+            return FeatureState.is(fConfigUpdated);
         }
         else if (VALIDATION.equals(featureId) || SCHEMA_VALIDATION.equals(featureId)) {
-            return true;
+            return FeatureState.is(true);
         }
         else if (USE_GRAMMAR_POOL_ONLY.equals(featureId)) {
-            return fUseGrammarPoolOnly;
+            return FeatureState.is(fUseGrammarPoolOnly);
         }
         else if (XMLConstants.FEATURE_SECURE_PROCESSING.equals(featureId)) {
-            return getProperty(SECURITY_MANAGER) != null;
+            return FeatureState.is(getProperty(SECURITY_MANAGER) != null);
         }
         else if (SCHEMA_ELEMENT_DEFAULT.equals(featureId)) {
-            return true; //pre-condition: VALIDATION and SCHEMA_VALIDATION are always true
+            return FeatureState.is(true); //pre-condition: VALIDATION and SCHEMA_VALIDATION are always true
         }
-        return super.getFeature(featureId);
+        return super.getFeatureState(featureId);
     }
     
     /**
@@ -284,17 +287,17 @@ final class XMLSchemaValidatorComponentManager extends ParserConfigurationSettin
      */
     public void setFeature(String featureId, boolean value) throws XMLConfigurationException {
         if (PARSER_SETTINGS.equals(featureId)) {
-            throw new XMLConfigurationException(XMLConfigurationException.NOT_SUPPORTED, featureId);
+            throw new XMLConfigurationException(Status.NOT_SUPPORTED, featureId);
         }
         else if (value == false && (VALIDATION.equals(featureId) || SCHEMA_VALIDATION.equals(featureId))) {
-            throw new XMLConfigurationException(XMLConfigurationException.NOT_SUPPORTED, featureId);
+            throw new XMLConfigurationException(Status.NOT_SUPPORTED, featureId);
         }
         else if (USE_GRAMMAR_POOL_ONLY.equals(featureId) && value != fUseGrammarPoolOnly) {
-            throw new XMLConfigurationException(XMLConfigurationException.NOT_SUPPORTED, featureId);
+            throw new XMLConfigurationException(Status.NOT_SUPPORTED, featureId);
         }
         if (XMLConstants.FEATURE_SECURE_PROCESSING.equals(featureId)) {
             if (_isSecureMode && !value) {
-                throw new XMLConfigurationException(XMLConfigurationException.NOT_ALLOWED, XMLConstants.FEATURE_SECURE_PROCESSING);
+                throw new XMLConfigurationException(Status.NOT_ALLOWED, XMLConstants.FEATURE_SECURE_PROCESSING);
             }
             setProperty(SECURITY_MANAGER, value ? new SecurityManager() : null);
             return;
@@ -322,19 +325,19 @@ final class XMLSchemaValidatorComponentManager extends ParserConfigurationSettin
      *                                   it is <strong>really</strong>
      *                                   a critical error.
      */
-    public Object getProperty(String propertyId)
+    public PropertyState getPropertyState(String propertyId)
             throws XMLConfigurationException {
         if (LOCALE.equals(propertyId)) {
-            return getLocale();
+            return PropertyState.is(getLocale());
         }
         final Object component = fComponents.get(propertyId);
         if (component != null) {
-            return component;
+            return PropertyState.is(component);
         }
         else if (fComponents.containsKey(propertyId)) {
-            return null;
+            return PropertyState.is(null);
         }
-        return super.getProperty(propertyId);
+        return super.getPropertyState(propertyId);
     }
     
     /**
@@ -350,7 +353,7 @@ final class XMLSchemaValidatorComponentManager extends ParserConfigurationSettin
              NAMESPACE_CONTEXT.equals(propertyId) || SCHEMA_VALIDATOR.equals(propertyId) ||
              SYMBOL_TABLE.equals(propertyId) || VALIDATION_MANAGER.equals(propertyId) ||
              XMLGRAMMAR_POOL.equals(propertyId)) {
-            throw new XMLConfigurationException(XMLConfigurationException.NOT_SUPPORTED, propertyId);
+            throw new XMLConfigurationException(Status.NOT_SUPPORTED, propertyId);
         }
         fConfigUpdated = true;
         fEntityManager.setProperty(propertyId, value);

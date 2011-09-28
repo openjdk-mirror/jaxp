@@ -32,15 +32,7 @@ package com.sun.org.apache.xml.internal.utils.res;
  */
 public class XResources_zh_CN extends XResourceBundle
 {
-
-  /**
-   * Get the association list.
-   *
-   * @return The association list.
-   */
-  public Object[][] getContents()
-  {
-    return new Object[][]
+  private static final Object[][] _contents = new Object[][]
   {
     { "ui_language", "zh" }, { "help_language", "zh" }, { "language", "zh" },
     { "alphabet", new CharArrayWrapper(
@@ -78,5 +70,14 @@ public class XResources_zh_CN extends XResourceBundle
                   0x516b, 0x4e5d }) }, { "tables", new StringArrayWrapper(
                       new String[]{ "digits" }) }
   };
+
+  /**
+   * Get the association list.
+   *
+   * @return The association list.
+   */
+  public Object[][] getContents()
+  {
+    return _contents;
   }
 }

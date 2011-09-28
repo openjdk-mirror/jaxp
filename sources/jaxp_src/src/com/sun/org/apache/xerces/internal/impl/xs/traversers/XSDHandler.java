@@ -3481,11 +3481,7 @@ public class XSDHandler {
 
         fSecureProcessing = null;
         if( componentManager!=null ) {
-            try {
-                fSecureProcessing = (SecurityManager) componentManager.getProperty(SECURE_PROCESSING);
-            } catch (XMLConfigurationException xmlConfigurationException) {
-                ;
-            }
+            fSecureProcessing = (SecurityManager) componentManager.getProperty(SECURE_PROCESSING, null);
         }
 
         //set entity resolver
@@ -3518,29 +3514,10 @@ public class XSDHandler {
         }
         catch (XMLConfigurationException e) {}
 
-        try {
-            fValidateAnnotations = componentManager.getFeature(VALIDATE_ANNOTATIONS);
-        } catch (XMLConfigurationException e) {
-            fValidateAnnotations = false;
-        }
-
-        try {
-            fHonourAllSchemaLocations = componentManager.getFeature(HONOUR_ALL_SCHEMALOCATIONS);
-        } catch (XMLConfigurationException e) {
-            fHonourAllSchemaLocations = false;
-        }
-
-        try {
-            fNamespaceGrowth = componentManager.getFeature(NAMESPACE_GROWTH);
-        } catch (XMLConfigurationException e) {
-            fNamespaceGrowth = false;
-        }
-
-        try {
-            fTolerateDuplicates = componentManager.getFeature(TOLERATE_DUPLICATES);
-        } catch (XMLConfigurationException e) {
-            fTolerateDuplicates = false;
-        }
+        fValidateAnnotations = componentManager.getFeature(VALIDATE_ANNOTATIONS, false);
+        fHonourAllSchemaLocations = componentManager.getFeature(HONOUR_ALL_SCHEMALOCATIONS, false);
+        fNamespaceGrowth = componentManager.getFeature(NAMESPACE_GROWTH, false);
+        fTolerateDuplicates = componentManager.getFeature(TOLERATE_DUPLICATES, false);
 
         try {
             fSchemaParser.setFeature(
@@ -3550,15 +3527,15 @@ public class XSDHandler {
         }
 
         try {
-            fSchemaParser.setFeature(
-                    ALLOW_JAVA_ENCODINGS,
-                    componentManager.getFeature(ALLOW_JAVA_ENCODINGS));
+            if (componentManager.getFeature(ALLOW_JAVA_ENCODINGS, false)) {
+                fSchemaParser.setFeature(ALLOW_JAVA_ENCODINGS, true);
+            }
         } catch (XMLConfigurationException e) {
         }
         try {
-            fSchemaParser.setFeature(
-                    STANDARD_URI_CONFORMANT_FEATURE,
-                    componentManager.getFeature(STANDARD_URI_CONFORMANT_FEATURE));
+            if (componentManager.getFeature(STANDARD_URI_CONFORMANT_FEATURE, false)) {
+                fSchemaParser.setFeature(STANDARD_URI_CONFORMANT_FEATURE, true);
+            }
         } catch (XMLConfigurationException e) {
         }
 
@@ -3570,12 +3547,13 @@ public class XSDHandler {
         }
         // security features
         try {
-            fSchemaParser.setFeature( DISALLOW_DOCTYPE,
-                    componentManager.getFeature(DISALLOW_DOCTYPE));
+            if (componentManager.getFeature(DISALLOW_DOCTYPE, false)) {
+                fSchemaParser.setFeature(DISALLOW_DOCTYPE, true);
+            }
         } catch (XMLConfigurationException e) {
         }
         try {
-            Object security = componentManager.getProperty(SECURITY_MANAGER);
+            Object security = componentManager.getProperty(SECURITY_MANAGER, null);
             if (security != null){
                 fSchemaParser.setProperty(SECURITY_MANAGER, security);
             }

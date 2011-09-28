@@ -90,13 +90,7 @@ public class ErrorMessages_ca extends ListResourceBundle {
  */
 
     // These message should be read from a locale-specific resource bundle
-    /** Get the lookup table for error messages.   
-     *
-     * @return The message lookup table.
-     */
-    public Object[][] getContents()
-    {
-      return new Object[][] {
+    private static final Object[][] _contents = new Object[][] {
         {ErrorMsg.MULTIPLE_STYLESHEET_ERR,
         "S'ha definit m\u00e9s d'un full d'estils en el mateix fitxer."},
 
@@ -852,5 +846,13 @@ public class ErrorMessages_ca extends ListResourceBundle {
         {ErrorMsg.JAXP_SECUREPROCESSING_FEATURE,
         "FEATURE_SECURE_PROCESSING: Cannot set the feature to false when security manager is present."}
     };
+
+    /** Get the lookup table for error messages.   
+     *
+     * @return The message lookup table.
+     */
+    public Object[][] getContents()
+    {
+      return _contents;
     }
 }

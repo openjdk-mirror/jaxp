@@ -20,6 +20,7 @@
 
 package com.sun.org.apache.xerces.internal.xni.parser;
 
+import com.sun.org.apache.xerces.internal.util.Status;
 import com.sun.org.apache.xerces.internal.xni.XNIException;
 
 /**
@@ -29,7 +30,7 @@ import com.sun.org.apache.xerces.internal.xni.XNIException;
  *
  * @author Andy Clark, IBM
  *
- * @version $Id: XMLConfigurationException.java,v 1.5 2009/07/28 23:48:32 joehw Exp $
+ * @version $Id: XMLConfigurationException.java,v 1.7 2010-11-01 04:40:22 joehw Exp $
  */
 public class XMLConfigurationException
     extends XNIException {
@@ -38,24 +39,11 @@ public class XMLConfigurationException
     static final long serialVersionUID = -5437427404547669188L;
     
     //
-    // Constants
-    //
-
-    /** Exception type: identifier not recognized. */
-    public static final short NOT_RECOGNIZED = 0;
-
-    /** Exception type: identifier not supported. */
-    public static final short NOT_SUPPORTED = 1;
-
-    /** Exception type: feature-change not allowed. */
-    public static final short NOT_ALLOWED = 2;
-    
-    //
     // Data
     //
 
     /** Exception type. */
-    protected short fType;
+    protected Status fType;
 
     /** Identifier. */
     protected String fIdentifier;
@@ -70,11 +58,8 @@ public class XMLConfigurationException
      *
      * @param type       The type of the exception.
      * @param identifier The feature or property identifier.
-     *
-     * @see #NOT_RECOGNIZED
-     * @see #NOT_SUPPORTED
      */
-    public XMLConfigurationException(short type, String identifier) {
+    public XMLConfigurationException(Status type, String identifier) {
         super(identifier);
         fType = type;
         fIdentifier = identifier;
@@ -87,11 +72,8 @@ public class XMLConfigurationException
      * @param type       The type of the exception.
      * @param identifier The feature or property identifier.
      * @param message    The error message.
-     *
-     * @see #NOT_RECOGNIZED
-     * @see #NOT_SUPPORTED
      */
-    public XMLConfigurationException(short type, String identifier,
+    public XMLConfigurationException(Status type, String identifier,
                                      String message) {
         super(message);
         fType = type;
@@ -104,11 +86,8 @@ public class XMLConfigurationException
 
     /** 
      * Returns the exception type. 
-     *
-     * @see #NOT_RECOGNIZED
-     * @see #NOT_SUPPORTED
      */
-    public short getType() {
+    public Status getType() {
         return fType;
     } // getType():short
 

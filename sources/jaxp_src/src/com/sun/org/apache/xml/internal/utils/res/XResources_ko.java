@@ -32,15 +32,7 @@ package com.sun.org.apache.xml.internal.utils.res;
  */
 public class XResources_ko extends XResourceBundle
 {
-
-  /**
-   * Get the association list.
-   *
-   * @return The association list.
-   */
-  public Object[][] getContents()
-  {
-    return new Object[][]
+  private static final Object[][] _contents = new Object[][]
   {
     { "ui_language", "ko" }, { "help_language", "ko" }, { "language", "ko" },
     { "alphabet", new CharArrayWrapper(
@@ -78,5 +70,14 @@ public class XResources_ko extends XResourceBundle
           0xd314, 0xad6c}) }, { "tables", new StringArrayWrapper(
               new String[]{ "digits" }) }
   };
+
+  /**
+   * Get the association list.
+   *
+   * @return The association list.
+   */
+  public Object[][] getContents()
+  {
+    return _contents;
   }
 }

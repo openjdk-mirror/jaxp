@@ -23,6 +23,9 @@ package com.sun.org.apache.xerces.internal.parsers;
 import com.sun.org.apache.xerces.internal.impl.Constants;
 import com.sun.org.apache.xerces.internal.impl.xs.XMLSchemaValidator;
 import com.sun.org.apache.xerces.internal.impl.xs.XSMessageFormatter;
+import com.sun.org.apache.xerces.internal.util.FeatureState;
+import com.sun.org.apache.xerces.internal.util.PropertyState;
+import com.sun.org.apache.xerces.internal.util.Status;
 import com.sun.org.apache.xerces.internal.util.SymbolTable;
 import com.sun.org.apache.xerces.internal.xni.grammars.XMLGrammarPool;
 import com.sun.org.apache.xerces.internal.xni.parser.XMLComponentManager;
@@ -284,7 +287,7 @@ public class StandardParserConfiguration
      *                                   it is <strong>really</strong>
      *                                   a critical error.
      */
-    protected void checkFeature(String featureId)
+    protected FeatureState checkFeature(String featureId)
         throws XMLConfigurationException {
 
         //
@@ -300,24 +303,24 @@ public class StandardParserConfiguration
             //
             if (suffixLength == Constants.SCHEMA_VALIDATION_FEATURE.length() && 
                 featureId.endsWith(Constants.SCHEMA_VALIDATION_FEATURE)) {
-                return;
+                return FeatureState.RECOGNIZED;
             }
             // activate full schema checking
             if (suffixLength == Constants.SCHEMA_FULL_CHECKING.length() &&
                 featureId.endsWith(Constants.SCHEMA_FULL_CHECKING)) {
-                return;
+                return FeatureState.RECOGNIZED;
             }
             // Feature identifier: expose schema normalized value 
             //  http://apache.org/xml/features/validation/schema/normalized-value
             if (suffixLength == Constants.SCHEMA_NORMALIZED_VALUE.length() && 
                 featureId.endsWith(Constants.SCHEMA_NORMALIZED_VALUE)) {
-                return;
+                return FeatureState.RECOGNIZED;
             } 
             // Feature identifier: send element default value via characters() 
             // http://apache.org/xml/features/validation/schema/element-default
             if (suffixLength == Constants.SCHEMA_ELEMENT_DEFAULT.length() && 
                 featureId.endsWith(Constants.SCHEMA_ELEMENT_DEFAULT)) {
-                return;
+                return FeatureState.RECOGNIZED;
             }
         }
 
@@ -325,7 +328,7 @@ public class StandardParserConfiguration
         // Not recognized
         //
 
-        super.checkFeature(featureId);
+        return super.checkFeature(featureId);
 
     } // checkFeature(String)
 
@@ -342,7 +345,7 @@ public class StandardParserConfiguration
      *                                   it is <strong>really</strong>
      *                                   a critical error.
      */
-    protected void checkProperty(String propertyId)
+    protected PropertyState checkProperty(String propertyId)
         throws XMLConfigurationException {
 
         //
@@ -354,11 +357,11 @@ public class StandardParserConfiguration
             
             if (suffixLength == Constants.SCHEMA_LOCATION.length() && 
                 propertyId.endsWith(Constants.SCHEMA_LOCATION)) {
-                return;
+                return PropertyState.RECOGNIZED;
             }
             if (suffixLength == Constants.SCHEMA_NONS_LOCATION.length() && 
                 propertyId.endsWith(Constants.SCHEMA_NONS_LOCATION)) {
-                return;
+                return PropertyState.RECOGNIZED;
             }
         }
 
@@ -367,7 +370,7 @@ public class StandardParserConfiguration
         	
             if (suffixLength == Constants.SCHEMA_SOURCE.length() && 
                 propertyId.endsWith(Constants.SCHEMA_SOURCE)) {
-                return;
+                return PropertyState.RECOGNIZED;
             }
         }
 
@@ -375,7 +378,7 @@ public class StandardParserConfiguration
         // Not recognized
         //
 
-        super.checkProperty(propertyId);
+        return super.checkProperty(propertyId);
 
     } // checkProperty(String)
 

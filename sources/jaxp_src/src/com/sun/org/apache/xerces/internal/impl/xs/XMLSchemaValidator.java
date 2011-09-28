@@ -1329,13 +1329,7 @@ public class XMLSchemaValidator
         // get error reporter
         fXSIErrorReporter.reset((XMLErrorReporter) componentManager.getProperty(ERROR_REPORTER));
 
-        boolean parser_settings;
-        try {
-            parser_settings = componentManager.getFeature(PARSER_SETTINGS);
-        }
-        catch (XMLConfigurationException e){
-            parser_settings = true;
-        }
+        boolean parser_settings = componentManager.getFeature(PARSER_SETTINGS, true);
 
         if (!parser_settings){
             // parser settings have not been changed
@@ -1356,72 +1350,30 @@ public class XMLSchemaValidator
             fSymbolTable = symbolTable;
         }
 
-        try {
-            fNamespaceGrowth = componentManager.getFeature(NAMESPACE_GROWTH);
-        } catch (XMLConfigurationException e) {
-            fNamespaceGrowth = false;
-        }
-
-        try {
-            fDynamicValidation = componentManager.getFeature(DYNAMIC_VALIDATION);
-        } catch (XMLConfigurationException e) {
-            fDynamicValidation = false;
-        }
+        fNamespaceGrowth = componentManager.getFeature(NAMESPACE_GROWTH, false);
+        fDynamicValidation = componentManager.getFeature(DYNAMIC_VALIDATION, false);
 
         if (fDynamicValidation) {
             fDoValidation = true;
         } else {
-            try {
-                fDoValidation = componentManager.getFeature(VALIDATION);
-            } catch (XMLConfigurationException e) {
-                fDoValidation = false;
-            }
+            fDoValidation = componentManager.getFeature(VALIDATION, false);
         }
 
         if (fDoValidation) {
-            try {
-                fDoValidation = componentManager.getFeature(XMLSchemaValidator.SCHEMA_VALIDATION);
-            } catch (XMLConfigurationException e) {
-            }
+            fDoValidation |= componentManager.getFeature(XMLSchemaValidator.SCHEMA_VALIDATION, false);
         }
 
-        try {
-            fFullChecking = componentManager.getFeature(SCHEMA_FULL_CHECKING);
-        } catch (XMLConfigurationException e) {
-            fFullChecking = false;
-        }
+        fFullChecking = componentManager.getFeature(SCHEMA_FULL_CHECKING, false);
+        fNormalizeData = componentManager.getFeature(NORMALIZE_DATA, false);
+        fSchemaElementDefault = componentManager.getFeature(SCHEMA_ELEMENT_DEFAULT, false);
 
-        try {
-            fNormalizeData = componentManager.getFeature(NORMALIZE_DATA);
-        } catch (XMLConfigurationException e) {
-            fNormalizeData = false;
-        }
+        fAugPSVI = componentManager.getFeature(SCHEMA_AUGMENT_PSVI, true);
 
-        try {
-            fSchemaElementDefault = componentManager.getFeature(SCHEMA_ELEMENT_DEFAULT);
-        } catch (XMLConfigurationException e) {
-            fSchemaElementDefault = false;
-        }
-
-        try {
-            fAugPSVI = componentManager.getFeature(SCHEMA_AUGMENT_PSVI);
-        } catch (XMLConfigurationException e) {
-            fAugPSVI = true;
-        }
-        try {
-            fSchemaType =
+        fSchemaType =
                 (String) componentManager.getProperty(
-                    Constants.JAXP_PROPERTY_PREFIX + Constants.SCHEMA_LANGUAGE);
-        } catch (XMLConfigurationException e) {
-            fSchemaType = null;
-        }
-        
-        try {
-            fUseGrammarPoolOnly = componentManager.getFeature(USE_GRAMMAR_POOL_ONLY);
-        } 
-        catch (XMLConfigurationException e) {
-            fUseGrammarPoolOnly = false;
-        }
+                    Constants.JAXP_PROPERTY_PREFIX + Constants.SCHEMA_LANGUAGE, null);
+
+        fUseGrammarPoolOnly = componentManager.getFeature(USE_GRAMMAR_POOL_ONLY, false);
 
         fEntityResolver = (XMLEntityResolver) componentManager.getProperty(ENTITY_MANAGER);
 
@@ -1450,19 +1402,10 @@ public class XMLSchemaValidator
             fLocationPairs,
             fXSIErrorReporter.fErrorReporter);
 
-        try {
-            fJaxpSchemaSource = componentManager.getProperty(JAXP_SCHEMA_SOURCE);
-        } catch (XMLConfigurationException e) {
-            fJaxpSchemaSource = null;
-
-        }
+        fJaxpSchemaSource = componentManager.getProperty(JAXP_SCHEMA_SOURCE, null);
 
         // clear grammars, and put the one for schema namespace there
-        try {
-            fGrammarPool = (XMLGrammarPool) componentManager.getProperty(XMLGRAMMAR_POOL);
-        } catch (XMLConfigurationException e) {
-            fGrammarPool = null;
-        }
+        fGrammarPool = (XMLGrammarPool) componentManager.getProperty(XMLGRAMMAR_POOL, null);
 
         fState4XsiType.setSymbolTable(symbolTable);
         fState4ApplyDefault.setSymbolTable(symbolTable);

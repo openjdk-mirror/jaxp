@@ -30,7 +30,7 @@ import java.util.Vector;
  * 
  * @xerces.internal
  *
- * @version $Id: RegexParser.java,v 1.7 2010/07/27 07:00:02 joehw Exp $
+ * @version $Id: RegexParser.java,v 1.8 2010-11-01 04:39:54 joehw Exp $
  */
 class RegexParser {
     static final int T_CHAR = 0;
@@ -83,6 +83,7 @@ class RegexParser {
     int parennumber = 1;
     boolean hasBackReferences;
     Vector references = null;
+    int parenCount = 0;
 
     public RegexParser() {
         this.setLocale(Locale.getDefault());
@@ -131,6 +132,8 @@ class RegexParser {
         Token ret = this.parseRegex();
         if (this.offset != this.regexlen)
             throw ex("parser.parse.1", this.offset);
+        if (parenCount < 0)
+            throw ex("parser.factor.0", this.offset);
         if (this.references != null) {
             for (int i = 0;  i < this.references.size();  i ++) {
                 ReferencePosition position = (ReferencePosition)this.references.elementAt(i);
@@ -236,6 +239,7 @@ class RegexParser {
               break;
           case '(':
             ret = T_LPAREN;
+            parenCount++;
             if (this.offset >= this.regexlen)
                 break;
             if (this.regex.charAt(this.offset) != '?')
@@ -324,10 +328,11 @@ class RegexParser {
      */
     Token parseTerm() throws ParseException {
         int ch = this.read();
+        Token tok = null;
         if (ch == T_OR || ch == T_RPAREN || ch == T_EOF) {
-            return Token.createEmpty();
+            tok = Token.createEmpty();
         } else {
-            Token tok = this.parseFactor();
+            tok = this.parseFactor();
             Token concat = null;
             while ((ch = this.read()) != T_OR && ch != T_RPAREN && ch != T_EOF) {
                 if (concat == null) {
@@ -338,8 +343,11 @@ class RegexParser {
                 concat.addChild(this.parseFactor());
                 //tok = Token.createConcat(tok, this.parseFactor());
             }
-            return tok;
         }
+        if (ch == T_RPAREN) {
+            parenCount--;
+        }
+        return tok;
     }
 
     // ----------------------------------------------------------------

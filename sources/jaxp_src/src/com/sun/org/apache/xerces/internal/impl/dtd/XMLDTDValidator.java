@@ -83,7 +83,7 @@ import com.sun.org.apache.xerces.internal.xni.parser.XMLDocumentSource;
  * @author Jeffrey Rodriguez IBM
  * @author Neil Graham, IBM
  *
- * @version $Id: XMLDTDValidator.java,v 1.7 2010/08/11 07:18:38 joehw Exp $
+ * @version $Id: XMLDTDValidator.java,v 1.8 2010-11-01 04:39:42 joehw Exp $
  */
 public class XMLDTDValidator
         implements XMLComponent, XMLDocumentFilter, XMLDTDValidatorFilter, RevalidationHandler {
@@ -438,13 +438,7 @@ public class XMLDTDValidator
 		fElementDepth = -1;
 		fElementChildrenLength = 0;
 
-        boolean parser_settings;
-        try {
-        	parser_settings = componentManager.getFeature(PARSER_SETTINGS);
-        }
-        catch (XMLConfigurationException e){
-        	parser_settings = true;
-        }
+        boolean parser_settings = componentManager.getFeature(PARSER_SETTINGS, true);
 
         if (!parser_settings){
         	// parser settings have not been changed
@@ -453,55 +447,17 @@ public class XMLDTDValidator
         }
 
         // sax features
-        try {
-            fNamespaces = componentManager.getFeature(NAMESPACES);
-        }
-        catch (XMLConfigurationException e) {
-            fNamespaces = true;
-        }
-        try {
-            fValidation = componentManager.getFeature(VALIDATION);
-        }
-        catch (XMLConfigurationException e) {
-            fValidation = false;
-        }
-        try {
-            fDTDValidation = !(componentManager.getFeature(Constants.XERCES_FEATURE_PREFIX + Constants.SCHEMA_VALIDATION_FEATURE));
-        }
-        catch (XMLConfigurationException e) {
-            // must be in a schema-less configuration!
-            fDTDValidation = true;
-        }
+        fNamespaces = componentManager.getFeature(NAMESPACES, true);
+        fValidation = componentManager.getFeature(VALIDATION, false);
+        fDTDValidation = !(componentManager.getFeature(Constants.XERCES_FEATURE_PREFIX + Constants.SCHEMA_VALIDATION_FEATURE, false));
 
         // Xerces features
-        try {
-            fDynamicValidation = componentManager.getFeature(DYNAMIC_VALIDATION);
-        }
-        catch (XMLConfigurationException e) {
-            fDynamicValidation = false;
-        }
+        fDynamicValidation = componentManager.getFeature(DYNAMIC_VALIDATION, false);
+        fBalanceSyntaxTrees = componentManager.getFeature(BALANCE_SYNTAX_TREES, false);
+        fWarnDuplicateAttdef = componentManager.getFeature(WARN_ON_DUPLICATE_ATTDEF, false);
 
-        try {
-            fBalanceSyntaxTrees = componentManager.getFeature(BALANCE_SYNTAX_TREES);
-        }
-        catch (XMLConfigurationException e) {
-            fBalanceSyntaxTrees = false;
-        }
-
-        try {
-            fWarnDuplicateAttdef = componentManager.getFeature(WARN_ON_DUPLICATE_ATTDEF);
-        }
-        catch (XMLConfigurationException e) {
-            fWarnDuplicateAttdef = false;
-        }
-
-        try {
-            fSchemaType = (String)componentManager.getProperty (Constants.JAXP_PROPERTY_PREFIX
-            + Constants.SCHEMA_LANGUAGE);
-        }
-        catch (XMLConfigurationException e){
-            fSchemaType = null;
-        }
+        fSchemaType = (String)componentManager.getProperty (Constants.JAXP_PROPERTY_PREFIX
+            + Constants.SCHEMA_LANGUAGE, null);
 
         fValidationManager= (ValidationManager)componentManager.getProperty(VALIDATION_MANAGER);
         fValidationManager.addValidationState(fValidationState);
@@ -510,11 +466,7 @@ public class XMLDTDValidator
         // get needed components
         fErrorReporter = (XMLErrorReporter)componentManager.getProperty(Constants.XERCES_PROPERTY_PREFIX+Constants.ERROR_REPORTER_PROPERTY);
         fSymbolTable = (SymbolTable)componentManager.getProperty(Constants.XERCES_PROPERTY_PREFIX+Constants.SYMBOL_TABLE_PROPERTY);
-        try {
-            fGrammarPool= (XMLGrammarPool)componentManager.getProperty(GRAMMAR_POOL);
-        } catch (XMLConfigurationException e) {
-            fGrammarPool = null;
-        }
+        fGrammarPool= (XMLGrammarPool)componentManager.getProperty(GRAMMAR_POOL, null);
 
         fDatatypeValidatorFactory = (DTDDVFactory)componentManager.getProperty(Constants.XERCES_PROPERTY_PREFIX + Constants.DATATYPE_VALIDATOR_FACTORY_PROPERTY);
 		init();

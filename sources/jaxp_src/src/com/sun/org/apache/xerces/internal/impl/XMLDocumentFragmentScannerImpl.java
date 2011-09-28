@@ -546,35 +546,17 @@ public class XMLDocumentFragmentScannerImpl
         //fAttributes.setNamespaces(fNamespaces);
                 
         // xerces features
-        try{
-            fReportCdataEvent = componentManager.getFeature(Constants.STAX_REPORT_CDATA_EVENT);
-        } catch (XMLConfigurationException e) {
-            e.printStackTrace();
-            //note that default value of this feature is true in stax configuration
-            fReportCdataEvent = true;
-        }
-        
-        try {
-            fSecurityManager = (SecurityManager)componentManager.getProperty(Constants.SECURITY_MANAGER);
-        } catch (XMLConfigurationException e) {
-            fSecurityManager = null;
-        }
+        fReportCdataEvent = componentManager.getFeature(Constants.STAX_REPORT_CDATA_EVENT, true);
+
+        fSecurityManager = (SecurityManager)componentManager.getProperty(Constants.SECURITY_MANAGER, null);
         fElementAttributeLimit = (fSecurityManager != null)?fSecurityManager.getElementAttrLimit():0;
         
-        try {
-            fNotifyBuiltInRefs = componentManager.getFeature(NOTIFY_BUILTIN_REFS);
-        } catch (XMLConfigurationException e) {
-            fNotifyBuiltInRefs = false;
-        }
-        
-        try {
-            Object resolver = componentManager.getProperty(ENTITY_RESOLVER);
-            fExternalSubsetResolver = (resolver instanceof ExternalSubsetResolver) ?
+        fNotifyBuiltInRefs = componentManager.getFeature(NOTIFY_BUILTIN_REFS, false);
+
+        Object resolver = componentManager.getProperty(ENTITY_RESOLVER, null);
+        fExternalSubsetResolver = (resolver instanceof ExternalSubsetResolver) ?
                 (ExternalSubsetResolver) resolver : null;
-        } catch (XMLConfigurationException e) {
-            fExternalSubsetResolver = null;
-        }
-                        
+
         // initialize vars
         fMarkupDepth = 0;
         fCurrentElement = null;

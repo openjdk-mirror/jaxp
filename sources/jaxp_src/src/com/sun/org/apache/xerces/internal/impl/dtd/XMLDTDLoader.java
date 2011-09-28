@@ -72,6 +72,7 @@ import com.sun.org.apache.xerces.internal.impl.XMLErrorReporter;
 import com.sun.org.apache.xerces.internal.impl.XMLEntityManager;
 import com.sun.org.apache.xerces.internal.impl.msg.XMLMessageFormatter;
 
+import com.sun.org.apache.xerces.internal.util.Status;
 import com.sun.org.apache.xerces.internal.util.SymbolTable;
 import com.sun.org.apache.xerces.internal.util.DefaultErrorHandler;
 
@@ -107,7 +108,7 @@ import com.sun.org.apache.xerces.internal.xni.parser.XMLInputSource;
  * @author Neil Graham, IBM
  * @author Michael Glavassevich, IBM
  *
- * @version $Id: XMLDTDLoader.java,v 1.5 2010/08/11 07:18:37 joehw Exp $
+ * @version $Id: XMLDTDLoader.java,v 1.6 2010-11-01 04:39:42 joehw Exp $
  */
 public class XMLDTDLoader
         extends XMLDTDProcessor
@@ -274,7 +275,7 @@ public class XMLDTDLoader
             fBalanceSyntaxTrees = state;
         }
         else {
-            throw new XMLConfigurationException(XMLConfigurationException.NOT_RECOGNIZED, featureId);
+            throw new XMLConfigurationException(Status.NOT_RECOGNIZED, featureId);
         }
     } // setFeature(String,boolean)
 
@@ -317,7 +318,7 @@ public class XMLDTDLoader
         else if (propertyId.equals(DTD_VALIDATOR)) {
             return fValidator;
         }
-        throw new XMLConfigurationException(XMLConfigurationException.NOT_RECOGNIZED, propertyId);
+        throw new XMLConfigurationException(Status.NOT_RECOGNIZED, propertyId);
     } // getProperty(String):  Object
 
     /**
@@ -367,7 +368,7 @@ public class XMLDTDLoader
             fGrammarPool = (XMLGrammarPool)value;
         }
         else {
-            throw new XMLConfigurationException(XMLConfigurationException.NOT_RECOGNIZED, propertyId);
+            throw new XMLConfigurationException(Status.NOT_RECOGNIZED, propertyId);
         }
     } // setProperty(String,Object)
 
@@ -398,7 +399,7 @@ public class XMLDTDLoader
         else if (featureId.equals(BALANCE_SYNTAX_TREES)) {
             return fBalanceSyntaxTrees;
         }
-        throw new XMLConfigurationException(XMLConfigurationException.NOT_RECOGNIZED, featureId);
+        throw new XMLConfigurationException(Status.NOT_RECOGNIZED, featureId);
     } //getFeature(String):  boolean
 
     /**

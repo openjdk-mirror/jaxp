@@ -105,9 +105,12 @@ import java.util.GregorianCalendar;
  *       <td><a name="datetimefield-hour"/>hour</td>
  *       <td>{@link #getHour()}</td>
  *       <td>
- *         0 to 24 or {@link DatatypeConstants#FIELD_UNDEFINED}.
- *         For a value of 24, the minute and second field must be zero per
- *         <a href="http://www.w3.org/2001/05/xmlschema-errata#e2-45">XML Schema Errata</a>.
+ *         0 to 23 or {@link DatatypeConstants#FIELD_UNDEFINED}.
+ *         An hour value of 24 is allowed to be set in the lexical space provided the minute and second
+ *         field values are zero. However, an hour value of 24 is not allowed in value space and will be
+ *         transformed to represent the value of the first instance of the following day as per
+ *         <a href="http://www.w3.org/TR/xmlschema-2/#built-in-primitive-datatypes">
+ *         XML Schema Part 2: Datatypes Second Edition, 3.2 Primitive datatypes</a>.
  *       </td>
  *     </tr>
  *     <tr>

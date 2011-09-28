@@ -50,6 +50,7 @@ import com.sun.org.apache.xerces.internal.util.DOMEntityResolverWrapper;
 import com.sun.org.apache.xerces.internal.util.DOMErrorHandlerWrapper;
 import com.sun.org.apache.xerces.internal.util.DefaultErrorHandler;
 import com.sun.org.apache.xerces.internal.util.ParserConfigurationSettings;
+import com.sun.org.apache.xerces.internal.util.Status;
 import com.sun.org.apache.xerces.internal.util.SymbolTable;
 import com.sun.org.apache.xerces.internal.util.XMLSymbols;
 import com.sun.org.apache.xerces.internal.xni.XNIException;
@@ -251,6 +252,7 @@ XSLoader, DOMConfiguration {
     private XSGrammarBucket fGrammarBucket;
     private XSDeclarationPool fDeclPool = null;
     private SubstitutionGroupHandler fSubGroupHandler;
+    private final CMNodeFactory fNodeFactory = new CMNodeFactory(); //component mgr will be set later
     private CMBuilder fCMBuilder;
     private XSDDescription fXSDDescription = new XSDDescription();
     
@@ -332,12 +334,9 @@ XSLoader, DOMConfiguration {
             sHandler = new SubstitutionGroupHandler(fGrammarBucket);
         }
         fSubGroupHandler = sHandler;
-        
-        //get an instance of the CMNodeFactory */
-        CMNodeFactory nodeFactory = new CMNodeFactory() ;
-        
+                
         if(builder == null) {
-            builder = new CMBuilder(nodeFactory);
+            builder = new CMBuilder(fNodeFactory);
         }
         fCMBuilder = builder;
         fSchemaHandler = new XSDHandler(fGrammarBucket);
@@ -761,7 +760,7 @@ XSLoader, DOMConfiguration {
         ) {
             // Not an Object[], String[], File[], InputStream[], InputSource[]
             throw new XMLConfigurationException(
-                    XMLConfigurationException.NOT_SUPPORTED, "\""+JAXP_SCHEMA_SOURCE+
+                    Status.NOT_SUPPORTED, "\""+JAXP_SCHEMA_SOURCE+
                     "\" property cannot have an array of type {"+componentType.getName()+
                     "}. Possible types of the array supported are Object, String, File, "+
             "InputStream, InputSource.");
@@ -862,7 +861,7 @@ XSLoader, DOMConfiguration {
             return new XMLInputSource(null, null, null, is, null);
         }
         throw new XMLConfigurationException(
-                XMLConfigurationException.NOT_SUPPORTED, "\""+JAXP_SCHEMA_SOURCE+
+                Status.NOT_SUPPORTED, "\""+JAXP_SCHEMA_SOURCE+
                 "\" property cannot have a value of type {"+val.getClass().getName()+
                 "}. Possible types of the value supported are String, File, InputStream, "+
         "InputSource OR an array of these types.");
@@ -953,13 +952,8 @@ XSLoader, DOMConfiguration {
         
         fSubGroupHandler.reset();		
         
-        boolean parser_settings;
-        try {
-            parser_settings = componentManager.getFeature(PARSER_SETTINGS);     
-        }
-        catch (XMLConfigurationException e){
-            parser_settings = true;
-        }
+        boolean parser_settings = componentManager.getFeature(PARSER_SETTINGS, true);
+
         if (!parser_settings || !fSettingsChanged){
             // need to reprocess JAXP schema sources
             fJAXPProcessed = false;
@@ -967,7 +961,10 @@ XSLoader, DOMConfiguration {
             initGrammarBucket();
             return;           
         } 
-        
+
+        //pass the component manager to the factory..
+        fNodeFactory.reset(componentManager);
+
         // get registered entity manager to be able to resolve JAXP schema-source property:
         // Note: in case XMLSchemaValidator has created the loader, 
         // the entity manager property is null
@@ -988,13 +985,8 @@ XSLoader, DOMConfiguration {
         fSchemaHandler.setDVFactory(dvFactory);
 
         
-        boolean psvi = true;
-        try {
-            psvi = componentManager.getFeature(AUGMENT_PSVI);
-        } catch (XMLConfigurationException e) {
-            psvi = false;
-        }
-        
+        boolean psvi = componentManager.getFeature(AUGMENT_PSVI, false);
+
         if (!psvi) {
             fDeclPool.reset();
             fCMBuilder.setDeclPool(fDeclPool);
@@ -1011,50 +1003,33 @@ XSLoader, DOMConfiguration {
         // get schema location properties
         try {
             fExternalSchemas = (String) componentManager.getProperty(SCHEMA_LOCATION);
-            fExternalNoNSSchema =
-                (String) componentManager.getProperty(SCHEMA_NONS_LOCATION);
+            fExternalNoNSSchema = (String) componentManager.getProperty(SCHEMA_NONS_LOCATION);
         } catch (XMLConfigurationException e) {
             fExternalSchemas = null;
             fExternalNoNSSchema = null;
         }
+
         // get JAXP sources if available
-        try {
-            fJAXPSource = componentManager.getProperty(JAXP_SCHEMA_SOURCE);
-            fJAXPProcessed = false;
-            
-        } catch (XMLConfigurationException e) {
-            fJAXPSource = null;
-            fJAXPProcessed = false;
-        }
+        fJAXPSource = componentManager.getProperty(JAXP_SCHEMA_SOURCE, null);
+        fJAXPProcessed = false;
         
         // clear grammars, and put the one for schema namespace there
-        try {
-            fGrammarPool = (XMLGrammarPool) componentManager.getProperty(XMLGRAMMAR_POOL);
-        } catch (XMLConfigurationException e) {
-            fGrammarPool = null;
-        }
+        fGrammarPool = (XMLGrammarPool) componentManager.getProperty(XMLGRAMMAR_POOL, null);
         initGrammarBucket();
         // get continue-after-fatal-error feature
         try {
-            boolean fatalError = componentManager.getFeature(CONTINUE_AFTER_FATAL_ERROR);
-            fErrorReporter.setFeature(CONTINUE_AFTER_FATAL_ERROR, fatalError);
+            boolean fatalError = componentManager.getFeature(CONTINUE_AFTER_FATAL_ERROR, false);
+            if (!fatalError) {
+                fErrorReporter.setFeature(CONTINUE_AFTER_FATAL_ERROR, fatalError);
+            }
         } catch (XMLConfigurationException e) {
         }
         // set full validation to false        
-        try {
-            fIsCheckedFully = componentManager.getFeature(SCHEMA_FULL_CHECKING);
-        }
-        catch (XMLConfigurationException e){
-            fIsCheckedFully = false;
-        }
+        fIsCheckedFully = componentManager.getFeature(SCHEMA_FULL_CHECKING, false);
+        
         // get generate-synthetic-annotations feature
-        try {
-            fSchemaHandler.setGenerateSyntheticAnnotations(componentManager.getFeature(GENERATE_SYNTHETIC_ANNOTATIONS));
-        }
-        catch (XMLConfigurationException e) {
-            fSchemaHandler.setGenerateSyntheticAnnotations(false);
-        }
-        fSchemaHandler.reset(componentManager);		 
+        fSchemaHandler.setGenerateSyntheticAnnotations(componentManager.getFeature(GENERATE_SYNTHETIC_ANNOTATIONS, false));
+        fSchemaHandler.reset(componentManager);
     }
     
     private void initGrammarBucket(){

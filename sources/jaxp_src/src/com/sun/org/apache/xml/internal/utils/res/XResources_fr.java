@@ -32,15 +32,7 @@ package com.sun.org.apache.xml.internal.utils.res;
  */
 public class XResources_fr extends XResourceBundle
 {
-
-  /**
-   * Get the association list.
-   *
-   * @return The association list.
-   */
-  public Object[][] getContents()
-  {
-    return new Object[][]
+  private static final Object[][] _contents = new Object[][]
   {
     { "ui_language", "fr" }, { "help_language", "fr" }, { "language", "fr" },
     { "alphabet", new CharArrayWrapper(
@@ -71,5 +63,14 @@ public class XResources_fr extends XResourceBundle
     //hundreds, etc...
     //{"tables", new String[]{"tens", "digits"}}
   };
+
+  /**
+   * Get the association list.
+   *
+   * @return The association list.
+   */
+  public Object[][] getContents()
+  {
+    return _contents;
   }
 }

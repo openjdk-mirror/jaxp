@@ -34,6 +34,7 @@ import javax.xml.validation.Validator;
 
 import com.sun.org.apache.xerces.internal.impl.Constants;
 import com.sun.org.apache.xerces.internal.util.SAXMessageFormatter;
+import com.sun.org.apache.xerces.internal.util.Status;
 import com.sun.org.apache.xerces.internal.xni.parser.XMLConfigurationException;
 import com.sun.org.apache.xerces.internal.xs.AttributePSVI;
 import com.sun.org.apache.xerces.internal.xs.ElementPSVI;
@@ -50,7 +51,7 @@ import org.xml.sax.SAXNotSupportedException;
  * @author <a href="mailto:Kohsuke.Kawaguchi@Sun.com">Kohsuke Kawaguchi</a>
  * @author Michael Glavassevich, IBM
  * @author <a href="mailto:Sunitha.Reddy@Sun.com">Sunitha Reddy</a>
- * @version $Id: ValidatorImpl.java,v 1.9 2010/07/23 02:09:26 joehw Exp $
+ * @version $Id: ValidatorImpl.java,v 1.10 2010-11-01 04:40:08 joehw Exp $
  */
 final class ValidatorImpl extends Validator implements PSVIProvider {
     
@@ -161,7 +162,7 @@ final class ValidatorImpl extends Validator implements PSVIProvider {
         }
         catch (XMLConfigurationException e) {
             final String identifier = e.getIdentifier();
-            final String key = e.getType() == XMLConfigurationException.NOT_RECOGNIZED ?
+            final String key = e.getType() == Status.NOT_RECOGNIZED ?
                     "feature-not-recognized" : "feature-not-supported";
             throw new SAXNotRecognizedException(
                     SAXMessageFormatter.formatMessage(fComponentManager.getLocale(),
@@ -179,14 +180,13 @@ final class ValidatorImpl extends Validator implements PSVIProvider {
         }
         catch (XMLConfigurationException e) {
             final String identifier = e.getIdentifier();
-            final short type = e.getType();
             final String key;
-            if (type == XMLConfigurationException.NOT_ALLOWED) {
+            if (e.getType() == Status.NOT_ALLOWED) {
                 //for now, the identifier can only be (XMLConstants.FEATURE_SECURE_PROCESSING)
                 throw new SAXNotSupportedException(
                     SAXMessageFormatter.formatMessage(fComponentManager.getLocale(),
                     "jaxp-secureprocessing-feature", null));                    
-            } else if (type == XMLConfigurationException.NOT_RECOGNIZED) {
+            } else if (e.getType() == Status.NOT_RECOGNIZED) {
                 key = "feature-not-recognized";
             } else {
                 key = "feature-not-supported";
@@ -212,7 +212,7 @@ final class ValidatorImpl extends Validator implements PSVIProvider {
         }
         catch (XMLConfigurationException e) {
             final String identifier = e.getIdentifier();
-            final String key = e.getType() == XMLConfigurationException.NOT_RECOGNIZED ?
+            final String key = e.getType() == Status.NOT_RECOGNIZED ?
                     "property-not-recognized" : "property-not-supported";
             throw new SAXNotRecognizedException(
                     SAXMessageFormatter.formatMessage(fComponentManager.getLocale(),
@@ -230,7 +230,7 @@ final class ValidatorImpl extends Validator implements PSVIProvider {
         }
         catch (XMLConfigurationException e) {
             final String identifier = e.getIdentifier();
-            final String key = e.getType() == XMLConfigurationException.NOT_RECOGNIZED ?
+            final String key = e.getType() == Status.NOT_RECOGNIZED ?
                     "property-not-recognized" : "property-not-supported";
             throw new SAXNotRecognizedException(
                     SAXMessageFormatter.formatMessage(fComponentManager.getLocale(),

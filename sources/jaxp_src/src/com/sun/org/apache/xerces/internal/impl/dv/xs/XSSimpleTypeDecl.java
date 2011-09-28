@@ -1828,6 +1828,12 @@ public class XSSimpleTypeDecl implements XSSimpleType, TypeInfo {
             nvalue = content.toString();
         }
         if ( (fFacetsDefined & FACET_PATTERN ) != 0 ) {
+            if (fPattern.size()==0 && nvalue.length()>0) {
+                        throw new InvalidDatatypeValueException("cvc-pattern-valid",
+                                new Object[]{content,
+                                "(empty string)",
+                                fTypeName});
+            }
             RegularExpression regex;
             for (int idx = fPattern.size()-1; idx >= 0; idx--) {
                 regex = (RegularExpression)fPattern.elementAt(idx);
@@ -1835,7 +1841,6 @@ public class XSSimpleTypeDecl implements XSSimpleType, TypeInfo {
                     throw new InvalidDatatypeValueException("cvc-pattern-valid",
                             new Object[]{content,
                             fPatternStr.elementAt(idx),
-
                             fTypeName});
                 }
             }

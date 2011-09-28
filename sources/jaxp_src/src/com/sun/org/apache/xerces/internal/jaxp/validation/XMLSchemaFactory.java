@@ -43,6 +43,7 @@ import com.sun.org.apache.xerces.internal.util.SAXInputSource;
 import com.sun.org.apache.xerces.internal.util.SAXMessageFormatter;
 import com.sun.org.apache.xerces.internal.util.SecurityManager;
 import com.sun.org.apache.xerces.internal.util.StAXInputSource;
+import com.sun.org.apache.xerces.internal.util.Status;
 import com.sun.org.apache.xerces.internal.util.XMLGrammarPoolImpl;
 import com.sun.org.apache.xerces.internal.xni.XNIException;
 import com.sun.org.apache.xerces.internal.xni.grammars.Grammar;
@@ -277,7 +278,7 @@ public final class XMLSchemaFactory extends SchemaFactory {
         }
         catch (XMLConfigurationException e) {
             String identifier = e.getIdentifier();
-            if (e.getType() == XMLConfigurationException.NOT_RECOGNIZED) {
+            if (e.getType() == Status.NOT_RECOGNIZED) {
                 throw new SAXNotRecognizedException(
                         SAXMessageFormatter.formatMessage(fXMLSchemaLoader.getLocale(),
                         "feature-not-recognized", new Object [] {identifier}));
@@ -309,7 +310,7 @@ public final class XMLSchemaFactory extends SchemaFactory {
         }
         catch (XMLConfigurationException e) {
             String identifier = e.getIdentifier();
-            if (e.getType() == XMLConfigurationException.NOT_RECOGNIZED) {
+            if (e.getType() == Status.NOT_RECOGNIZED) {
                 throw new SAXNotRecognizedException(
                         SAXMessageFormatter.formatMessage(fXMLSchemaLoader.getLocale(),
                         "property-not-recognized", new Object [] {identifier}));
@@ -343,7 +344,7 @@ public final class XMLSchemaFactory extends SchemaFactory {
         }
         catch (XMLConfigurationException e) {
             String identifier = e.getIdentifier();
-            if (e.getType() == XMLConfigurationException.NOT_RECOGNIZED) {
+            if (e.getType() == Status.NOT_RECOGNIZED) {
                 throw new SAXNotRecognizedException(
                         SAXMessageFormatter.formatMessage(fXMLSchemaLoader.getLocale(),
                         "feature-not-recognized", new Object [] {identifier}));
@@ -377,7 +378,7 @@ public final class XMLSchemaFactory extends SchemaFactory {
         }
         catch (XMLConfigurationException e) {
             String identifier = e.getIdentifier();
-            if (e.getType() == XMLConfigurationException.NOT_RECOGNIZED) {
+            if (e.getType() == Status.NOT_RECOGNIZED) {
                 throw new SAXNotRecognizedException(
                         SAXMessageFormatter.formatMessage(fXMLSchemaLoader.getLocale(),
                         "property-not-recognized", new Object [] {identifier}));

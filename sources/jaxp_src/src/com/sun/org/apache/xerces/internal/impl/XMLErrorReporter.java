@@ -471,12 +471,7 @@ public class XMLErrorReporter
         throws XNIException {
 
         // features
-        try {
-            fContinueAfterFatalError = componentManager.getFeature(CONTINUE_AFTER_FATAL_ERROR);
-        }
-        catch (XNIException e) {
-            fContinueAfterFatalError = false;
-        }
+        fContinueAfterFatalError = componentManager.getFeature(CONTINUE_AFTER_FATAL_ERROR, false);
 
         // properties
         fErrorHandler = (XMLErrorHandler)componentManager.getProperty(ERROR_HANDLER);

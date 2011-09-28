@@ -35,6 +35,7 @@ import com.sun.org.apache.xerces.internal.impl.xs.XMLSchemaValidator;
 import com.sun.org.apache.xerces.internal.jaxp.validation.XSGrammarPoolContainer;
 import com.sun.org.apache.xerces.internal.util.SAXMessageFormatter;
 import com.sun.org.apache.xerces.internal.util.SecurityManager;
+import com.sun.org.apache.xerces.internal.util.Status;
 import com.sun.org.apache.xerces.internal.xni.XMLDocumentHandler;
 import com.sun.org.apache.xerces.internal.xni.parser.XMLComponent;
 import com.sun.org.apache.xerces.internal.xni.parser.XMLComponentManager;
@@ -611,7 +612,7 @@ public class SAXParserImpl extends javax.xml.parsers.SAXParser
             // This should never be thrown from the schema validator.
             catch (XMLConfigurationException e) {
                 String identifier = e.getIdentifier();
-                if (e.getType() == XMLConfigurationException.NOT_RECOGNIZED) {
+                if (e.getType() == Status.NOT_RECOGNIZED) {
                     throw new SAXNotRecognizedException(
                         SAXMessageFormatter.formatMessage(fConfiguration.getLocale(),
                         "feature-not-recognized", new Object [] {identifier}));
@@ -632,7 +633,7 @@ public class SAXParserImpl extends javax.xml.parsers.SAXParser
             // This should never be thrown from the schema validator.
             catch (XMLConfigurationException e) {
                 String identifier = e.getIdentifier();
-                if (e.getType() == XMLConfigurationException.NOT_RECOGNIZED) {
+                if (e.getType() == Status.NOT_RECOGNIZED) {
                     throw new SAXNotRecognizedException(
                         SAXMessageFormatter.formatMessage(fConfiguration.getLocale(),
                         "property-not-recognized", new Object [] {identifier}));

@@ -21,6 +21,7 @@
 package com.sun.org.apache.xerces.internal.impl;
 
 
+import com.sun.org.apache.xerces.internal.util.Status;
 import com.sun.xml.internal.stream.XMLEntityStorage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ import com.sun.xml.internal.stream.Entity;
  * @author Eric Ye, IBM
  * @author K.Venugopal SUN Microsystems
  * @author Sunitha Reddy, SUN Microsystems
- * @version $Id: XMLScanner.java,v 1.11 2009/08/18 00:54:44 joehw Exp $
+ * @version $Id: XMLScanner.java,v 1.12 2010-11-01 04:39:41 joehw Exp $
  */
 public abstract class XMLScanner
         implements XMLComponent {
@@ -242,11 +243,7 @@ public abstract class XMLScanner
     public void reset(XMLComponentManager componentManager)
     throws XMLConfigurationException {
         
-		try {
-			fParserSettings = componentManager.getFeature(PARSER_SETTINGS);
-		} catch (XMLConfigurationException e) {
-			fParserSettings = true;
-		}
+		fParserSettings = componentManager.getFeature(PARSER_SETTINGS, true);
 
 		if (!fParserSettings) {
 			// parser settings have not been changed
@@ -264,23 +261,10 @@ public abstract class XMLScanner
         fEntityStore = fEntityManager.getEntityStore() ;
         
         // sax features
-        try {
-            fValidation = componentManager.getFeature(VALIDATION);
-        } catch (XMLConfigurationException e) {
-            fValidation = false;
-        }
-        try {
-            fNamespaces = componentManager.getFeature(NAMESPACES);
-        }
-        catch (XMLConfigurationException e) {
-            fNamespaces = true;
-        }
-        try {
-            fNotifyCharRefs = componentManager.getFeature(NOTIFY_CHAR_REFS);
-        } catch (XMLConfigurationException e) {
-            fNotifyCharRefs = false;
-        }
-        
+        fValidation = componentManager.getFeature(VALIDATION, false);
+        fNamespaces = componentManager.getFeature(NAMESPACES, true);
+        fNotifyCharRefs = componentManager.getFeature(NOTIFY_CHAR_REFS, false);
+
         init();
     } // reset(XMLComponentManager)
     
@@ -341,7 +325,7 @@ public abstract class XMLScanner
         } else if (NOTIFY_CHAR_REFS.equals(featureId)) {
             return fNotifyCharRefs;
         }
-        throw new XMLConfigurationException(XMLConfigurationException.NOT_RECOGNIZED, featureId);
+        throw new XMLConfigurationException(Status.NOT_RECOGNIZED, featureId);
     }
     
     //

@@ -32,16 +32,7 @@ package com.sun.org.apache.xml.internal.utils.res;
  */
 public class XResources_ja_JP_I extends XResourceBundle
 {
-
-  /**
-   * Get the association table for this resource.
-   *
-   *
-   * @return the association table for this resource.
-   */
-  public Object[][] getContents()
-  {
-    return new Object[][]
+  private static final Object[][] _contents = new Object[][]
   {
     { "ui_language", "ja" }, { "help_language", "ja" }, { "language", "ja" },
     { "alphabet", new CharArrayWrapper(
@@ -84,5 +75,15 @@ public class XResources_ja_JP_I extends XResourceBundle
                   0x516B, 0x4E5D }) }, { "tables", new StringArrayWrapper(
                       new String[]{ "digits" }) }
   };
+
+  /**
+   * Get the association table for this resource.
+   *
+   *
+   * @return the association table for this resource.
+   */
+  public Object[][] getContents()
+  {
+    return _contents;
   }
 }

@@ -178,15 +178,7 @@ public class XMLErrorResources_tr extends ListResourceBundle
    */
 
   // Error messages...
-
-  /**
-   * Get the lookup table for error messages
-   *
-   * @return The association list.
-   */
-  public Object[][] getContents()
-  {
-    return new Object[][] {
+  private static final Object[][] _contents = new Object[][] {
 
   /** Error message ID that has a null message, but takes in a single object.    */
     {"ER0000" , "{0}" },
@@ -440,6 +432,15 @@ public class XMLErrorResources_tr extends ListResourceBundle
 
 
   };
+
+  /**
+   * Get the lookup table for error messages
+   *
+   * @return The association list.
+   */
+  public Object[][] getContents()
+  {
+    return _contents;
   }
 
   /**

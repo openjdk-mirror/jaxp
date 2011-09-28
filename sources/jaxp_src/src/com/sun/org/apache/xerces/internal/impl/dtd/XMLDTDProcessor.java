@@ -113,7 +113,7 @@ import com.sun.org.apache.xerces.internal.xni.parser.XMLDTDSource;
  *
  * @author Neil Graham, IBM
  *
- * @version $Id: XMLDTDProcessor.java,v 1.4 2010/08/11 07:18:38 joehw Exp $
+ * @version $Id: XMLDTDProcessor.java,v 1.5 2010-11-01 04:39:42 joehw Exp $
  */
 public class XMLDTDProcessor
         implements XMLComponent, XMLDTDFilter, XMLDTDContentModelFilter {
@@ -334,12 +334,7 @@ public class XMLDTDProcessor
      */
     public void reset(XMLComponentManager componentManager) throws XMLConfigurationException {
 
-        boolean parser_settings;
-        try {
-            parser_settings = componentManager.getFeature(PARSER_SETTINGS);
-        } catch (XMLConfigurationException e) {
-            parser_settings = true;
-        }
+        boolean parser_settings = componentManager.getFeature(PARSER_SETTINGS, true);
 
         if (!parser_settings) {
             // parser settings have not been changed
@@ -348,35 +343,17 @@ public class XMLDTDProcessor
         }
 
         // sax features
-        try {
-            fValidation = componentManager.getFeature(VALIDATION);
-        } catch (XMLConfigurationException e) {
-            fValidation = false;
-        }
-        try {
-            fDTDValidation =
+        fValidation = componentManager.getFeature(VALIDATION, false);
+
+        fDTDValidation =
                 !(componentManager
                     .getFeature(
-                        Constants.XERCES_FEATURE_PREFIX + Constants.SCHEMA_VALIDATION_FEATURE));
-        } catch (XMLConfigurationException e) {
-            // must be in a schema-less configuration!
-            fDTDValidation = true;
-        }
+                        Constants.XERCES_FEATURE_PREFIX + Constants.SCHEMA_VALIDATION_FEATURE, false));
 
         // Xerces features
 
-        try {
-            fWarnDuplicateAttdef = componentManager.getFeature(WARN_ON_DUPLICATE_ATTDEF);
-        }
-        catch (XMLConfigurationException e) {
-            fWarnDuplicateAttdef = false;
-        }
-        try {
-            fWarnOnUndeclaredElemdef = componentManager.getFeature(WARN_ON_UNDECLARED_ELEMDEF);
-        }
-        catch (XMLConfigurationException e) {
-            fWarnOnUndeclaredElemdef = false;
-        }
+        fWarnDuplicateAttdef = componentManager.getFeature(WARN_ON_DUPLICATE_ATTDEF, false);
+        fWarnOnUndeclaredElemdef = componentManager.getFeature(WARN_ON_UNDECLARED_ELEMDEF, false);
 
         // get needed components
         fErrorReporter =
@@ -385,15 +362,11 @@ public class XMLDTDProcessor
         fSymbolTable =
             (SymbolTable) componentManager.getProperty(
                 Constants.XERCES_PROPERTY_PREFIX + Constants.SYMBOL_TABLE_PROPERTY);
+
+        fGrammarPool = (XMLGrammarPool) componentManager.getProperty(GRAMMAR_POOL, null);
+
         try {
-            fGrammarPool = (XMLGrammarPool) componentManager.getProperty(GRAMMAR_POOL);
-        } catch (XMLConfigurationException e) {
-            fGrammarPool = null;
-        }
-        try {
-            fValidator = (XMLDTDValidator) componentManager.getProperty(DTD_VALIDATOR);
-        } catch (XMLConfigurationException e) {
-            fValidator = null;
+            fValidator = (XMLDTDValidator) componentManager.getProperty(DTD_VALIDATOR, null);
         } catch (ClassCastException e) {
             fValidator = null;
         }

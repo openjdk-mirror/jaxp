@@ -45,25 +45,25 @@ import com.sun.org.apache.xerces.internal.impl.Constants;
  *
  */
 public class XMLEntityStorage {
-
+    
     /** Property identifier: error reporter. */
     protected static final String ERROR_REPORTER =
     Constants.XERCES_PROPERTY_PREFIX + Constants.ERROR_REPORTER_PROPERTY;
-
+    
     /** Feature identifier: warn on duplicate EntityDef */
     protected static final String WARN_ON_DUPLICATE_ENTITYDEF =
     Constants.XERCES_FEATURE_PREFIX +Constants.WARN_ON_DUPLICATE_ENTITYDEF_FEATURE;
-
+    
     /** warn on duplicate Entity declaration.
      *  http://apache.org/xml/features/warn-on-duplicate-entitydef
      */
     protected boolean fWarnDuplicateEntityDef;
-
+    
     /** Entities. */
     protected Hashtable fEntities = new Hashtable();
-
+    
     protected Entity.ScannedEntity fCurrentEntity ;
-
+    
     private XMLEntityManager fEntityManager;
     /**
      * Error reporter. This property identifier is:
@@ -71,30 +71,30 @@ public class XMLEntityStorage {
      */
     protected XMLErrorReporter fErrorReporter;
     protected PropertyManager fPropertyManager ;
-
+    
     /* To keep track whether an entity is declared in external or internal subset*/
     protected boolean fInExternalSubset = false;
-
+    
     /** Creates a new instance of XMLEntityStorage */
     public XMLEntityStorage(PropertyManager propertyManager) {
         fPropertyManager = propertyManager ;
     }
-
+    
     /** Creates a new instance of XMLEntityStorage */
     /*public XMLEntityStorage(Entity.ScannedEntity currentEntity) {
         fCurrentEntity = currentEntity ;*/
     public XMLEntityStorage(XMLEntityManager entityManager) {
         fEntityManager = entityManager;
     }
-
+    
     public void reset(PropertyManager propertyManager){
-
+        
         fErrorReporter = (XMLErrorReporter)propertyManager.getProperty(Constants.XERCES_PROPERTY_PREFIX + Constants.ERROR_REPORTER_PROPERTY);
         fEntities.clear();
         fCurrentEntity = null;
-
+        
     }
-
+    
     public void reset(){
         fEntities.clear();
         fCurrentEntity = null;
@@ -115,24 +115,19 @@ public class XMLEntityStorage {
      */
     public void reset(XMLComponentManager componentManager)
     throws XMLConfigurationException {
-
-
+        
+        
         // xerces features
-
-        try {
-            fWarnDuplicateEntityDef = componentManager.getFeature(WARN_ON_DUPLICATE_ENTITYDEF);
-        }
-        catch (XMLConfigurationException e) {
-            fWarnDuplicateEntityDef = false;
-        }
+        
+        fWarnDuplicateEntityDef = componentManager.getFeature(WARN_ON_DUPLICATE_ENTITYDEF, false);
 
         fErrorReporter = (XMLErrorReporter)componentManager.getProperty(ERROR_REPORTER);
-
+        
         fEntities.clear();
         fCurrentEntity = null;
-
+        
     } // reset(XMLComponentManager)
-
+    
     /**
      * Returns the hashtable of declared entities.
      * <p>
@@ -146,7 +141,7 @@ public class XMLEntityStorage {
     public Hashtable getDeclaredEntities() {
         return fEntities;
     } // getDeclaredEntities():Hashtable
-
+    
     /**
      * Adds an internal entity declaration.
      * <p>
@@ -163,7 +158,7 @@ public class XMLEntityStorage {
      */
     public void addInternalEntity(String name, String text) {
       if (!fEntities.containsKey(name)) {
-            Entity entity = new Entity.InternalEntity(name, text, fInExternalSubset);
+            Entity entity = new Entity.InternalEntity(name, text, fInExternalSubset);    
             fEntities.put(name, entity);
         }
         else{
@@ -175,7 +170,7 @@ public class XMLEntityStorage {
             }
         }
     } // addInternalEntity(String,String)
-
+        
     /**
      * Adds an external entity declaration.
      * <p>
@@ -211,7 +206,7 @@ public class XMLEntityStorage {
                  * baseSystemId = fCurrentEntity.entityLocation.getExpandedSystemId();
                  * }
                  */
-
+                
                 //xxx we need to have information about the current entity.
                 if (fCurrentEntity != null && fCurrentEntity.entityLocation != null) {
                     baseSystemId = fCurrentEntity.entityLocation.getExpandedSystemId();
@@ -227,7 +222,7 @@ public class XMLEntityStorage {
                  * }
                  */
             }
-
+            
             fCurrentEntity = fEntityManager.getCurrentEntity();
             Entity entity = new Entity.ExternalEntity(name,
             new XMLResourceIdentifierImpl(publicId, literalSystemId,
@@ -235,7 +230,7 @@ public class XMLEntityStorage {
             null, fInExternalSubset);
             //TODO :: Forced to pass true above remove it.
             //(fCurrentEntity == null) ? fasle : fCurrentEntity.isEntityDeclInExternalSubset());
-            //                                  null, fCurrentEntity.isEntityDeclInExternalSubset());
+            //					null, fCurrentEntity.isEntityDeclInExternalSubset());
             fEntities.put(name, entity);
         }
         else{
@@ -246,9 +241,9 @@ public class XMLEntityStorage {
                 XMLErrorReporter.SEVERITY_WARNING );
             }
         }
-
+        
     } // addExternalEntity(String,String,String,String)
-
+    
     /**
      * Checks whether an entity given by name is external.
      *
@@ -257,14 +252,14 @@ public class XMLEntityStorage {
      *           (including when the entity is not declared).
      */
     public boolean isExternalEntity(String entityName) {
-
+        
         Entity entity = (Entity)fEntities.get(entityName);
         if (entity == null) {
             return false;
         }
         return entity.isExternal();
     }
-
+    
     /**
      * Checks whether the declaration of an entity given by name is
      * // in the external subset.
@@ -274,14 +269,14 @@ public class XMLEntityStorage {
      *           (including when the entity is not declared).
      */
     public boolean isEntityDeclInExternalSubset(String entityName) {
-
+        
         Entity entity = (Entity)fEntities.get(entityName);
         if (entity == null) {
             return false;
         }
         return entity.isEntityDeclInExternalSubset();
     }
-
+    
     /**
      * Adds an unparsed entity declaration.
      * <p>
@@ -301,12 +296,12 @@ public class XMLEntityStorage {
     public void addUnparsedEntity(String name,
     String publicId, String systemId,
     String baseSystemId, String notation) {
-
+        
         fCurrentEntity = fEntityManager.getCurrentEntity();
         if (!fEntities.containsKey(name)) {
             Entity entity = new Entity.ExternalEntity(name, new XMLResourceIdentifierImpl(publicId, systemId, baseSystemId, null), notation, fInExternalSubset);
-            //                  (fCurrentEntity == null) ? fasle : fCurrentEntity.isEntityDeclInExternalSubset());
-            //                  fCurrentEntity.isEntityDeclInExternalSubset());
+            //			(fCurrentEntity == null) ? fasle : fCurrentEntity.isEntityDeclInExternalSubset());
+            //			fCurrentEntity.isEntityDeclInExternalSubset());
             fEntities.put(name, entity);
         }
         else{
@@ -318,7 +313,7 @@ public class XMLEntityStorage {
             }
         }
     } // addUnparsedEntity(String,String,String,String)
-
+    
     /**
      * Checks whether an entity given by name is unparsed.
      *
@@ -327,14 +322,14 @@ public class XMLEntityStorage {
      *          (including when the entity is not declared).
      */
     public boolean isUnparsedEntity(String entityName) {
-
+        
         Entity entity = (Entity)fEntities.get(entityName);
         if (entity == null) {
             return false;
         }
         return entity.isUnparsed();
     }
-
+    
     /**
      * Checks whether an entity given by name is declared.
      *
@@ -342,7 +337,7 @@ public class XMLEntityStorage {
      * @returns True if the entity is declared, false otherwise.
      */
     public boolean isDeclaredEntity(String entityName) {
-
+        
         Entity entity = (Entity)fEntities.get(entityName);
         return entity != null;
     }
@@ -362,7 +357,7 @@ public class XMLEntityStorage {
     public static String expandSystemId(String systemId) {
         return expandSystemId(systemId, null);
     } // expandSystemId(String):String
-
+    
     // current value of the "user.dir" property
     private static String gUserDir;
     // escaped value of the current "user.dir" property
@@ -414,23 +409,23 @@ public class XMLEntityStorage {
         }
         catch (SecurityException se) {
         }
-
+        
         // return empty string if property value is empty string.
         if (userDir.length() == 0)
             return "";
-
+        
         // compute the new escaped value if the new property value doesn't
         // match the previous one
         if (userDir.equals(gUserDir)) {
             return gEscapedUserDir;
         }
-
+        
         // record the new value as the global property value
         gUserDir = userDir;
-
+        
         char separator = java.io.File.separatorChar;
         userDir = userDir.replace(separator, '/');
-
+        
         int len = userDir.length(), ch;
         StringBuffer buffer = new StringBuffer(len*3);
         // change C:/blah to /C:/blah
@@ -440,7 +435,7 @@ public class XMLEntityStorage {
                 buffer.append('/');
             }
         }
-
+        
         // for each character in the path
         int i = 0;
         for (; i < len; i++) {
@@ -458,7 +453,7 @@ public class XMLEntityStorage {
                 buffer.append((char)ch);
             }
         }
-
+        
         // we saw some non-ascii character
         if (i < len) {
             // get UTF-8 bytes for the remaining sub-string
@@ -471,7 +466,7 @@ public class XMLEntityStorage {
                 return userDir;
             }
             len = bytes.length;
-
+            
             // for each byte
             for (i = 0; i < len; i++) {
                 b = bytes[i];
@@ -492,16 +487,16 @@ public class XMLEntityStorage {
                 }
             }
         }
-
+        
         // change blah/blah to blah/blah/
         if (!userDir.endsWith("/"))
             buffer.append('/');
-
+        
         gEscapedUserDir = buffer.toString();
-
+        
         return gEscapedUserDir;
     }
-
+    
     /**
      * Expands a system id and returns the system id as a URI, if
      * it can be expanded. A return value of null means that the
@@ -516,7 +511,7 @@ public class XMLEntityStorage {
      *
      */
     public static String expandSystemId(String systemId, String baseSystemId) {
-
+        
         // check for bad parameters id
         if (systemId == null || systemId.length() == 0) {
             return systemId;
@@ -530,7 +525,7 @@ public class XMLEntityStorage {
         }
         // normalize id
         String id = fixURI(systemId);
-
+        
         // normalize base
         URI base = null;
         URI uri = null;
@@ -562,19 +557,19 @@ public class XMLEntityStorage {
         }
         catch (Exception e) {
             // let it go through
-
+            
         }
-
+        
         if (uri == null) {
             return systemId;
         }
         return uri.toString();
-
+        
     } // expandSystemId(String,String):String
     //
     // Protected static methods
     //
-
+    
     /**
      * Fixes a platform dependent filename to standard URI form.
      *
@@ -583,10 +578,10 @@ public class XMLEntityStorage {
      * @return Returns the fixed URI string.
      */
     protected static String fixURI(String str) {
-
+        
         // handle platform dependent strings
         str = str.replace(java.io.File.separatorChar, '/');
-
+        
         // Windows fix
         if (str.length() >= 2) {
             char ch1 = str.charAt(1);
@@ -602,17 +597,17 @@ public class XMLEntityStorage {
                 str = "file:" + str;
             }
         }
-
+        
         // done
         return str;
-
+        
     } // fixURI(String):String
-
-    // indicate start of external subset
+    
+    // indicate start of external subset 
     public void startExternalSubset() {
         fInExternalSubset = true;
     }
-
+    
     public void endExternalSubset() {
         fInExternalSubset = false;
     }

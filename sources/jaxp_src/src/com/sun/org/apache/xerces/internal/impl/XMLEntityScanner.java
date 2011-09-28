@@ -203,12 +203,8 @@ public class XMLEntityScanner implements XMLLocator  {
         
         //System.out.println(" this is being called");
         // xerces features
-        try {
-            fAllowJavaEncodings = componentManager.getFeature(ALLOW_JAVA_ENCODINGS);
-        } catch (XMLConfigurationException e) {
-            fAllowJavaEncodings = false;
-        }
-        
+        fAllowJavaEncodings = componentManager.getFeature(ALLOW_JAVA_ENCODINGS, false);
+
         //xerces properties
         fSymbolTable = (SymbolTable)componentManager.getProperty(SYMBOL_TABLE);
         fErrorReporter = (XMLErrorReporter)componentManager.getProperty(ERROR_REPORTER);

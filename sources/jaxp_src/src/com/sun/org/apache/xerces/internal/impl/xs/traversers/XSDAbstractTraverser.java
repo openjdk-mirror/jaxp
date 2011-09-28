@@ -361,6 +361,7 @@ abstract class XSDAbstractTraverser {
                 }
             }
             else if (facet.equals(SchemaSymbols.ELT_PATTERN)) {
+                facetsPresent |= XSSimpleType.FACET_PATTERN;
                 attrs = fAttrChecker.checkAttributes(content, false, schemaDoc);
                 String patternVal = (String)attrs[XSAttributeChecker.ATTIDX_VALUE];
                 // The facet can't be used if the value is missing. Ignore
@@ -562,8 +563,7 @@ abstract class XSDAbstractTraverser {
             xsFacets.enumNSDecls = enumNSDecls;
             xsFacets.enumAnnotations = enumAnnotations;
         }
-        if (fPattern.length() != 0) {
-            facetsPresent |= XSSimpleType.FACET_PATTERN;
+        if ((facetsPresent & XSSimpleType.FACET_PATTERN) != 0) {
             xsFacets.pattern = fPattern.toString();
             xsFacets.patternAnnotations = patternAnnotations;
         }

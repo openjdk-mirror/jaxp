@@ -27,6 +27,7 @@ import com.sun.org.apache.xerces.internal.util.EntityResolverWrapper;
 import com.sun.org.apache.xerces.internal.util.EntityResolver2Wrapper;
 import com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper;
 import com.sun.org.apache.xerces.internal.util.SAXMessageFormatter;
+import com.sun.org.apache.xerces.internal.util.Status;
 import com.sun.org.apache.xerces.internal.util.SymbolTable;
 import com.sun.org.apache.xerces.internal.xni.XNIException;
 import com.sun.org.apache.xerces.internal.xni.grammars.XMLGrammarPool;
@@ -55,7 +56,7 @@ import org.xml.sax.helpers.LocatorImpl;
  * @author Arnaud  Le Hors, IBM
  * @author Andy Clark, IBM
  *
- * @version $Id: DOMParser.java,v 1.5 2007/07/19 04:38:54 ofung Exp $
+ * @version $Id: DOMParser.java,v 1.7 2010-11-01 04:40:09 joehw Exp $
  */
 public class DOMParser
     extends AbstractDOMParser {
@@ -448,7 +449,7 @@ public class DOMParser
         }
         catch (XMLConfigurationException e) {
             String identifier = e.getIdentifier();
-            if (e.getType() == XMLConfigurationException.NOT_RECOGNIZED) {
+            if (e.getType() == Status.NOT_RECOGNIZED) {
                 throw new SAXNotRecognizedException(
                     SAXMessageFormatter.formatMessage(fConfiguration.getLocale(), 
                     "feature-not-recognized", new Object [] {identifier}));
@@ -497,7 +498,7 @@ public class DOMParser
         }
         catch (XMLConfigurationException e) {
             String identifier = e.getIdentifier();
-            if (e.getType() == XMLConfigurationException.NOT_RECOGNIZED) {
+            if (e.getType() == Status.NOT_RECOGNIZED) {
                 throw new SAXNotRecognizedException(
                     SAXMessageFormatter.formatMessage(fConfiguration.getLocale(), 
                     "feature-not-recognized", new Object [] {identifier}));
@@ -534,7 +535,7 @@ public class DOMParser
         }
         catch (XMLConfigurationException e) {
             String identifier = e.getIdentifier();
-            if (e.getType() == XMLConfigurationException.NOT_RECOGNIZED) {
+            if (e.getType() == Status.NOT_RECOGNIZED) {
                 throw new SAXNotRecognizedException(
                     SAXMessageFormatter.formatMessage(fConfiguration.getLocale(), 
                     "property-not-recognized", new Object [] {identifier}));
@@ -585,7 +586,7 @@ public class DOMParser
         }
         catch (XMLConfigurationException e) {
             String identifier = e.getIdentifier();
-            if (e.getType() == XMLConfigurationException.NOT_RECOGNIZED) {
+            if (e.getType() == Status.NOT_RECOGNIZED) {
                 throw new SAXNotRecognizedException(
                     SAXMessageFormatter.formatMessage(fConfiguration.getLocale(), 
                     "property-not-recognized", new Object [] {identifier}));
