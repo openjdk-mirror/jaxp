@@ -32,7 +32,7 @@ import com.sun.org.apache.xerces.internal.xs.XSObjectList;
 /**
  * Containts a list of XSObject's.
  *
- * @xerces.internal 
+ * @xerces.internal
  *
  * @author Sandy Gao, IBM
  *

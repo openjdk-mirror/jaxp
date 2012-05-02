@@ -29,7 +29,7 @@ import com.sun.org.apache.xerces.internal.xs.StringList;
 /**
  * Containts a list of Object's.
  *
- * @xerces.internal 
+ * @xerces.internal
  *
  * @author Sandy Gao, IBM
  *

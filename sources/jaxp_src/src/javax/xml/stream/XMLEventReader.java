@@ -35,7 +35,7 @@ import java.util.Iterator;
 /**
  *
  * This is the top level interface for parsing XML Events.  It provides
- * the ability to peek at the next event and returns configuration 
+ * the ability to peek at the next event and returns configuration
  * information through the property interface.
  *
  * @version 1.0

@@ -41,7 +41,7 @@ import org.w3c.dom.Element;
  *   Content: (annotation?, ((attribute | attributeGroup)*, anyAttribute?))
  * </attributeGroup>
  *
- * @xerces.internal 
+ * @xerces.internal
  *
  * @author Rahul Srivastava, Sun Microsystems Inc.
  * @author Sandy Gao, IBM
@@ -65,7 +65,7 @@ class XSDAttributeGroupTraverser extends XSDAbstractTraverser {
         Object[] attrValues = fAttrChecker.checkAttributes(elmNode, false, schemaDoc);
 
         // get attribute
-        QName   refAttr	= (QName)   attrValues[XSAttributeChecker.ATTIDX_REF];
+        QName   refAttr = (QName)   attrValues[XSAttributeChecker.ATTIDX_REF];
 
         XSAttributeGroupDecl attrGrp = null;
 

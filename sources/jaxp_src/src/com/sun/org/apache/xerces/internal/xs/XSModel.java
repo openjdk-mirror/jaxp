@@ -21,7 +21,7 @@
 package com.sun.org.apache.xerces.internal.xs;
 
 /**
- * This interface represents an XML Schema. 
+ * This interface represents an XML Schema.
  */
 public interface XSModel {
     /**

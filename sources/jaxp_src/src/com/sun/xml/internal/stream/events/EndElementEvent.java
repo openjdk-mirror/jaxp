@@ -44,38 +44,38 @@ import com.sun.xml.internal.stream.util.ReadOnlyIterator;
 
 public class EndElementEvent extends DummyEvent
 implements EndElement {
-    
+
     List fNamespaces = null;
     QName fQName ;
-    
+
     public EndElementEvent() {
         init();
     }
-    
+
     protected void init() {
         setEventType(XMLEvent.END_ELEMENT);
         fNamespaces = new ArrayList();
     }
-    
-    
+
+
     public EndElementEvent(String prefix,  String uri, String localpart) {
         this(new QName(uri,localpart,prefix));
     }
-    
+
     public EndElementEvent(QName qname) {
         this.fQName = qname;
         init();
     }
-    
+
     public QName getName() {
         return fQName;
     }
-    
+
     public void setName(QName qname) {
         this.fQName = qname;
     }
-        
-    protected void writeAsEncodedUnicodeEx(java.io.Writer writer) 
+
+    protected void writeAsEncodedUnicodeEx(java.io.Writer writer)
     throws java.io.IOException
     {
         writer.write("</");
@@ -86,8 +86,8 @@ implements EndElement {
      }
         writer.write(fQName.getLocalPart());
         writer.write('>');
-    }    
-    
+    }
+
     /** Returns an Iterator of namespaces that have gone out
      * of scope.  Returns an empty iterator if no namespaces have gone
      * out of scope.
@@ -99,19 +99,19 @@ implements EndElement {
             fNamespaces.iterator();
         return new ReadOnlyIterator();
     }
-    
+
     void addNamespace(Namespace attr){
         if(attr != null){
             fNamespaces.add(attr);
         }
     }
-    
+
     public String toString() {
         String s = "</" + nameAsString();
         s = s + ">";
         return s;
     }
-    
+
     public String nameAsString() {
         if("".equals(fQName.getNamespaceURI()))
             return fQName.getLocalPart();
@@ -120,5 +120,5 @@ implements EndElement {
         else
             return "['" + fQName.getNamespaceURI() + "']:" + fQName.getLocalPart();
     }
-    
+
 }

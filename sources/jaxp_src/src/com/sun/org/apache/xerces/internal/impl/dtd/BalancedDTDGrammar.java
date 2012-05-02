@@ -286,4 +286,3 @@ final class BalancedDTDGrammar extends DTDGrammar {
     } // addToCurrentGroup(int)
 
 } // class BalancedDTDGrammar
-

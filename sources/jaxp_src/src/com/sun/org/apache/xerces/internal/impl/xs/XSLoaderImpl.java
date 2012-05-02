@@ -40,11 +40,11 @@ import org.w3c.dom.ls.LSInput;
 
 /**
  * <p>An implementation of XSLoader which wraps XMLSchemaLoader.</p>
- * 
+ *
  * @xerces.internal
- * 
+ *
  * @author Michael Glavassevich, IBM
- * 
+ *
  * @version $Id: XSLoaderImpl.java,v 1.7 2010-11-01 04:39:55 joehw Exp $
  */
 public final class XSLoaderImpl implements XSLoader, DOMConfiguration {

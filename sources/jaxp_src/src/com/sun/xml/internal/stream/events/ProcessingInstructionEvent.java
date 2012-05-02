@@ -40,47 +40,47 @@ import javax.xml.stream.events.ProcessingInstruction;
 
 public class ProcessingInstructionEvent extends DummyEvent
 implements ProcessingInstruction {
-    
+
     /** Processing Instruction Name */
     private String fName;
     /** Processsing instruction content */
     private String fContent;
-    
+
     public ProcessingInstructionEvent() {
         init();
     }
-    
+
     public ProcessingInstructionEvent(String targetName, String data) {
         this(targetName,data,null);
     }
-    
+
     public ProcessingInstructionEvent(String targetName, String data,Location loc) {
         init();
         this.fName = targetName;
         fContent = data;
         setLocation(loc);
     }
-    
+
     protected void init() {
         setEventType(XMLStreamConstants.PROCESSING_INSTRUCTION);
     }
-    
+
     public String getTarget() {
         return fName;
     }
-    
+
     public void setTarget(String targetName) {
         fName = targetName;
     }
-    
+
     public void setData(String data) {
         fContent = data;
     }
-    
+
     public String getData() {
         return fContent;
     }
-    
+
     public String toString() {
         if(fContent != null && fName != null)
             return "<?" + fName + " " + fContent + "?>";
@@ -91,11 +91,11 @@ implements ProcessingInstruction {
         else
             return "<??>";
     }
-    
-    protected void writeAsEncodedUnicodeEx(java.io.Writer writer) 
+
+    protected void writeAsEncodedUnicodeEx(java.io.Writer writer)
     throws java.io.IOException
     {
         writer.write(toString());
     }
-    
+
 }

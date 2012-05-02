@@ -72,7 +72,7 @@ public class Version {
     // Data
     //
 
-    /** Version string. 
+    /** Version string.
      * @deprecated  getVersion() should be used instead.  */
     public static String fVersion = "Xerces-J 2.7.1";
 

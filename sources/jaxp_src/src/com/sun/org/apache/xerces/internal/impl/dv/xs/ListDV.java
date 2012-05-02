@@ -29,7 +29,7 @@ import com.sun.org.apache.xerces.internal.xs.datatypes.ObjectList;
 /**
  * Represent the schema list types
  *
- * @xerces.internal 
+ * @xerces.internal
  *
  * @author Neeraj Bajaj, Sun Microsystems, inc.
  * @author Sandy Gao, IBM
@@ -135,4 +135,3 @@ public class ListDV extends TypeValidator{
         }
     }
 } // class ListDV
-

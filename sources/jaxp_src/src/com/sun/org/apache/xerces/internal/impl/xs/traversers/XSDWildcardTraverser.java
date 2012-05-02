@@ -52,7 +52,7 @@ import org.w3c.dom.Element;
  *   Content: (annotation?)
  * &lt;/anyAttribute&gt;
  *
- * @xerces.internal 
+ * @xerces.internal
  *
  * @author Rahul Srivastava, Sun Microsystems Inc.
  * @author Sandy Gao, IBM

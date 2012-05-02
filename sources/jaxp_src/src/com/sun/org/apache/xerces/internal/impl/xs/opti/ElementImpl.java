@@ -26,8 +26,8 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 /**
- * @xerces.internal  
- * 
+ * @xerces.internal
+ *
  * @author Rahul Srivastava, Sun Microsystems Inc.
  * @author Sandy Gao, IBM
  *

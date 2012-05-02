@@ -28,7 +28,7 @@ import com.sun.org.apache.xerces.internal.impl.dv.util.ByteListImpl;
 /**
  * Represent the schema type "base64Binary"
  *
- * @xerces.internal 
+ * @xerces.internal
  *
  * @author Neeraj Bajaj, Sun Microsystems, inc.
  * @author Sandy Gao, IBM

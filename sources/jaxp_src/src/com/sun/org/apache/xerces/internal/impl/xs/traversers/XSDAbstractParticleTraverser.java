@@ -33,8 +33,8 @@ import com.sun.org.apache.xerces.internal.xs.XSObjectList;
 import org.w3c.dom.Element;
 
 /**
- * @xerces.internal  
- * 
+ * @xerces.internal
+ *
  * @author Elena Litani, IBM
  * @author Sandy Gao, IBM
  * @version $Id: XSDAbstractParticleTraverser.java,v 1.7 2010-11-01 04:40:02 joehw Exp $

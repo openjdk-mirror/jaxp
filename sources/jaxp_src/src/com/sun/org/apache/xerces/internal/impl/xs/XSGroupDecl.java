@@ -33,7 +33,7 @@ import com.sun.org.apache.xerces.internal.xs.XSObjectList;
  * The XML representation for a group declaration
  * schema component is a global <group> element information item
  *
- * @xerces.internal 
+ * @xerces.internal
  *
  * @author Sandy Gao, IBM
  * @version $Id: XSGroupDecl.java,v 1.7 2010-11-01 04:39:55 joehw Exp $

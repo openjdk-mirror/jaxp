@@ -39,7 +39,7 @@ import com.sun.org.apache.xerces.internal.xs.XSTypeDefinition;
  * The XML representation for an element declaration
  * schema component is an <element> element information item
  *
- * @xerces.internal 
+ * @xerces.internal
  *
  * @author Elena Litani, IBM
  * @author Sandy Gao, IBM

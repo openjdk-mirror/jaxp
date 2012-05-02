@@ -28,7 +28,7 @@ import javax.xml.validation.ValidatorHandler;
 
 /**
  * <p>Abstract implementation of Schema for W3C XML Schemas.</p>
- * 
+ *
  * @author Michael Glavassevich, IBM
  * @version $Id: AbstractXMLSchema.java,v 1.6 2010-11-01 04:40:07 joehw Exp $
  */
@@ -49,20 +49,20 @@ abstract class AbstractXMLSchema extends Schema implements
      * Schema methods
      */
 
-    /* 
+    /*
      * @see javax.xml.validation.Schema#newValidator()
      */
     public final Validator newValidator() {
         return new ValidatorImpl(this);
     }
 
-    /* 
+    /*
      * @see javax.xml.validation.Schema#newValidatorHandler()
      */
     public final ValidatorHandler newValidatorHandler() {
         return new ValidatorHandlerImpl(this);
     }
-    
+
     /*
      * XSGrammarPoolContainer methods
      */
@@ -83,5 +83,5 @@ abstract class AbstractXMLSchema extends Schema implements
     final void setFeature(String featureId, boolean state) {
         fFeatures.put(featureId, state ? Boolean.TRUE : Boolean.FALSE);
     }
-    
+
 } // AbstractXMLSchema

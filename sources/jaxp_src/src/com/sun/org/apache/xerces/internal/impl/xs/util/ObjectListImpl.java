@@ -28,7 +28,7 @@ import com.sun.org.apache.xerces.internal.xs.datatypes.ObjectList;
 
 /**
  * Contains a list of Objects.
- * 
+ *
  * @xerces.internal
  *
  * @version $Id: ObjectListImpl.java,v 1.2 2010-10-26 23:01:04 joehw Exp $

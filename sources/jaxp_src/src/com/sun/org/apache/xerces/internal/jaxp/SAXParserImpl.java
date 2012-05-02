@@ -59,10 +59,10 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * This is the implementation specific class for the
  * <code>javax.xml.parsers.SAXParser</code>.
- * 
+ *
  * @author Rajiv Mordani
  * @author Edwin Goei
- * 
+ *
  * @version $Id: SAXParserImpl.java,v 1.7 2010-11-01 04:40:06 joehw Exp $
  */
 public class SAXParserImpl extends javax.xml.parsers.SAXParser

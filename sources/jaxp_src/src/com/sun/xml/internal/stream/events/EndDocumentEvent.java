@@ -38,24 +38,24 @@ import javax.xml.stream.XMLStreamConstants;
 
 public class EndDocumentEvent extends DummyEvent
 implements EndDocument {
-    
+
     public EndDocumentEvent() {
         init();
     }
-    
+
     protected void init() {
         setEventType(XMLStreamConstants.END_DOCUMENT);
     }
-    
+
     public String toString() {
         return "ENDDOCUMENT";
     }
-    
-    protected void writeAsEncodedUnicodeEx(java.io.Writer writer) 
+
+    protected void writeAsEncodedUnicodeEx(java.io.Writer writer)
     throws java.io.IOException
     {
         //end document
-    }    
-    
-    
+    }
+
+
 }

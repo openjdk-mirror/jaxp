@@ -36,8 +36,8 @@ import com.sun.org.apache.xerces.internal.xs.XSSimpleTypeDefinition;
 /**
  * The XML representation for an attribute declaration
  * schema component is an <attribute> element information item
- * 
- * @xerces.internal 
+ *
+ * @xerces.internal
  *
  * @author Elena Litani, IBM
  * @author Sandy Gao, IBM

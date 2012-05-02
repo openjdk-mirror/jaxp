@@ -482,7 +482,7 @@ import com.sun.org.apache.xerces.internal.util.IntStack;
  * </ul>
  *
  * <hr width="50%">
- * 
+ *
  * @xerces.internal
  *
  * @author TAMURA Kent &lt;kent@trl.ibm.co.jp&gt;

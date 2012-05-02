@@ -21,7 +21,7 @@
 package com.sun.org.apache.xerces.internal.xs;
 
 /**
- * The interface represents the Element Declaration schema component. 
+ * The interface represents the Element Declaration schema component.
  */
 public interface XSElementDeclaration extends XSTerm {
     /**

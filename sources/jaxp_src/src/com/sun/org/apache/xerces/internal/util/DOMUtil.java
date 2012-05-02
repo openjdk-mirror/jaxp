@@ -324,7 +324,7 @@ public class DOMUtil {
             ((com.sun.org.apache.xerces.internal.impl.xs.opti.NodeImpl)node).setReadOnly(true, false);
         }
         else {
-        	hiddenNodes.put(node, "");
+                hiddenNodes.put(node, "");
         }
     } // setHidden(node):void
 

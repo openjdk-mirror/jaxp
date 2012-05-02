@@ -41,10 +41,10 @@ import javax.xml.stream.util.XMLEventAllocator;
  */
 
 public class XMLEventReaderImpl implements javax.xml.stream.XMLEventReader{
-    
+
     protected XMLStreamReader fXMLReader ;
     protected XMLEventAllocator fXMLEventAllocator;
-    
+
     //only constructor will do because we delegate everything to underlying XMLStreamReader
     public XMLEventReaderImpl(XMLStreamReader reader) throws  XMLStreamException {
         fXMLReader = reader ;
@@ -52,10 +52,10 @@ public class XMLEventReaderImpl implements javax.xml.stream.XMLEventReader{
         if(fXMLEventAllocator == null){
             fXMLEventAllocator = new XMLEventAllocatorImpl();
         }
-        fPeekedEvent = fXMLEventAllocator.allocate(fXMLReader);        
+        fPeekedEvent = fXMLEventAllocator.allocate(fXMLReader);
     }
-    
-    
+
+
     public boolean hasNext() {
         //if we have the peeked event return 'true'
         if(fPeekedEvent != null)return true;
@@ -69,8 +69,8 @@ public class XMLEventReaderImpl implements javax.xml.stream.XMLEventReader{
         }
         return next ;
     }
-    
-    
+
+
     public XMLEvent nextEvent() throws XMLStreamException {
         //if application peeked return the peeked event
         if(fPeekedEvent != null){
@@ -88,17 +88,17 @@ public class XMLEventReaderImpl implements javax.xml.stream.XMLEventReader{
             throw new NoSuchElementException();
         }
     }
-    
+
     public void remove(){
         //remove of the event is not supported.
         throw new java.lang.UnsupportedOperationException();
     }
-    
-    
+
+
     public void close() throws XMLStreamException {
         fXMLReader.close();
     }
-    
+
     /** Reads the content of a text-only element. Precondition:
      * the current event is START_ELEMENT. Postcondition:
      * The current event is the corresponding END_ELEMENT.
@@ -112,20 +112,20 @@ public class XMLEventReaderImpl implements javax.xml.stream.XMLEventReader{
             throw new XMLStreamException(
             "parser must be on START_ELEMENT to read next text", fLastEvent.getLocation());
         }
-        
+
         // STag content ETag
         //[43]   content   ::=   CharData? ((element | Reference | CDSect | PI | Comment) CharData?)*
-        
+
         //<foo>....some long text say in KB and underlying parser reports multiple character
         // but getElementText() events....</foo>
-        
+
         String data = null;
         //having a peeked event makes things really worse -- we have to test the first event
         if(fPeekedEvent != null){
             XMLEvent event = fPeekedEvent ;
             fPeekedEvent = null;
             int type = event.getEventType();
-            
+
             if(  type == XMLEvent.CHARACTERS || type == XMLEvent.SPACE ||
             type == XMLEvent.CDATA){
                 data = event.asCharacters().getData();
@@ -141,7 +141,7 @@ public class XMLEventReaderImpl implements javax.xml.stream.XMLEventReader{
             }else if(type == XMLEvent.END_ELEMENT){
                 return "";
             }
-            
+
             //create the string buffer and add initial data
             StringBuffer buffer = new StringBuffer();
             if(data != null && data.length() > 0 ) {
@@ -180,14 +180,14 @@ public class XMLEventReaderImpl implements javax.xml.stream.XMLEventReader{
             }
             return buffer.toString();
         }//if (fPeekedEvent != null)
-        
+
         //if there was no peeked, delegate everything to fXMLReader
         //update the last event before returning the text
         data = fXMLReader.getElementText();
         fLastEvent = fXMLEventAllocator.allocate(fXMLReader);
         return data;
     }
-    
+
     /** Get the value of a feature/property from the underlying implementation
      * @param name The name of the property
      * @return The value of the property
@@ -196,7 +196,7 @@ public class XMLEventReaderImpl implements javax.xml.stream.XMLEventReader{
     public Object getProperty(java.lang.String name) throws java.lang.IllegalArgumentException {
         return fXMLReader.getProperty(name) ;
     }
-    
+
     /** Skips any insignificant space events until a START_ELEMENT or
      * END_ELEMENT is reached. If anything other than space characters are
      * encountered, an exception is thrown. This method should
@@ -221,27 +221,27 @@ public class XMLEventReaderImpl implements javax.xml.stream.XMLEventReader{
                 event = nextEvent();
                 eventType = event.getEventType();
             }
-            
+
             //we have to have the while loop because there can be many PI or comment event in sucession
             while((event.isCharacters() && event.asCharacters().isWhiteSpace())
             || eventType == XMLStreamConstants.PROCESSING_INSTRUCTION
             || eventType == XMLStreamConstants.COMMENT){
-                
+
                 event = nextEvent();
                 eventType = event.getEventType();
             }
-            
+
             if (eventType != XMLStreamConstants.START_ELEMENT && eventType != XMLStreamConstants.END_ELEMENT) {
                 throw new XMLStreamException("expected start or end tag", event.getLocation());
             }
             return event;
         }
-        
+
         //if there is no peeked event -- delegate the work of getting next event to fXMLReader
         fXMLReader.nextTag();
         return (fLastEvent = fXMLEventAllocator.allocate(fXMLReader));
     }
-    
+
     public Object next() {
         Object object = null;
         try{
@@ -253,18 +253,18 @@ public class XMLEventReaderImpl implements javax.xml.stream.XMLEventReader{
         }
         return object;
     }
-    
+
     public XMLEvent peek() throws XMLStreamException{
         //if someone call peek() two times we should just return the peeked event
         //this is reset if we call next() or nextEvent()
         if(fPeekedEvent != null) return fPeekedEvent;
-        
+
         if(hasNext()){
             //revisit: we can implement peek() by calling underlying reader to advance
             // the stream and returning the event without the knowledge of the user
             // that the stream was advanced but the point is we are advancing the stream
             //here. -- nb.
-            
+
             // Is there any application that relies on this behavior ?
             //Can it be an application knows that there is particularly very large 'comment' section
             //or character data which it doesn't want to read or to be returned as event
@@ -277,8 +277,8 @@ public class XMLEventReaderImpl implements javax.xml.stream.XMLEventReader{
             return null;
         }
     }//peek()
-    
+
     private XMLEvent fPeekedEvent;
     private XMLEvent fLastEvent;
-    
+
 }//XMLEventReaderImpl

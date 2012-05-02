@@ -847,7 +847,7 @@ public class ErrorMessages_ca extends ListResourceBundle {
         "FEATURE_SECURE_PROCESSING: Cannot set the feature to false when security manager is present."}
     };
 
-    /** Get the lookup table for error messages.   
+    /** Get the lookup table for error messages.
      *
      * @return The message lookup table.
      */

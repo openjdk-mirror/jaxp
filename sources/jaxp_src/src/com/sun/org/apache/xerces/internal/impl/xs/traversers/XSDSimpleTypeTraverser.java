@@ -72,12 +72,12 @@ import org.w3c.dom.Element;
  *   Content: (annotation?, (simpleType*))
  * </union>
  *
- * @xerces.internal 
+ * @xerces.internal
  *
  * @author Elena Litani, IBM
  * @author Neeraj Bajaj, Sun Microsystems, Inc.
  * @author Sandy Gao, IBM
- * 
+ *
  * @version $Id: XSDSimpleTypeTraverser.java,v 1.7 2010-11-01 04:40:02 joehw Exp $
  */
 class XSDSimpleTypeTraverser extends XSDAbstractTraverser {

@@ -28,7 +28,7 @@ import com.sun.org.apache.xerces.internal.xs.XSException;
 /**
  * Containts a list of Object's.
  *
- * @xerces.internal 
+ * @xerces.internal
  *
  * @author Sandy Gao, IBM
  *

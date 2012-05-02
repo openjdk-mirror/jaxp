@@ -30,7 +30,7 @@ import com.sun.org.apache.xerces.internal.xs.XSObjectList;
 /**
  * the factory to create/return built-in schema DVs and create user-defined DVs
  *
- * @xerces.internal 
+ * @xerces.internal
  *
  * @author Neeraj Bajaj, Sun Microsystems, inc.
  * @author Sandy Gao, IBM

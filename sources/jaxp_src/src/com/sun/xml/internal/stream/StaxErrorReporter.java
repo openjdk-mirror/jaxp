@@ -45,16 +45,16 @@ import com.sun.org.apache.xerces.internal.impl.XMLErrorReporter;
  */
 
 public class StaxErrorReporter extends XMLErrorReporter {
-    
+
     protected XMLReporter fXMLReporter = null ;
-    
+
     /** Creates a new instance of StaxErrorReporter */
     public StaxErrorReporter(PropertyManager propertyManager) {
         super();
         putMessageFormatter(XMLMessageFormatter.XML_DOMAIN, new XMLMessageFormatter());
         reset(propertyManager);
     }
-    
+
     /** Creates a new instance of StaxErrorReporter
      * If this constructor is used to create the object, one must invoke reset() on this object.
      */
@@ -62,7 +62,7 @@ public class StaxErrorReporter extends XMLErrorReporter {
         super();
         putMessageFormatter(XMLMessageFormatter.XML_DOMAIN, new XMLMessageFormatter());
     }
-    
+
     /**
      *One must call reset before using any of the function.
      */
@@ -109,16 +109,16 @@ public class StaxErrorReporter extends XMLErrorReporter {
             }
             message = str.toString();
         }
-        
-        
-        
+
+
+
         //no reporter was specified
         /**
          * if (reporter == null) {
          * reporter = new DefaultStaxErrorReporter();
          * }
          */
-        
+
         // call error handler
         switch (severity) {
             case SEVERITY_WARNING: {
@@ -154,34 +154,34 @@ public class StaxErrorReporter extends XMLErrorReporter {
         }
         return message;
     }
-    
-    
+
+
     Location convertToStaxLocation(final XMLLocator location){
         return new Location(){
             public int getColumnNumber(){
                 return location.getColumnNumber();
             }
-            
+
             public int getLineNumber(){
                 return location.getLineNumber();
             }
-            
+
             public String getPublicId(){
                 return location.getPublicId();
             }
-            
+
             public String getSystemId(){
                 return location.getLiteralSystemId();
             }
-            
+
             public int getCharacterOffset(){
                 return location.getCharacterOffset();
             }
             public String getLocationURI(){
                 return "";
             }
-            
+
         };
     }
-    
+
 }

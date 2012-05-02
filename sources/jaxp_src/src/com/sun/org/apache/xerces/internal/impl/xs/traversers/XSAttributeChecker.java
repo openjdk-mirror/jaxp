@@ -1200,7 +1200,7 @@ public class XSAttributeChecker {
 
                         // reset max values in case processing continues on error
                         attrValues[ATTIDX_MAXOCCURS] = fXIntPool.getXInt(maxOccurNodeLimit);
-						//new Integer(maxOccurNodeLimit);
+                                                //new Integer(maxOccurNodeLimit);
                         max = maxOccurNodeLimit;
                     }
                 }

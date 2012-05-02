@@ -41,7 +41,7 @@ import com.sun.org.apache.xerces.internal.xs.XSTypeDefinition;
 /**
  * Constaints shared by traversers and validator
  *
- * @xerces.internal 
+ * @xerces.internal
  *
  * @author Sandy Gao, IBM
  *

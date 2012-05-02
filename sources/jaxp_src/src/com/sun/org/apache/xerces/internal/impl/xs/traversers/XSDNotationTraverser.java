@@ -41,7 +41,7 @@ import org.w3c.dom.Element;
  *   Content: (annotation?)
  * </notation>
  *
- * @xerces.internal 
+ * @xerces.internal
  *
  * @author Rahul Srivastava, Sun Microsystems Inc.
  * @author Elena Litani, IBM

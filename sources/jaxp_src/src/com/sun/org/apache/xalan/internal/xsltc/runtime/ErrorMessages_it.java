@@ -269,7 +269,7 @@ public class ErrorMessages_it extends ListResourceBundle {
          */
         {BasisLibrary.INVALID_NCNAME_ERR,
         "Un attributo il cui valore deve essere un NCName contiene il valore ''{0}''"},
-        
+
         {BasisLibrary.UNALLOWED_EXTENSION_FUNCTION_ERR,
         "Non \u00E8 consentito utilizzare la funzione di estensione ''{0}'' se la funzione di elaborazione sicura \u00E8 impostata su true."},
 

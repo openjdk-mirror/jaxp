@@ -45,28 +45,28 @@ import com.sun.org.apache.xerces.internal.impl.Constants;
 
 //xxx: Should we be reusing the XMLInputSource object
 public class XMLInputFactoryImpl extends javax.xml.stream.XMLInputFactory {
-        
-    
+
+
     //List of supported properties and default values.
     private PropertyManager fPropertyManager = new PropertyManager(PropertyManager.CONTEXT_READER) ;
     private static final boolean DEBUG = false;
-    
+
     //Maintain a reference to last reader instantiated.
     private XMLStreamReaderImpl fTempReader = null ;
-    
+
     boolean fPropertyChanged = false;
     //no reader reuse by default
     boolean fReuseInstance = false;
 
     /** Creates a new instance of ZephryParserFactory */
     public XMLInputFactoryImpl() {
-        
+
     }
-    
+
     void initEventReader(){
         fPropertyChanged = true;
     }
-    
+
     /**
      * @param inputstream
      * @throws XMLStreamException
@@ -77,37 +77,37 @@ public class XMLInputFactoryImpl extends javax.xml.stream.XMLInputFactory {
         //delegate everything to XMLStreamReader
         return new XMLEventReaderImpl(createXMLStreamReader(inputstream));
     }
-    
+
     public XMLEventReader createXMLEventReader(Reader reader) throws XMLStreamException {
         initEventReader();
         //delegate everything to XMLStreamReader
         return new XMLEventReaderImpl(createXMLStreamReader(reader));
     }
-    
+
     public XMLEventReader createXMLEventReader(Source source) throws XMLStreamException {
         initEventReader();
         //delegate everything to XMLStreamReader
         return new XMLEventReaderImpl(createXMLStreamReader(source));
     }
-    
+
     public XMLEventReader createXMLEventReader(String systemId, InputStream inputstream) throws XMLStreamException {
         initEventReader();
         //delegate everything to XMLStreamReader
         return new XMLEventReaderImpl(createXMLStreamReader(systemId, inputstream));
     }
-    
+
     public XMLEventReader createXMLEventReader(java.io.InputStream stream, String encoding) throws XMLStreamException {
         initEventReader();
         //delegate everything to XMLStreamReader
         return new XMLEventReaderImpl(createXMLStreamReader(stream, encoding));
     }
-    
+
     public XMLEventReader createXMLEventReader(String systemId, Reader reader) throws XMLStreamException {
         initEventReader();
         //delegate everything to XMLStreamReader
         return new XMLEventReaderImpl(createXMLStreamReader(systemId, reader));
     }
-    
+
     /** Create a new XMLEventReader from an XMLStreamReader.  After being used
      * to construct the XMLEventReader instance returned from this method
      * the XMLStreamReader must not be used.
@@ -116,67 +116,67 @@ public class XMLInputFactoryImpl extends javax.xml.stream.XMLInputFactory {
      * @throws XMLStreamException
      */
     public XMLEventReader createXMLEventReader(XMLStreamReader reader) throws XMLStreamException {
-        
+
         //xxx: what do we do now -- instance is passed from the application
         //probably we should check if the state is at the start document,
         //eventreader call to next() should return START_DOCUMENT and
         //then delegate every call to underlying streamReader
         return new XMLEventReaderImpl(reader) ;
     }
-    
+
     public XMLStreamReader createXMLStreamReader(InputStream inputstream) throws XMLStreamException {
         XMLInputSource inputSource = new XMLInputSource(null, null, null, inputstream, null);
         return getXMLStreamReaderImpl(inputSource);
     }
-    
+
     public XMLStreamReader createXMLStreamReader(Reader reader) throws XMLStreamException {
         XMLInputSource inputSource = new XMLInputSource(null, null, null, reader, null);
         return getXMLStreamReaderImpl(inputSource);
     }
-    
+
     public XMLStreamReader createXMLStreamReader(String systemId, Reader reader) throws XMLStreamException {
         XMLInputSource inputSource = new XMLInputSource(null,systemId,null,reader,null);
         return getXMLStreamReaderImpl(inputSource);
     }
-    
+
     public XMLStreamReader createXMLStreamReader(Source source) throws XMLStreamException {
-        return new XMLStreamReaderImpl(jaxpSourcetoXMLInputSource(source), 
+        return new XMLStreamReaderImpl(jaxpSourcetoXMLInputSource(source),
                 new PropertyManager(fPropertyManager));
     }
-    
+
     public XMLStreamReader createXMLStreamReader(String systemId, InputStream inputstream) throws XMLStreamException {
         XMLInputSource inputSource = new XMLInputSource(null,systemId,null,inputstream,null);
         return getXMLStreamReaderImpl(inputSource);
     }
-    
-    
+
+
     public XMLStreamReader createXMLStreamReader(InputStream inputstream, String encoding) throws XMLStreamException {
         XMLInputSource inputSource = new XMLInputSource(null,null,null,inputstream,encoding);
         return getXMLStreamReaderImpl(inputSource);
     }
-    
+
     public XMLEventAllocator getEventAllocator() {
         return (XMLEventAllocator)getProperty(XMLInputFactory.ALLOCATOR);
     }
-    
+
     public XMLReporter getXMLReporter() {
         return (XMLReporter)fPropertyManager.getProperty(XMLInputFactory.REPORTER);
     }
-    
+
     public XMLResolver getXMLResolver() {
         Object object = fPropertyManager.getProperty(XMLInputFactory.RESOLVER);
         return (XMLResolver)object;
         //return (XMLResolver)fPropertyManager.getProperty(XMLInputFactory.RESOLVER);
     }
-    
+
     public void setXMLReporter(XMLReporter xmlreporter) {
         fPropertyManager.setProperty(XMLInputFactory.REPORTER, xmlreporter);
     }
-    
+
     public void setXMLResolver(XMLResolver xmlresolver) {
         fPropertyManager.setProperty(XMLInputFactory.RESOLVER, xmlresolver);
     }
-    
+
     /** Create a filtered event reader that wraps the filter around the event reader
      * @param reader the event reader to wrap
      * @param filter the filter to apply to the event reader
@@ -185,7 +185,7 @@ public class XMLInputFactoryImpl extends javax.xml.stream.XMLInputFactory {
     public XMLEventReader createFilteredReader(XMLEventReader reader, EventFilter filter) throws XMLStreamException {
         return new EventFilterSupport(reader, filter);
     }
-    
+
     /** Create a filtered reader that wraps the filter around the reader
      * @param reader the reader to filter
      * @param filter the filter to apply to the reader
@@ -194,12 +194,12 @@ public class XMLInputFactoryImpl extends javax.xml.stream.XMLInputFactory {
     public XMLStreamReader createFilteredReader(XMLStreamReader reader, StreamFilter filter) throws XMLStreamException {
         if( reader != null && filter != null )
             return new XMLStreamFilterImpl(reader,filter);
-        
+
         return null;
     }
-    
-    
-    
+
+
+
     /** Get the value of a feature/property from the underlying implementation
      * @param name The name of the property (may not be null)
      * @return The value of the property
@@ -213,7 +213,7 @@ public class XMLInputFactoryImpl extends javax.xml.stream.XMLInputFactory {
             return fPropertyManager.getProperty(name);
         throw new IllegalArgumentException("Property not supported");
     }
-    
+
     /** Query the set of fProperties that this factory supports.
      *
      * @param name The name of the property (may not be null)
@@ -225,14 +225,14 @@ public class XMLInputFactoryImpl extends javax.xml.stream.XMLInputFactory {
         else
             return fPropertyManager.containsProperty(name);
     }
-    
+
     /** Set a user defined event allocator for events
      * @param allocator the user defined allocator
      */
     public void setEventAllocator(XMLEventAllocator allocator) {
         fPropertyManager.setProperty(XMLInputFactory.ALLOCATOR, allocator);
     }
-    
+
     /** Allows the user to set specific feature/property on the underlying implementation. The underlying implementation
      * is not required to support every setting of every property in the specification and may use IllegalArgumentException
      * to signal that an unsupported property may not be set with the specified value.
@@ -241,7 +241,7 @@ public class XMLInputFactoryImpl extends javax.xml.stream.XMLInputFactory {
      * @throws java.lang.IllegalArgumentException if the property is not supported
      */
     public void setProperty(java.lang.String name, Object value) throws java.lang.IllegalArgumentException {
-        
+
         if(name == null || value == null || !fPropertyManager.containsProperty(name) ){
             throw new IllegalArgumentException("Property "+name+" is not supported");
         }
@@ -254,15 +254,15 @@ public class XMLInputFactoryImpl extends javax.xml.stream.XMLInputFactory {
         }
         fPropertyManager.setProperty(name,value);
     }
-    
+
     XMLStreamReader getXMLStreamReaderImpl(XMLInputSource inputSource) throws javax.xml.stream.XMLStreamException{
         //1. if the temp reader is null -- create the instance and return
         if(fTempReader == null){
             fPropertyChanged = false;
-            return fTempReader = new XMLStreamReaderImpl(inputSource, 
+            return fTempReader = new XMLStreamReaderImpl(inputSource,
                     new PropertyManager(fPropertyManager));
         }
-        //if factory is configured to reuse the instance & this instance can be reused 
+        //if factory is configured to reuse the instance & this instance can be reused
         //& the setProperty() hasn't been called
         if(fReuseInstance && fTempReader.canReuse() && !fPropertyChanged){
             if(DEBUG)System.out.println("Reusing the instance");
@@ -274,11 +274,11 @@ public class XMLInputFactoryImpl extends javax.xml.stream.XMLInputFactory {
         }else{
             fPropertyChanged = false;
             //just return the new instance.. note that we are not setting  fTempReader to the newly created instance
-            return fTempReader = new XMLStreamReaderImpl(inputSource, 
+            return fTempReader = new XMLStreamReaderImpl(inputSource,
                     new PropertyManager(fPropertyManager));
         }
     }
-    
+
     XMLInputSource jaxpSourcetoXMLInputSource(Source source){
          if(source instanceof StreamSource){
              StreamSource stSource = (StreamSource)source;
@@ -301,5 +301,5 @@ public class XMLInputFactoryImpl extends javax.xml.stream.XMLInputFactory {
                 "XMLStreamReader or XMLEventReader from a " +
                 source.getClass().getName());
     }
-    
+
 }//XMLInputFactoryImpl

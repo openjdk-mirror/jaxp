@@ -21,7 +21,7 @@
 package com.sun.org.apache.xerces.internal.xs;
 
 /**
- * This interface represents the Attribute Use schema component. 
+ * This interface represents the Attribute Use schema component.
  */
 public interface XSAttributeUse extends XSObject {
     /**

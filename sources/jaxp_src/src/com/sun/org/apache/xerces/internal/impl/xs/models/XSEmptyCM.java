@@ -33,7 +33,7 @@ import java.util.ArrayList;
  *
  * This model validated on the way in.
  *
- * @xerces.internal 
+ * @xerces.internal
  *
  * @author Elena Litani, Lisa Martin
  * @author IBM
@@ -47,7 +47,7 @@ public class XSEmptyCM  implements XSCMValidator {
 
     // start the content model: did not see any children
     private static final short STATE_START = 0;
-    
+
     private static final Vector EMPTY = new Vector(0);
 
     //
@@ -57,7 +57,7 @@ public class XSEmptyCM  implements XSCMValidator {
     //
     // XSCMValidator methods
     //
-    
+
     /**
      * This methods to be called on entering a first element whose type
      * has this content model. It will return the initial state of the content model
@@ -125,7 +125,7 @@ public class XSEmptyCM  implements XSCMValidator {
      * Check which elements are valid to appear at this point. This method also
      * works if the state is in error, in which case it returns what should
      * have been seen.
-     * 
+     *
      * @param state  the current state
      * @return       a Vector whose entries are instances of
      *               either XSWildcardDecl or XSElementDecl.
@@ -133,7 +133,7 @@ public class XSEmptyCM  implements XSCMValidator {
     public Vector whatCanGoHere(int[] state) {
         return EMPTY;
     }
-    
+
     public ArrayList checkMinMaxBounds() {
         return null;
     }

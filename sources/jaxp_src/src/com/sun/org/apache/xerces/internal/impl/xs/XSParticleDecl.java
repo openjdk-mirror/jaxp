@@ -30,7 +30,7 @@ import com.sun.org.apache.xerces.internal.xs.XSTerm;
 /**
  * Store schema particle declaration.
  *
- * @xerces.internal 
+ * @xerces.internal
  *
  * @author Sandy Gao, IBM
  *
@@ -231,12 +231,12 @@ public class XSParticleDecl implements XSParticle {
         return fValue;
     }
 
-	/**
-	 * @see org.apache.xerces.xs.XSObject#getNamespaceItem()
-	 */
-	public XSNamespaceItem getNamespaceItem() {
-		return null;
-	}
+        /**
+         * @see org.apache.xerces.xs.XSObject#getNamespaceItem()
+         */
+        public XSNamespaceItem getNamespaceItem() {
+                return null;
+        }
 
     /**
      * Optional. Annotations.

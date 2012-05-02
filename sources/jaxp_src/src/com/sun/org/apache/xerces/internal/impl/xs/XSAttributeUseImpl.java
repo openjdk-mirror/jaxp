@@ -33,7 +33,7 @@ import com.sun.org.apache.xerces.internal.xs.XSObjectList;
  * The XML representation for an attribute use
  * schema component is a local <attribute> element information item
  *
- * @xerces.internal 
+ * @xerces.internal
  *
  * @author Sandy Gao, IBM
  * @version $Id: XSAttributeUseImpl.java,v 1.7 2010-11-01 04:39:55 joehw Exp $

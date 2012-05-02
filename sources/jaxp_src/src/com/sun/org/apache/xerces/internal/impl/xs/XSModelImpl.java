@@ -53,7 +53,7 @@ import com.sun.org.apache.xerces.internal.xs.XSTypeDefinition;
  * Implements XSModel:  a read-only interface that represents an XML Schema,
  * which could be components from different namespaces.
  *
- * @xerces.internal 
+ * @xerces.internal
  *
  * @author Sandy Gao, IBM
  *

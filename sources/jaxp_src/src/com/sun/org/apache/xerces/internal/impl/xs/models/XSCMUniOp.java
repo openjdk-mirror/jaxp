@@ -28,7 +28,7 @@ import com.sun.org.apache.xerces.internal.impl.xs.XSParticleDecl;
  *
  * Content model Uni-Op node.
  *
- * @xerces.internal 
+ * @xerces.internal
  *
  * @author Neil Graham, IBM
  * @version $$
@@ -69,9 +69,9 @@ public class XSCMUniOp extends CMNode {
         //  repetitions. Otherwise, '*' style nodes are always nullable.
         //
         if (type() == XSParticleDecl.PARTICLE_ONE_OR_MORE)
-	        return fChild.isNullable();
-	    else
-	        return true;
+                return fChild.isNullable();
+            else
+                return true;
     }
 
 
@@ -110,4 +110,3 @@ public class XSCMUniOp extends CMNode {
     // -------------------------------------------------------------------
     private CMNode  fChild;
 } // XSCMUniOp
-

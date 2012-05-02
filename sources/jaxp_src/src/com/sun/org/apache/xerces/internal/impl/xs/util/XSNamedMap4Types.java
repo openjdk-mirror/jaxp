@@ -28,7 +28,7 @@ import com.sun.org.apache.xerces.internal.xs.XSTypeDefinition;
 /**
  * Containts the map between qnames and XSObject's.
  *
- * @xerces.internal 
+ * @xerces.internal
  *
  * @author Sandy Gao, IBM
  *

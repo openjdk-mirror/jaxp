@@ -739,23 +739,23 @@ public class XObject extends Expression implements Serializable, Cloneable
    */
   public void callVisitors(ExpressionOwner owner, XPathVisitor visitor)
   {
-  	assertion(false, "callVisitors should not be called for this object!!!");
+        assertion(false, "callVisitors should not be called for this object!!!");
   }
   /**
    * @see Expression#deepEquals(Expression)
    */
   public boolean deepEquals(Expression expr)
   {
-  	if(!isSameClass(expr))
-  		return false;
+        if(!isSameClass(expr))
+                return false;
 
-  	// If equals at the expression level calls deepEquals, I think we're
-  	// still safe from infinite recursion since this object overrides
-  	// equals.  I hope.
-  	if(!this.equals((XObject)expr))
-  		return false;
+        // If equals at the expression level calls deepEquals, I think we're
+        // still safe from infinite recursion since this object overrides
+        // equals.  I hope.
+        if(!this.equals((XObject)expr))
+                return false;
 
-  	return true;
+        return true;
   }
 
 }

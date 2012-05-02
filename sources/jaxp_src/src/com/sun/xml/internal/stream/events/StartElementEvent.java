@@ -49,41 +49,41 @@ import javax.xml.stream.events.Namespace;
 
 public class StartElementEvent extends DummyEvent
 implements StartElement {
-    
+
     private Map fAttributes;
     private List fNamespaces;
     private NamespaceContext fNamespaceContext = null;
     private QName fQName;
-        
+
     public StartElementEvent(String prefix, String uri, String localpart) {
         this(new QName(uri, localpart, prefix));
     }
-    
+
     public StartElementEvent(QName qname) {
         fQName = qname;
         init();
     }
-    
+
     public StartElementEvent(StartElement startelement) {
         this(startelement.getName());
         addAttributes(startelement.getAttributes());
         addNamespaceAttributes(startelement.getNamespaces());
     }
-    
+
     protected void init() {
         setEventType(XMLStreamConstants.START_ELEMENT);
         fAttributes = new HashMap();
         fNamespaces = new ArrayList();
     }
-    
+
     public QName getName() {
         return fQName;
     }
-    
+
     public void setName(QName qname) {
         this.fQName = qname;
     }
-    
+
     public Iterator getAttributes() {
         if(fAttributes != null){
             Collection coll = fAttributes.values();
@@ -91,26 +91,26 @@ implements StartElement {
         }
         return new ReadOnlyIterator();
     }
-    
+
     public Iterator getNamespaces() {
         if(fNamespaces != null){
             return new ReadOnlyIterator(fNamespaces.iterator());
         }
         return new ReadOnlyIterator();
     }
-    
+
     public Attribute getAttributeByName(QName qname) {
         if(qname == null)
             return null;
         return (Attribute)fAttributes.get(qname);
     }
-    
+
     public String getNamespace(){
         return fQName.getNamespaceURI();
     }
-    
+
     public String getNamespaceURI(String prefix) {
-        //check that URI was supplied when creating this startElement event and prefix matches 
+        //check that URI was supplied when creating this startElement event and prefix matches
         if( getNamespace() != null && fQName.getPrefix().equals(prefix)) return getNamespace();
         //else check the namespace context
         if(fNamespaceContext != null)
@@ -173,8 +173,8 @@ implements StartElement {
         else
             return "['" + fQName.getNamespaceURI() + "']:" + fQName.getLocalPart();
     }
-    
-    
+
+
     /** Gets a read-only namespace context. If no context is
      * available this method will return an empty namespace context.
      * The NamespaceContext contains information about all namespaces
@@ -185,17 +185,17 @@ implements StartElement {
     public NamespaceContext getNamespaceContext() {
         return fNamespaceContext;
     }
-    
+
     public void setNamespaceContext(NamespaceContext nc) {
         fNamespaceContext = nc;
     }
-    
-    protected void writeAsEncodedUnicodeEx(java.io.Writer writer) 
+
+    protected void writeAsEncodedUnicodeEx(java.io.Writer writer)
     throws java.io.IOException
     {
         writer.write(toString());
     }
-    
+
     void addAttribute(Attribute attr){
         if(attr.isNamespace()){
             fNamespaces.add(attr);
@@ -203,7 +203,7 @@ implements StartElement {
             fAttributes.put(attr.getName(),attr);
         }
     }
-    
+
     void addAttributes(Iterator attrs){
         if(attrs == null)
             return;
@@ -212,13 +212,13 @@ implements StartElement {
             fAttributes.put(attr.getName(),attr);
         }
     }
-    
+
     void addNamespaceAttribute(Namespace attr){
         if(attr == null)
             return;
         fNamespaces.add(attr);
     }
-    
+
     void addNamespaceAttributes(Iterator attrs){
         if(attrs == null)
             return;
@@ -227,5 +227,5 @@ implements StartElement {
             fNamespaces.add(attr);
         }
     }
-    
+
 }

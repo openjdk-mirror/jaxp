@@ -223,7 +223,7 @@ public class ErrorMessages_cs extends ListResourceBundle {
         "Nelze p\u0159elo\u017eit odkazy URI ''{0}''."}
     };
 
-    /** Get the lookup table for error messages.   
+    /** Get the lookup table for error messages.
      *
      * @return The message lookup table.
      */

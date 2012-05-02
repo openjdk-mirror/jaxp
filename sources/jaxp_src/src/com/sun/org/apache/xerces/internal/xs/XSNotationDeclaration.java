@@ -21,7 +21,7 @@
 package com.sun.org.apache.xerces.internal.xs;
 
 /**
- *  This interface represents the Notation Declaration schema component. 
+ *  This interface represents the Notation Declaration schema component.
  */
 public interface XSNotationDeclaration extends XSObject {
     /**

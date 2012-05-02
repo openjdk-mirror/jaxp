@@ -70,10 +70,10 @@ import com.sun.org.apache.xerces.internal.xni.parser.XMLInputSource;
 import com.sun.org.apache.xerces.internal.util.XMLResourceIdentifierImpl;
 
 /**
- * All information specific to DTD grammars.  
- * 
+ * All information specific to DTD grammars.
+ *
  * @xerces.internal
- * 
+ *
  * @author Neil Graham, IBM
  * @version $Id: XMLDTDDescription.java,v 1.4 2010/08/11 07:18:38 joehw Exp $
  */
@@ -156,9 +156,9 @@ public class XMLDTDDescription extends XMLResourceIdentifierImpl
      */
     public boolean equals(Object desc) {
         if (!(desc instanceof XMLGrammarDescription)) return false;
-    	if (!getGrammarType().equals(((XMLGrammarDescription)desc).getGrammarType())) {
-    	    return false;
-    	}
+        if (!getGrammarType().equals(((XMLGrammarDescription)desc).getGrammarType())) {
+            return false;
+        }
         // assume it's a DTDDescription
         XMLDTDDescription dtdDesc = (XMLDTDDescription)desc;
         if (fRootName != null) {
@@ -207,7 +207,7 @@ public class XMLDTDDescription extends XMLResourceIdentifierImpl
         else if (dtdDesc.fPublicId != null) {
             return false;
         }
-    	return true;
+        return true;
     }
 
     /**
@@ -227,4 +227,3 @@ public class XMLDTDDescription extends XMLResourceIdentifierImpl
         return 0;
     }
 } // class XMLDTDDescription
-

@@ -37,7 +37,7 @@ import com.sun.org.apache.xerces.internal.xni.parser.XMLDTDSource;
  * <p>This filter records which unparsed entities have been
  * declared in the DTD and provides this information to a ValidationManager.
  * Events are forwarded to the registered XMLDTDHandler without modification.</p>
- * 
+ *
  * @author Michael Glavassevich, IBM
  * @version $Id: UnparsedEntityHandler.java,v 1.6 2010-11-01 04:40:07 joehw Exp $
  */

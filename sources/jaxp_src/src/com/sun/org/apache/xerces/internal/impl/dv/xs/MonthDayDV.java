@@ -29,7 +29,7 @@ import com.sun.org.apache.xerces.internal.impl.dv.ValidationContext;
 /**
  * Validator for &lt;gMonthDay&gt; datatype (W3C Schema Datatypes)
  *
- * @xerces.internal 
+ * @xerces.internal
  *
  * @author Elena Litani
  * @author Gopal Sharma, SUN Microsystem Inc.
@@ -129,4 +129,3 @@ public class MonthDayDV extends AbstractDateTimeDV {
                 date.hasTimeZone() ? date.timezoneHr * 60 + date.timezoneMin : DatatypeConstants.FIELD_UNDEFINED);
     }
 }
-

@@ -40,11 +40,11 @@ import com.sun.org.apache.xerces.internal.util.NamespaceSupport;
  * @author Neeraj.bajaj@sun.com, k.venugopal@sun.com
  */
 public class XMLEventAllocatorImpl implements XMLEventAllocator {
-    
+
     /** Creates a new instance of XMLEventAllocator */
     public XMLEventAllocatorImpl() {
     }
-    
+
     public javax.xml.stream.events.XMLEvent allocate(javax.xml.stream.XMLStreamReader xMLStreamReader) throws javax.xml.stream.XMLStreamException {
         if(xMLStreamReader == null )
             throw new XMLStreamException("Reader cannot be null");
@@ -52,26 +52,26 @@ public class XMLEventAllocatorImpl implements XMLEventAllocator {
         //        return getNextEvent(xMLStreamReader);
         return getXMLEvent(xMLStreamReader);
     }
-    
+
     public void allocate(javax.xml.stream.XMLStreamReader xMLStreamReader, javax.xml.stream.util.XMLEventConsumer xMLEventConsumer) throws javax.xml.stream.XMLStreamException {
         XMLEvent currentEvent = getXMLEvent(xMLStreamReader);
         if(currentEvent != null )
             xMLEventConsumer.add(currentEvent);
-        
+
         return;
     }
-    
+
     public javax.xml.stream.util.XMLEventAllocator newInstance() {
         return new XMLEventAllocatorImpl();
     }
-    
+
     //REVISIT: shouldn't we be using XMLEventFactory to create events.
     XMLEvent getXMLEvent(XMLStreamReader streamReader){
         XMLEvent event = null;
         //returns the current event
         int eventType = streamReader.getEventType();
         switch(eventType){
-            
+
             case XMLEvent.START_ELEMENT:{
                 StartElementEvent startElementEvent = new StartElementEvent(getQName(streamReader));
                 fillAttributes(startElementEvent,streamReader);
@@ -81,7 +81,7 @@ public class XMLEventAllocatorImpl implements XMLEventAllocator {
                     fillNamespaceAttributes(startElementEvent, streamReader);
                     setNamespaceContext(startElementEvent,streamReader);
                 }
-                
+
                 startElementEvent.setLocation(streamReader.getLocation());
                 event = startElementEvent ;
                 break;
@@ -89,7 +89,7 @@ public class XMLEventAllocatorImpl implements XMLEventAllocator {
             case XMLEvent.END_ELEMENT:{
                 EndElementEvent endElementEvent = new EndElementEvent(getQName(streamReader));
                 endElementEvent.setLocation(streamReader.getLocation());
-                
+
                 if( ((Boolean)streamReader.getProperty(XMLInputFactory.IS_NAMESPACE_AWARE)).booleanValue() ){
                     fillNamespaceAttributes(endElementEvent,streamReader);
                 }
@@ -139,7 +139,7 @@ public class XMLEventAllocatorImpl implements XMLEventAllocator {
                 entityEvent.setLocation(streamReader.getLocation());
                 event = entityEvent;
                 break;
-                
+
             }
             case XMLEvent.ATTRIBUTE:{
                 event = null ;
@@ -151,7 +151,7 @@ public class XMLEventAllocatorImpl implements XMLEventAllocator {
                 List entities = (List)streamReader.getProperty(PropertyManager.STAX_ENTITIES);
                 if (entities != null && entities.size() != 0) dtdEvent.setEntities(entities);
                 List notations = (List)streamReader.getProperty(PropertyManager.STAX_NOTATIONS);
-                if (notations != null && notations.size() != 0) dtdEvent.setNotations(notations);                
+                if (notations != null && notations.size() != 0) dtdEvent.setNotations(notations);
                 event = dtdEvent;
                 break;
             }
@@ -170,16 +170,16 @@ public class XMLEventAllocatorImpl implements XMLEventAllocator {
         }
         return event ;
     }
-    
+
     //this function is not used..
     protected XMLEvent getNextEvent(XMLStreamReader streamReader) throws XMLStreamException{
         //advance the reader to next event.
         streamReader.next();
         return getXMLEvent(streamReader);
     }
-    
+
     protected void fillAttributes(StartElementEvent event,XMLStreamReader xmlr){
-        
+
         int len = xmlr.getAttributeCount();
         QName qname = null;
         AttributeImpl attr = null;
@@ -209,7 +209,7 @@ public class XMLEventAllocatorImpl implements XMLEventAllocator {
             event.addAttribute(attr);
         }
     }
-    
+
     protected void fillNamespaceAttributes(StartElementEvent event,XMLStreamReader xmlr){
         int count = xmlr.getNamespaceCount();
         String uri = null;
@@ -225,7 +225,7 @@ public class XMLEventAllocatorImpl implements XMLEventAllocator {
             event.addNamespaceAttribute(attr);
         }
     }
-    
+
     protected void fillNamespaceAttributes(EndElementEvent event,XMLStreamReader xmlr){
         int count = xmlr.getNamespaceCount();
         String uri = null;
@@ -241,7 +241,7 @@ public class XMLEventAllocatorImpl implements XMLEventAllocator {
             event.addNamespace(attr);
         }
     }
-    
+
     //Revisit : Creating a new Namespacecontext for now.
     //see if we can do better job.
     private void setNamespaceContext(StartElementEvent event , XMLStreamReader xmlr){
@@ -249,9 +249,9 @@ public class XMLEventAllocatorImpl implements XMLEventAllocator {
         NamespaceSupport ns = new NamespaceSupport(contextWrapper.getNamespaceContext());
         event.setNamespaceContext(new NamespaceContextWrapper(ns));
     }
-    
+
     private QName getQName(XMLStreamReader xmlr) {
-        return new QName(xmlr.getNamespaceURI(), xmlr.getLocalName(), 
+        return new QName(xmlr.getNamespaceURI(), xmlr.getLocalName(),
                 xmlr.getPrefix());
     }
 }

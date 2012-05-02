@@ -37,8 +37,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 /**
  * This is an implementation of the XSAnnotation schema component.
- * 
- * @xerces.internal 
+ *
+ * @xerces.internal
  */
 public class XSAnnotationImpl implements XSAnnotation {
 

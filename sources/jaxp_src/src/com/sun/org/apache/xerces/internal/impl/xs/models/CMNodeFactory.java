@@ -146,7 +146,7 @@ public class CMNodeFactory {
 
         // Xerces properties
         if (propertyId.startsWith(Constants.XERCES_PROPERTY_PREFIX)) {
-        	final int suffixLength = propertyId.length() - Constants.XERCES_PROPERTY_PREFIX.length();
+                final int suffixLength = propertyId.length() - Constants.XERCES_PROPERTY_PREFIX.length();
 
             if (suffixLength == Constants.SECURITY_MANAGER_PROPERTY.length() &&
                 propertyId.endsWith(Constants.SECURITY_MANAGER_PROPERTY)) {

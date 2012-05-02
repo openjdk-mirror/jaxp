@@ -28,7 +28,7 @@ import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
 /**
  * Represent the schema type "hexBinary"
  *
- * @xerces.internal 
+ * @xerces.internal
  *
  * @author Neeraj Bajaj, Sun Microsystems, inc.
  * @author Sandy Gao, IBM
