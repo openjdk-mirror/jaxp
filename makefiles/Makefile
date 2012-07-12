@@ -23,11 +23,12 @@
 # questions.
 #
 
+# This must be the first rule
+default: all
+
 -include $(SPEC)
 include MakeBase.gmk
 include JavaCompilation.gmk
-
-default: all
 
 JAVAC_JARS ?= "-Xbootclasspath/p:$(LANGTOOLS_OUTPUTDIR)/dist/bootstrap/lib/javac.jar" \
 		-jar $(LANGTOOLS_OUTPUTDIR)/dist/bootstrap/lib/javac.jar
@@ -47,7 +48,7 @@ $(eval $(call SetupJavaCompiler,GENERATE_NEWBYTECODE_DEBUG,\
 
 $(eval $(call SetupJavaCompilation,BUILD_JAXP,\
 		SETUP:=GENERATE_NEWBYTECODE_DEBUG,\
-		SRC:=$(JAXP_TOPDIR)/src/share/classes,\
+		SRC:=$(JAXP_TOPDIR)/src,\
 		CLEAN:=.properties,\
 		BIN:=$(JAXP_OUTPUTDIR)/classes,\
 		SRCZIP:=$(JAXP_OUTPUTDIR)/dist/lib/src.zip))
