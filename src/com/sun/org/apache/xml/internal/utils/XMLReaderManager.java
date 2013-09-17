@@ -136,7 +136,6 @@ public class XMLReaderManager {
                 try {
                     reader.setFeature(NAMESPACES_FEATURE, true);
                     reader.setFeature(NAMESPACE_PREFIXES_FEATURE, false);
-                    reader.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, _accessExternalDTD);
                 } catch (SAXException se) {
                     // Try to carry on if we've got a parser that
                     // doesn't know about namespace prefixes.
@@ -155,6 +154,14 @@ public class XMLReaderManager {
                 m_readers.set(reader);
                 m_inUse.put(reader, Boolean.TRUE);
             }
+        }
+
+        try {
+            //reader is cached, but this property might have been reset
+            reader.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, _accessExternalDTD);
+        } catch (SAXException se) {
+            System.err.println("Warning:  " + reader.getClass().getName() + ": "
+                        + se.getMessage());
         }
 
         return reader;
