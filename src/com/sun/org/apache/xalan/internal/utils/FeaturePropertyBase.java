@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -23,16 +23,15 @@
  * questions.
  */
 
-package com.sun.org.apache.xerces.internal.utils;
+package com.sun.org.apache.xalan.internal.utils;
 
-import com.sun.org.apache.xerces.internal.impl.Constants;
-import javax.xml.XMLConstants;
+import com.sun.org.apache.xalan.internal.XalanConstants;
 
 /**
- * This class manages security related properties
+ * This is the base class for features and properties
  *
  */
-public final class XMLSecurityPropertyManager {
+public abstract class FeaturePropertyBase {
 
     /**
      * States of the settings of a property, in the order: default value, value
@@ -44,70 +43,16 @@ public final class XMLSecurityPropertyManager {
         DEFAULT, FSP, JAXPDOTPROPERTIES, SYSTEMPROPERTY, APIPROPERTY
     }
 
-    /**
-     * Limits managed by the security manager
-     */
-    public static enum Property {
-        ACCESS_EXTERNAL_DTD(XMLConstants.ACCESS_EXTERNAL_DTD,
-                Constants.EXTERNAL_ACCESS_DEFAULT),
-        ACCESS_EXTERNAL_SCHEMA(XMLConstants.ACCESS_EXTERNAL_SCHEMA,
-                Constants.EXTERNAL_ACCESS_DEFAULT);
-
-        final String name;
-        final String defaultValue;
-
-        Property(String name, String value) {
-            this.name = name;
-            this.defaultValue = value;
-        }
-
-        public boolean equalsName(String propertyName) {
-            return (propertyName == null) ? false : name.equals(propertyName);
-        }
-
-        String defaultValue() {
-            return defaultValue;
-        }
-    }
 
     /**
      * Values of the properties as defined in enum Properties
      */
-    private final String[] values;
+    String[] values = null;
     /**
      * States of the settings for each property in Properties above
      */
-    private State[] states = {State.DEFAULT, State.DEFAULT};
+    State[] states = {State.DEFAULT, State.DEFAULT};
 
-    /**
-     * Default constructor. Establishes default values
-     */
-    public XMLSecurityPropertyManager() {
-        values = new String[Property.values().length];
-        for (Property property : Property.values()) {
-            values[property.ordinal()] = property.defaultValue();
-        }
-        //read system properties or jaxp.properties
-        readSystemProperties();
-    }
-
-
-    /**
-     * Set limit by property name and state
-     * @param propertyName property name
-     * @param state the state of the property
-     * @param value the value of the property
-     * @return true if the property is managed by the security property manager;
-     *         false if otherwise.
-     */
-    public boolean setValue(String propertyName, State state, Object value) {
-        int index = getIndex(propertyName);
-        if (index > -1) {
-            setValue(index, state, (String)value);
-            return true;
-        }
-        return false;
-    }
 
     /**
      * Set the value for a specific property.
@@ -116,7 +61,7 @@ public final class XMLSecurityPropertyManager {
      * @param state the state of the property
      * @param value the value of the property
      */
-    public void setValue(Property property, State state, String value) {
+    public void setValue(Enum property, State state, String value) {
         //only update if it shall override
         if (state.compareTo(states[property.ordinal()]) >= 0) {
             values[property.ordinal()] = value;
@@ -138,20 +83,42 @@ public final class XMLSecurityPropertyManager {
         }
     }
 
-
-    /**
-     * Return the value of the specified property
-     *
-     * @param propertyName the property name
-     * @return the value of the property as a string
+     /**
+     * Set value by property name and state
+     * @param propertyName property name
+     * @param state the state of the property
+     * @param value the value of the property
+     * @return true if the property is managed by the security property manager;
+     *         false if otherwise.
      */
-    public String getValue(String propertyName) {
+    public boolean setValue(String propertyName, State state, Object value) {
         int index = getIndex(propertyName);
         if (index > -1) {
-            return getValueByIndex(index);
+            setValue(index, state, (String)value);
+            return true;
         }
+        return false;
+    }
 
-        return null;
+     /**
+     * Set value by property name and state
+     * @param propertyName property name
+     * @param state the state of the property
+     * @param value the value of the property
+     * @return true if the property is managed by the security property manager;
+     *         false if otherwise.
+     */
+    public boolean setValue(String propertyName, State state, boolean value) {
+        int index = getIndex(propertyName);
+        if (index > -1) {
+            if (value) {
+                setValue(index, state, XalanConstants.FEATURE_TRUE);
+            } else {
+                setValue(index, state, XalanConstants.FEATURE_FALSE);
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -160,8 +127,38 @@ public final class XMLSecurityPropertyManager {
      * @param property the property
      * @return the value of the property
      */
-    public String getValue(Property property) {
+    public String getValue(Enum property) {
         return values[property.ordinal()];
+    }
+
+    /**
+     * Return the value of the specified property
+     *
+     * @param property the property
+     * @return the value of the property
+     */
+    public String getValue(String property) {
+        int index = getIndex(property);
+        if (index > -1) {
+            return getValueByIndex(index);
+        }
+        return null;
+    }
+
+    /**
+     * Return the value of the specified property.
+     *
+     * @param propertyName the property name
+     * @return the value of the property as a string. If a property is managed
+     * by this manager, its value shall not be null.
+     */
+    public String getValueAsString(String propertyName) {
+        int index = getIndex(propertyName);
+        if (index > -1) {
+            return getValueByIndex(index);
+        }
+
+        return null;
     }
 
     /**
@@ -178,25 +175,18 @@ public final class XMLSecurityPropertyManager {
      * @param propertyName property name
      * @return the index of the property if found; return -1 if not
      */
-    public int getIndex(String propertyName){
-        for (Property property : Property.values()) {
-            if (property.equalsName(propertyName)) {
+    public abstract int getIndex(String propertyName);
+
+    public <E extends Enum<E>> int getIndex(Class<E> property, String propertyName) {
+        for (Enum<E> enumItem : property.getEnumConstants()) {
+            if (enumItem.toString().equals(propertyName)) {
                 //internally, ordinal is used as index
-                return property.ordinal();
+                return enumItem.ordinal();
             }
         }
         return -1;
-    }
+    };
 
-    /**
-     * Read from system properties, or those in jaxp.properties
-     */
-    private void readSystemProperties() {
-        getSystemProperty(Property.ACCESS_EXTERNAL_DTD,
-                Constants.SP_ACCESS_EXTERNAL_DTD);
-        getSystemProperty(Property.ACCESS_EXTERNAL_SCHEMA,
-                Constants.SP_ACCESS_EXTERNAL_SCHEMA);
-    }
 
     /**
      * Read from system properties, or those in jaxp.properties
@@ -204,7 +194,7 @@ public final class XMLSecurityPropertyManager {
      * @param property the property
      * @param systemProperty the name of the system property
      */
-    private void getSystemProperty(Property property, String systemProperty) {
+    void getSystemProperty(Enum property, String systemProperty) {
         try {
             String value = SecuritySupport.getSystemProperty(systemProperty);
             if (value != null) {
