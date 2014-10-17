@@ -275,7 +275,7 @@ public final class SecuritySupport {
 
     /**
      * Read JAXP system property in this order: system property,
-     * $java.home/lib/jaxp.properties if the system property is not specified
+     * $java.home/conf/jaxp.properties if the system property is not specified
      *
      * @param propertyId the Id of the property
      * @return the value of the property
@@ -289,7 +289,7 @@ public final class SecuritySupport {
     }
 
      /**
-     * Read from $java.home/lib/jaxp.properties for the specified property
+     * Read from $java.home/conf/jaxp.properties for the specified property
      * The program
      *
      * @param propertyId the Id of the property
@@ -303,7 +303,7 @@ public final class SecuritySupport {
                 synchronized (cacheProps) {
                     if (firstTime) {
                         String configFile = getSystemProperty("java.home") + File.separator +
-                            "lib" + File.separator + "jaxp.properties";
+                            "conf" + File.separator + "jaxp.properties";
                         File f = new File(configFile);
                         if (getFileExists(f)) {
                             is = getFileInputStream(f);
@@ -329,12 +329,12 @@ public final class SecuritySupport {
     }
 
    /**
-     * Cache for properties in java.home/lib/jaxp.properties
+     * Cache for properties in java.home/conf/jaxp.properties
      */
     static final Properties cacheProps = new Properties();
 
     /**
-     * Flag indicating if the program has tried reading java.home/lib/jaxp.properties
+     * Flag indicating if the program has tried reading java.home/conf/jaxp.properties
      */
     static volatile boolean firstTime = true;
 
