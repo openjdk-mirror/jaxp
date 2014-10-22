@@ -243,8 +243,8 @@ public final class SecuritySupport {
             if (protocol.equalsIgnoreCase("jar")) {
                 String path = url.getPath();
                 protocol = path.substring(0, path.indexOf(":"));
-            } else if (protocol.equalsIgnoreCase("jimage")) {
-                // if the systemId is "jimage" then allow access if "file" allowed
+            } else if (protocol.equalsIgnoreCase("jrt")) {
+                // if the systemId is "jrt" then allow access if "file" allowed
                 protocol = "file";
             }
         }
