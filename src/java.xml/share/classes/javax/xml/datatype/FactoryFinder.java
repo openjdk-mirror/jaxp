@@ -256,7 +256,7 @@ class FactoryFinder {
             final String factoryClassName = cacheProps.getProperty(factoryId);
 
             if (factoryClassName != null) {
-                dPrint("found in $java.home/jaxp.properties, value=" + factoryClassName);
+                dPrint("found in ${java.home}/conf/jaxp.properties, value=" + factoryClassName);
                 return newInstance(type, factoryClassName, null, true);
             }
         }
